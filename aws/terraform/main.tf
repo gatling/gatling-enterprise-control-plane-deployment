@@ -1,61 +1,56 @@
 terraform {
-  
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 4.16"
+      version = "5.48.0"
     }
   }
-
-  required_version = ">= 1.2.0"
 }
 
 provider "aws" {
   region = "eu-west-3"
 }
 
-resource "aws_s3_bucket" "control_plane_s3_bucket" {
+resource "aws_s3_bucket" "cp_s3_bucket" {
   bucket = "${var.cp_name}-s3"
   tags = {
     Name = "Control Plane Configuration Bucket"
   }
 }
 
-resource "aws_s3_object" "control_plane_config" {
-  bucket  = aws_s3_bucket.control_plane_s3_bucket.id
+resource "aws_s3_object" "cp_config" {
+  bucket  = aws_s3_bucket.cp_s3_bucket.id
   key     = "control-plane.conf"
   content = jsonencode({
-    "control-plane": {
-      "token": "${var.cp_token}",
-      "description": "my control plane description",
-      "locations": [for location in var.locations : {
-        "id": location.id,
-        "description": location.description,
-        "type": "aws",
-        "region": location.region,
-        "ami": {
-          "type": "certified",
-          "java": location.java_version
+    control-plane : {
+      token : var.cp_token,
+      description : "my control plane description",
+      locations : [for location in var.locations : {
+        id : location.id,
+        description : location.description,
+        type : "aws",
+        region : location.region,
+        ami : {
+          type : "certified",
+          java : location.java_version
         },
-        "security-groups": location.security_group_ids,
-        "instance-type": location.instance_type,
-        "subnets": location.subnet_ids,
-        "tags": {},
-        "tags-for": {
-          "instance": {},
-          "volume": {},
-          "network-interface": {}
+        security-groups : location.security_group_ids,
+        instance-type : location.instance_type,
+        subnets : location.subnet_ids,
+        tags : {},
+        tags-for : {
+          instance : {},
+          volume : {},
+          network-interface : {}
         },
-        "system-properties": {},
-        "java-home": "/usr/lib/jvm/zulu",
-        "jvm-options": ["-Xmx4G", "-Xms512M"]
+        system-properties : {},
+        #java-home: "/usr/lib/jvm/zulu",
+        #jvm-options: ["-Xmx4G", "-Xms512M"]
       }]
     }
   })
   content_type = "application/json"
 }
-
-
 
 resource "aws_iam_role" "gatling_role" {
   name = "${var.cp_name}-role"
@@ -119,7 +114,7 @@ resource "aws_iam_role_policy_attachment" "ec2_policy_attachment" {
 }
 
 resource "aws_ecs_task_definition" "gatling_task" {
-  family                   = "gatling-control-plane-task"
+  family                   = "${var.cp_name}-task"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   task_role_arn            = aws_iam_role.gatling_role.arn
@@ -129,38 +124,38 @@ resource "aws_ecs_task_definition" "gatling_task" {
 
   container_definitions = jsonencode([
     {
-      name       = "conf-loader-side-car"
-      image      = "amazon/aws-cli"
-      cpu        = 0
-      essential  = false
-      entryPoint = ["aws", "s3", "cp", "s3://${var.cp_name}-s3/control-plane.conf", "/app/conf/control-plane.conf"]
-      mountPoints = [
+      name : "conf-loader-side-car"
+      image : "amazon/aws-cli"
+      cpu : 0
+      essential : false
+      entryPoint : ["aws", "s3", "cp", "s3://${var.cp_name}-s3/control-plane.conf", "/app/conf/control-plane.conf"]
+      mountPoints : [
         {
-          sourceVolume  = "control-plane-conf"
-          containerPath = "/app/conf"
-          readOnly      = false
+          sourceVolume : "control-plane-conf"
+          containerPath : "/app/conf"
+          readOnly : false
         }
       ]
     },
     {
-      name      = "control-plane"
-      image     = "gatlingcorp/control-plane:latest"
-      cpu       = 0
-      essential = true
-      mountPoints = [
+      name : "control-plane"
+      image : "gatlingcorp/control-plane:latest"
+      cpu : 0
+      essential : true
+      mountPoints : [
         {
-          sourceVolume  = "control-plane-conf"
-          containerPath = "/app/conf"
-          readOnly      = true
+          sourceVolume : "control-plane-conf"
+          containerPath : "/app/conf"
+          readOnly : true
         }
       ]
       dependsOn = [
         {
-          containerName = "conf-loader-side-car"
-          condition     = "SUCCESS"
+          containerName : "conf-loader-side-car"
+          condition : "SUCCESS"
         }
       ]
-      workingDirectory = "/app/conf"
+      workingDirectory : "/app/conf"
     }
   ])
 
