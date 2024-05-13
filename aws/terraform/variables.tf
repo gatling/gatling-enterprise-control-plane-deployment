@@ -10,40 +10,46 @@ variable "cp_token" {
   sensitive   = true
 }
 
+variable "pp_flag" { // Set to true in order to activate Private Packages
+  type        = bool
+  description = "Flag to determine if the private packages and their related resources should be created."
+  default     = false
+}
+
 variable "cp_security_group_ids" {
   type        = list(string)
-  description = "Security group IDs to be used with the control plane"
+  description = "Security group IDs to be used with the control plane."
   default     = ["sg-securitygroup"]
 }
 
 variable "cp_subnet_ids" {
   type        = list(string)
-  description = "The subnet IDs for the control plane"
+  description = "The subnet IDs for the control plane."
   default     = ["subnet-a", "subnet-b"]
 }
 
 variable "locations" {
   description = "List of location configurations"
   type = list(object({
-    id              = string
-    description     = string
-    region          = string
-    java_version    = string
+    id                 = string
+    description        = string
+    region             = string
+    java_version       = string
     security_group_ids = list(string)
-    instance_type   = string
-    subnet_ids      = list(string)
+    instance_type      = string
+    subnet_ids         = list(string)
   }))
 
   default = [
     {
-      id              = "prl_private_location_example",
-      description     = "Private Location on AWS",
-      region          = "eu-west-3",
-      java_version    = "latest",
-      security_group_ids = ["sg-mysecuritygroup"]
-      instance_type   = "c6i.xlarge",
-      subnet_ids      = ["subnet-a", "subnet-b"]
-    },
+      id                 = "prl_aws",
+      description        = "Private Location on AWS",
+      region             = "eu-west-3",
+      java_version       = "latest", // 11, 17, 21 or latest
+      security_group_ids = ["sg-securitygroup"]
+      instance_type      = "c6i.xlarge",
+      subnet_ids         = ["subnet-a", "subnet-b"]
+    }
   ]
 
   validation {
@@ -61,14 +67,20 @@ variable "locations" {
   }
 }
 
-variable "s3_policy_name" {
+variable "pp_s3_dir" {
   type        = string
-  description = "Name of the S3 policy"
-  default     = "GatlingControlPlaneConfSidecarPolicy"
+  description = "Name of the S3 private package directory."
+  default     = ""
 }
 
-variable "ec2_policy_name" {
+variable "pp_vpc" {
   type        = string
-  description = "Name of the EC2 policy"
-  default     = "GatlingControlPlaneEC2Policy"
+  description = "The VPC ID for the ALB exposing the control plane for private packages."
+  default     = "vpc-id"
+}
+
+variable "pp_alb_security_group_ids" {
+  type        = list(string)
+  description = "ALB security group IDs to be used with the control plane container to generate a public URL for private packages."
+  default     = ["subnet-a", "subnet-b"]
 }
