@@ -12,26 +12,30 @@ Before you begin, ensure you have the following:
 
 This Terraform configuration does not create any VPCs, subnets, routers, or security groups. It also does not modify any outbound rules. These network configurations need to be managed and configured manually or integrated from existing resources within your AWS environment.
 
-## Configuration
+## Clone the repository
 
-To use these Terraform scripts:
-
-1. **Clone the repository**:
    ```bash
-   git clone https://github.com/yourgithub/gatling-aws-terraform.git
+   git clone https://github.com/gatling/gatling-enterprise-control-plane-deployment.git
    cd gatling-aws-terraform
+   ```
 
-2. **Configure the Solution**:
+## Configure the Solution:
 
 1. **Open the `variables.tf`** to set up your specific deployment settings.
 2. **Specify the solution name** which will be used as a prefix for the resources created by setting `cp_name`.
 3. **Enter the control plane configuration** either through the CLI prompts when running Terraform or by directly setting it in the `variables.tf`.
 4. **Define the Private Locations configuration** in the `locations` variable within your Terraform variables file. Make sure to provide all required details such as region, instance type, and AMI details.
 
-2. **Deploy the Solution**:
-1. **On the command line run `terraform init`**
-2. **Next run the command `terraform apply`**
+## Deploy the Solution:
+
+1. **Initiliaze Terraform `terraform init`**
+2. **Apply the configuration `terraform apply`**
+
+## Manage the Solution:
+
+1. **To update your deployment, modify the Terraform configuration files as needed and rerun terraform apply. `terraform apply`**
+2. **To tear down your infrastructure and stop all services, execute: `terraform destroy`**
 
 ## Activate Private Locations
 
-- To activate Private Locations, set the `pp_flag` to `true` in your configuration file. This action will enable the deployment of related resources such as the S3 permissions and the Application Load Balancer and other necessary AWS services.
+To activate Private Locations, set the `pp_flag` to `true` in your configuration file. This action will enable the deployment of related resources such as the S3 permissions and the Application Load Balancer and other necessary AWS services.
