@@ -16,7 +16,7 @@ This Terraform configuration does not create any VPCs, subnets, routers, or secu
 
    ```bash
    git clone https://github.com/gatling/gatling-enterprise-control-plane-deployment.git
-   cd gatling-aws-terraform
+   cd aws/terraform
    ```
 
 ## Configure the Solution:
