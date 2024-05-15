@@ -46,6 +46,7 @@ variable "location_java_version" {
 variable "alb_security_group_ids" {
   type        = list(string)
   description = "Security Group IDs of the Control Plane's ALB."
+  default = []
 }
 
 variable "conf_s3_name" {
