@@ -8,6 +8,7 @@ module "iam" {
 module "s3" {
   source = "./s3"
   name = var.conf_s3_name
+  object_name = var.conf_s3_object_name
   token = var.token
   locations = var.locations
   private_package = var.private_package

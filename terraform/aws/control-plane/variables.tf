@@ -35,6 +35,11 @@ variable "conf_s3_name" {
   description = "S3 bucket name to be used with the control plane."
 }
 
+variable "conf_s3_object_name" {
+  type        = string
+  description = "Configuration object name to be stored in the S3 bucket."
+}
+
 variable "locations" {
   description = "JSON configuration for the locations."
   type        = list(map(any))

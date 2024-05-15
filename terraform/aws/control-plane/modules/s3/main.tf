@@ -4,7 +4,7 @@ data "aws_s3_bucket" "s3_conf" {
 
 resource "aws_s3_object" "conf" {
   bucket = data.aws_s3_bucket.s3_conf.id
-  key    = "control-plane.conf"
+  key    = var.object_name
   content_type = "application/json"
   content = jsonencode({
     control-plane : {
