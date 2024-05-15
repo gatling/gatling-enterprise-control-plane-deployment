@@ -1,0 +1,12 @@
+token                  = "cpt_token"
+region                 = "eu-west-1"
+vpc                    = "vpc-id"
+subnet_ids             = ["subnet-a", "subnet-b"]
+security_group_ids     = ["sg-id"]
+location_description   = ""
+location_instance_type = "c6i.xlarge"
+location_java_version  = "latest"
+alb_security_group_ids = ["sg-id"]
+conf_s3_name           = "bucket_name"
+package_name           = "bucket_name"
+package_path           = ""
