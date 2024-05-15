@@ -7,10 +7,6 @@ terraform {
   }
 }
 
-provider "aws" {
-  region = "eu-west-3"
-}
-
 module "control-plane" {
   source                 = "./modules/control-plane"
   name                   = "gatling-cp"
