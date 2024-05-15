@@ -21,7 +21,7 @@ module "control-plane" {
   alb_security_group_ids = var.alb_security_group_ids
   conf_s3_name           = var.conf_s3_name
   locations              = [module.location]
-  //private_package        = module.private-package       // Uncomment to unable Private Package feature
+  //private_package        = module.private-package       // Uncomment to enable Private Package feature
 }
 
 module "location" {
@@ -35,7 +35,7 @@ module "location" {
   security_group_ids = var.security_group_ids
 }
 
-/*module "private-package" {                              // Uncomment to unable Private Package feature
+/*module "private-package" {                              // Uncomment to enable Private Package feature
   source     = "./modules/private-package"
   bucket = var.package_name
   path  = var.package_path

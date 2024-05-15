@@ -21,10 +21,9 @@ This Terraform configuration does not create any VPCs, subnets, routers, or secu
 
 ## Configure the Solution:
 
-1. **Open the `variables.tf`** to set up your specific deployment settings.
-2. **Specify the solution name** which will be used as a prefix for the resources created by setting `cp_name`.
-3. **Enter the control plane configuration** either through the CLI prompts when running Terraform or by directly setting it in the `variables.tf`.
-4. **Define the Private Locations configuration** in the `locations` variable within your Terraform variables file. Make sure to provide all required details such as region, instance type, and AMI details.
+1. **Open the `terraform.tfvars`** to set up your specific deployment settings.
+2. **Specify the control plane, location, and private package configurations i**, in the `terraform.tfvars` file.
+3. **Create the necessary components for the solution**, you can create multiple control planes, you can assign multiple locations to a given control plane, but each control plane can only have one private package.
 
 ## Deploy the Solution:
 
