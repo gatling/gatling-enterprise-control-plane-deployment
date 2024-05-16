@@ -53,30 +53,6 @@ variable "conf_s3_object_name" {
   description = "Configuration object name to be stored in the S3 bucket."
 }
 
-variable "port" {
-  type        = number
-  description = "Server Port"
-  default = 8080
-}
-
-variable "bind_address" {
-  type        = string
-  description = "Server bind address"
-  default = "0.0.0.0"
-}
-
-variable "certificate_path" {
-  type        = string
-  description = "Server certificte path"
-  default = ""
-}
-
-variable "certificate_password" {
-  type        = string
-  description = "Server certificte password"
-  default = ""
-}
-
 variable "locations" {
   description = "JSON configuration for the locations."
   type        = list(map(any))
