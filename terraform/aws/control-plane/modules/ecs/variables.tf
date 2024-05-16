@@ -3,6 +3,11 @@ variable "name" {
   description = "Name of the control plane."
 }
 
+variable "image" {
+  type        = string
+  description = "Image of the control plane."
+}
+
 variable "subnet_ids" {
   type        = list(string)
   description = "The subnet IDs for the control plane."

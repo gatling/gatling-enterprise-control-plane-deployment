@@ -8,6 +8,11 @@ variable "object_name" {
   description = "Name of the configuration object to be stored inside the S3 Bucket."
 }
 
+variable "description" {
+  type        = string
+  description = "Description of the control plane."
+}
+
 variable "token" {
   type        = string
   description = "Token of the control plane"

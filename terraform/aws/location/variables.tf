@@ -13,7 +13,6 @@ variable "description" {
 variable "region" {
   type        = string
   description = "Region of the location."
-  default = "eu-west-1"
 }
 
 variable "instance_type" {

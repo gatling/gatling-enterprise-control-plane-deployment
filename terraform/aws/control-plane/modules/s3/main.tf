@@ -9,7 +9,7 @@ resource "aws_s3_object" "conf" {
   content = jsonencode({
     control-plane : {
       token : var.token,
-      description : "my control plane description",
+      description : var.description,
       locations :  [for location in var.locations : location.conf]
       repository : length(var.private_package) > 0 ? var.private_package.conf : {}
     }

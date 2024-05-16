@@ -3,6 +3,18 @@ variable "name" {
   description = "Name of the control plane"
 }
 
+variable "description" {
+  type        = string
+  description = "Description of the control plane."
+  default = "My AWS control plane description"
+}
+
+variable "image" {
+  type        = string
+  description = "Image of the control plane"
+  default = "gatlingcorp/control-plane:latest"
+}
+
 variable "token" {
   type        = string
   description = "Token of the control plane"
@@ -28,6 +40,7 @@ variable "security_group_ids" {
 variable "alb_security_group_ids" {
   description = "ALB Security group"
   type        = list(any)
+  default = []
 }
 
 variable "conf_s3_name" {
@@ -38,6 +51,30 @@ variable "conf_s3_name" {
 variable "conf_s3_object_name" {
   type        = string
   description = "Configuration object name to be stored in the S3 bucket."
+}
+
+variable "port" {
+  type        = number
+  description = "Server Port"
+  default = 8080
+}
+
+variable "bind_address" {
+  type        = string
+  description = "Server bind address"
+  default = "0.0.0.0"
+}
+
+variable "certificate_path" {
+  type        = string
+  description = "Server certificte path"
+  default = ""
+}
+
+variable "certificate_password" {
+  type        = string
+  description = "Server certificte password"
+  default = ""
 }
 
 variable "locations" {
