@@ -11,7 +11,7 @@ variable "description" {
 
 variable "image" {
   type        = string
-  description = "Image of the control plane"
+  description = "Image of the control plane."
   default = "gatlingcorp/control-plane:latest"
 }
 

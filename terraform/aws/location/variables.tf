@@ -58,13 +58,13 @@ variable "elastic_ips" {
 
 variable "profile_name" {
   type        = string
-  description = "Profile name to be assigned to the Location"
+  description = "Profile name to be assigned to the Location."
   default = ""
 }
 
 variable "iam_instance_profile" {
   type        = string
-  description = "IAM instance profile to be assigned to the Location"
+  description = "IAM instance profile to be assigned to the Location."
   default = ""
 }
 
