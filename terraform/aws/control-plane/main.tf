@@ -4,6 +4,7 @@ module "iam" {
   s3_bucket_name = var.conf_s3_name
   private_package =  var.private_package
 }
+
 module "s3" {
   source = "./modules/s3"
   name = var.conf_s3_name

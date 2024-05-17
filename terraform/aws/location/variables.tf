@@ -103,7 +103,7 @@ variable "system_properties" {
 variable "java_home" {
   description = "Overwrite JAVA_HOME definition."
   type        = string
-  default     = "/usr/lib/jvm/zulu"
+  default     = null
 }
 
 variable "jvm_options" {
