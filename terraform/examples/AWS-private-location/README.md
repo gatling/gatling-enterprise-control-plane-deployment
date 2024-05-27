@@ -25,7 +25,8 @@ provider "aws" {
 
 ### Location
 
-This module specifies the location parameters for the control plane. It includes the subnet IDs and security group IDs.
+This module specifies the location parameters for the control plane, including the subnet IDs and security group IDs.
+Ensure that your network permits outbound access to the domains listed in this documentation [link](https://docs.gatling.io/reference/install/cloud/private-locations/introduction/#network).
 
 ```sh
 module "location" {
