@@ -6,13 +6,13 @@ variable "name" {
 variable "description" {
   type        = string
   description = "Description of the control plane."
-  default = "My AWS control plane description"
+  default     = "My AWS control plane description"
 }
 
 variable "image" {
   type        = string
   description = "Image of the control plane."
-  default = "gatlingcorp/control-plane:latest"
+  default     = "gatlingcorp/control-plane:latest"
 }
 
 variable "token" {
@@ -24,7 +24,7 @@ variable "token" {
 variable "vpc" {
   type        = string
   description = "VPC to be used with the ALB exposing the control plane."
-  default = ""
+  default     = ""
 }
 
 variable "subnet_ids" {
@@ -40,7 +40,7 @@ variable "security_group_ids" {
 variable "alb_security_group_ids" {
   description = "ALB Security group"
   type        = list(any)
-  default = []
+  default     = []
 }
 
 variable "conf_s3_name" {
@@ -51,6 +51,7 @@ variable "conf_s3_name" {
 variable "conf_s3_object_name" {
   type        = string
   description = "Configuration object name to be stored in the S3 bucket."
+  default     = "control-plane.conf"
 }
 
 variable "locations" {
