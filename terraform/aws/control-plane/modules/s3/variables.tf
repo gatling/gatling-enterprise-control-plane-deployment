@@ -28,3 +28,8 @@ variable "private_package" {
   description = "JSON configuration for the Private Package."
   type        = map(any)
 }
+
+variable "extra_content" {
+  type = map(any)
+  default = {}
+}

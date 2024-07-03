@@ -13,6 +13,7 @@ module "s3" {
   description = var.description
   locations = var.locations
   private_package = var.private_package
+  extra_content = var.extra_content
 }
 
 module "alb" {
@@ -35,4 +36,5 @@ module "ecs" {
   private_package = var.private_package
   alb_security_group_ids = var.alb_security_group_ids
   alb_target_group_arn = module.alb.target_group_arn
+  command = var.command
 }

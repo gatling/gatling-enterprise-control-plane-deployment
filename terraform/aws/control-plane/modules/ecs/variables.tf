@@ -42,3 +42,9 @@ variable "alb_target_group_arn" {
   description = "Private Package ALB Target Group ARN."
   type        = string
 }
+
+variable "command" {
+  description = "Control plane image command"
+  type = list(string)
+  default = []
+}

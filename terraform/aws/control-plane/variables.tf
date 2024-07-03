@@ -64,3 +64,14 @@ variable "private_package" {
   type        = map(any)
   default     = {}
 }
+
+variable "extra_content" {
+  type = map(any)
+  default = {}
+}
+
+variable "command" {
+  description = "Control plane image command"
+  type = list(string)
+  default = []
+}
