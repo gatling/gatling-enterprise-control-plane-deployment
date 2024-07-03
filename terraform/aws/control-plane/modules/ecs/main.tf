@@ -25,6 +25,7 @@ resource "aws_ecs_task_definition" "gatling_task" {
     {
       name : "control-plane"
       image : var.image
+      command: var.command,
       cpu : 0
       essential : true
       portMappings : length(var.private_package) > 0 ? [
