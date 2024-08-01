@@ -18,7 +18,7 @@ variable "region" {
 variable "instance_type" {
   type        = string
   description = "Instance type of the location."
-  default = "c6i.xlarge"
+  default = "c7i.xlarge"
 }
 
 variable "spot" {

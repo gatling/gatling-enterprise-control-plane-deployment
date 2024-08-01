@@ -13,7 +13,7 @@ module "location" {
   region             = "eu-west-1"
   subnet_ids         = ["subnet-a", "subnet-b"]
   security_group_ids = ["sg-id"]
-  //instance_type      = "c6i.xlarge"
+  //instance_type      = "c7i.xlarge"
 }
 
 module "control-plane" {
