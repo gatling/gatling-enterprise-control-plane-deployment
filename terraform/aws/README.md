@@ -10,7 +10,7 @@ Before you begin, ensure you have the following:
 
 ## Important Note
 
-These Terraform configurations do not create any VPCs, subnets, routers, security groups or S3 Buckets. It also does not modify any outbound rules. These network configurations need to be managed and configured manually or integrated from existing resources within your AWS environment.
+These Terraform configurations do not create any VPCs, subnets, ALBs, routers, security groups or S3 Buckets. It also does not modify any outbound rules. These network configurations need to be managed and configured manually or integrated from existing resources within your AWS environment.
 
 
 ## Structure:
