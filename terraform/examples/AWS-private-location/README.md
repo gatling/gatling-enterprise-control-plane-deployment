@@ -66,7 +66,6 @@ module "control-plane" {
   source              = "git::git@github.com:gatling/gatling-enterprise-control-plane-deployment//terraform/aws/control-plane"
   name                = "name"
   token               = "token"
-  vpc                 = "vpc-id"
   subnet_ids          = ["subnet-a", "subnet-b"]
   security_group_ids  = ["sg-id"]
   conf_s3_name        = "conf_s3_name"
@@ -78,7 +77,6 @@ module "control-plane" {
 - `source` (required): The source of the module, pointing to the GitHub repository.
 - `name` (required): The name of the control plane.
 - `token`: The control plane token for authentication.
-- `vpc` (required): The VPC ID where the control plane will be deployed.
 - `subnet_ids` (required): List of subnet IDs where the resources will be deployed.
 - `security_group_ids` (required): List of security group IDs to be used.
 - `conf_s3_name` (required): The name of the S3 bucket for configuration.

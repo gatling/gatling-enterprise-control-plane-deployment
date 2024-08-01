@@ -21,12 +21,6 @@ variable "token" {
   sensitive   = true
 }
 
-variable "vpc" {
-  type        = string
-  description = "VPC to be used with the ALB exposing the control plane."
-  default     = ""
-}
-
 variable "subnet_ids" {
   type        = list(string)
   description = "The subnet IDs for the control plane."
@@ -35,12 +29,6 @@ variable "subnet_ids" {
 variable "security_group_ids" {
   type        = list(string)
   description = "Security group IDs to be used with the control plane."
-}
-
-variable "alb_security_group_ids" {
-  description = "ALB Security group"
-  type        = list(any)
-  default     = []
 }
 
 variable "conf_s3_name" {

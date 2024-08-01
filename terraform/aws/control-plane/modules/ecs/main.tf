@@ -68,15 +68,6 @@ resource "aws_ecs_service" "gatling_service" {
   desired_count   = 1
   launch_type     = "FARGATE"
 
-  dynamic "load_balancer" {
-    for_each = length(var.private_package) > 0 ? [1] : []
-    content {
-      target_group_arn = length(var.private_package) > 0 ? var.alb_target_group_arn : ""
-      container_name   = "control-plane"
-      container_port   = 8080
-    }
-  }
-
   network_configuration {
     subnets          = var.subnet_ids
     security_groups  = var.security_group_ids

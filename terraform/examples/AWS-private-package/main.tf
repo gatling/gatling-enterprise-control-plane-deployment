@@ -26,6 +26,5 @@ module "control-plane" {
   conf_s3_name           = "conf_s3_name"
   conf_s3_object_name    = "control-plane.conf"
   locations              = [module.location]
-  alb_security_group_ids = ["sg-id"]
   private_package        = module.private-package
 }

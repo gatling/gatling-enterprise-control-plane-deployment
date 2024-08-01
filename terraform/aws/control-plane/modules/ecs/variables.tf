@@ -33,16 +33,6 @@ variable "private_package" {
   type        = map(any)
 }
 
-variable "alb_security_group_ids" {
-  description = "ALB Security group"
-  type        = list(any)
-}
-
-variable "alb_target_group_arn" {
-  description = "Private Package ALB Target Group ARN."
-  type        = string
-}
-
 variable "command" {
   description = "Control plane image command"
   type = list(string)
