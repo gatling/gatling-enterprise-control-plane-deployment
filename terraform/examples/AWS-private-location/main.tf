@@ -18,6 +18,5 @@ module "control-plane" {
   subnet_ids          = ["subnet-a", "subnet-b"]
   security_group_ids  = ["sg-id"]
   conf_s3_name        = "conf_s3_name"
-  conf_s3_object_name = "control-plane.conf"
   locations           = [module.location]
 }
