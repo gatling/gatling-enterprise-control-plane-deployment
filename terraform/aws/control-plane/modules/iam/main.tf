@@ -15,7 +15,7 @@ resource "aws_iam_role" "gatling_role" {
 }
 
 resource "aws_iam_policy" "s3_policy" {
-  name = "${var.name}-ConfSidecarPolicy"
+  name = "${var.name}-ConfInitContainerPolicy"
   policy = jsonencode({
     Version = "2012-10-17",
     Statement = [

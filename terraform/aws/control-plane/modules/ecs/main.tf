@@ -9,7 +9,7 @@ resource "aws_ecs_task_definition" "gatling_task" {
 
   container_definitions = jsonencode([
     {
-      name : "conf-loader-side-car"
+      name : "conf-loader-init-container"
       image : "amazon/aws-cli"
       cpu : 0
       essential : false
@@ -30,8 +30,8 @@ resource "aws_ecs_task_definition" "gatling_task" {
       essential : true
       portMappings : length(var.private_package) > 0 ? [
         {
-          containerPort : 8080,
-          hostPort : 8080,
+          containerPort : var.private_package.conf.server.port,
+          hostPort : var.private_package.conf.server.port,
           protocol : "tcp"
         }
       ] : [],
@@ -44,7 +44,7 @@ resource "aws_ecs_task_definition" "gatling_task" {
       ]
       dependsOn = [
         {
-          containerName : "conf-loader-side-car"
+          containerName : "conf-loader-init-container"
           condition : "SUCCESS"
         }
       ]
