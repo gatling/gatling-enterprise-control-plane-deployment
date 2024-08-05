@@ -50,7 +50,7 @@ resource "aws_iam_policy" "ec2_policy" {
 }
 
 resource "aws_iam_policy" "pp_s3_policy" {
-  count =  length(var.private_package) > 0 ? 1 : 0
+  count = length(var.private_package) > 0 ? 1 : 0
   name  = "${var.name}-PackagePolicy"
   policy = jsonencode({
     Version = "2012-10-17",
@@ -80,7 +80,7 @@ resource "aws_iam_role_policy_attachment" "ec2_policy_attachment" {
 }
 
 resource "aws_iam_role_policy_attachment" "pp_s3_policy_attachment" {
-  count =  length(var.private_package) > 0 ? 1 : 0
+  count      = length(var.private_package) > 0 ? 1 : 0
   role       = aws_iam_role.gatling_role.name
   policy_arn = aws_iam_policy.pp_s3_policy[0].arn
 }

@@ -30,6 +30,6 @@ variable "private_package" {
 }
 
 variable "extra_content" {
-  type = map(any)
+  type    = map(any)
   default = {}
 }

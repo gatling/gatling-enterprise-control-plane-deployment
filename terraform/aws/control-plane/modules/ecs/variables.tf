@@ -35,6 +35,6 @@ variable "private_package" {
 
 variable "command" {
   description = "Control plane image command"
-  type = list(string)
-  default = []
+  type        = list(string)
+  default     = []
 }
