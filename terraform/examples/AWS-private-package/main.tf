@@ -26,4 +26,5 @@ module "control-plane" {
   conf_s3_name       = "conf_s3_name"
   locations          = [module.location]
   private_package    = module.private-package
+  //cloudWatch_logs    = true
 }

@@ -3,6 +3,7 @@ module "iam" {
   name            = "${var.name}-role"
   s3_bucket_name  = var.conf_s3_name
   private_package = var.private_package
+  cloudWatch_logs = var.cloudWatch_logs
 }
 
 module "s3" {
@@ -26,4 +27,5 @@ module "ecs" {
   ecs_tasks_iam_role_arn = module.iam.ecs_tasks_iam_role_arn
   private_package        = var.private_package
   command                = var.command
+  cloudWatch_logs        = var.cloudWatch_logs
 }

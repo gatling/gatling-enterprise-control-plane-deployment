@@ -1,3 +1,9 @@
+resource "aws_ecs_cluster" "gatling_cluster" {
+  name = "${var.name}-cluster"
+}
+
+data "aws_region" "current" {}
+
 resource "aws_ecs_task_definition" "gatling_task" {
   family                   = "${var.name}-task"
   network_mode             = "awsvpc"
@@ -35,6 +41,7 @@ resource "aws_ecs_task_definition" "gatling_task" {
           protocol : "tcp"
         }
       ] : [],
+      workingDirectory : "/app/conf"
       mountPoints : [
         {
           sourceVolume : "control-plane-conf"
@@ -42,23 +49,27 @@ resource "aws_ecs_task_definition" "gatling_task" {
           readOnly : true
         }
       ]
+      logConfiguration : var.cloudWatch_logs ? {
+        logDriver : "awslogs"
+        options : {
+          "awslogs-group" : "/ecs/${var.name}-service"
+          "awslogs-region" : data.aws_region.current.name
+          "awslogs-create-group" : "true"
+          "awslogs-stream-prefix" : "ecs"
+        }
+      } : null
       dependsOn : [
         {
           containerName : "conf-loader-init-container"
           condition : "SUCCESS"
         }
       ]
-      workingDirectory : "/app/conf"
     }
   ])
 
   volume {
     name = "control-plane-conf"
   }
-}
-
-resource "aws_ecs_cluster" "gatling_cluster" {
-  name = "${var.name}-cluster"
 }
 
 resource "aws_ecs_service" "gatling_service" {
@@ -74,5 +85,5 @@ resource "aws_ecs_service" "gatling_service" {
     assign_public_ip = true
   }
 
-  depends_on = [aws_ecs_task_definition.gatling_task]
+  depends_on = [aws_ecs_cluster.gatling_cluster, aws_ecs_task_definition.gatling_task]
 }

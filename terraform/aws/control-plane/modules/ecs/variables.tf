@@ -38,3 +38,8 @@ variable "command" {
   type        = list(string)
   default     = []
 }
+
+variable "cloudWatch_logs" {
+  description = "Control Plane CloudWatch Logs."
+  type        = bool
+}

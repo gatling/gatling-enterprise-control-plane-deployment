@@ -19,4 +19,5 @@ module "control-plane" {
   security_group_ids = ["sg-id"]
   conf_s3_name       = "conf_s3_name"
   locations          = [module.location]
+  //cloudWatch_logs    = true
 }
