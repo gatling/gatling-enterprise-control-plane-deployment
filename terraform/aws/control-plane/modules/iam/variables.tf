@@ -1,6 +1,6 @@
 variable "name" {
   type        = string
-  description = "Name of the Control Plane role."
+  description = "Control Plane role name."
 }
 
 variable "s3_bucket_name" {
@@ -11,4 +11,9 @@ variable "s3_bucket_name" {
 variable "private_package" {
   description = "JSON configuration for the private packages."
   type        = map(any)
+}
+
+variable "cloudWatch_logs" {
+  description = "Control Plane CloudWatch Logs."
+  type        = bool
 }
