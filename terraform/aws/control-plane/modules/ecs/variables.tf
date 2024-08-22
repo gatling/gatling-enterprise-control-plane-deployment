@@ -35,6 +35,11 @@ variable "private_package" {
 
 variable "command" {
   description = "Control plane image command"
-  type = list(string)
-  default = []
+  type        = list(string)
+  default     = []
+}
+
+variable "cloudWatch_logs" {
+  description = "Control Plane CloudWatch Logs."
+  type        = bool
 }

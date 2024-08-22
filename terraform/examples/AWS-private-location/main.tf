@@ -12,11 +12,12 @@ module "location" {
 }
 
 module "control-plane" {
-  source              = "git::git@github.com:gatling/gatling-enterprise-control-plane-deployment//terraform/aws/control-plane"
-  name                = "name"
-  token               = "token"
-  subnet_ids          = ["subnet-a", "subnet-b"]
-  security_group_ids  = ["sg-id"]
-  conf_s3_name        = "conf_s3_name"
-  locations           = [module.location]
+  source             = "git::git@github.com:gatling/gatling-enterprise-control-plane-deployment//terraform/aws/control-plane"
+  name               = "name"
+  token              = "token"
+  subnet_ids         = ["subnet-a", "subnet-b"]
+  security_group_ids = ["sg-id"]
+  conf_s3_name       = "conf_s3_name"
+  locations          = [module.location]
+  //cloudWatch_logs    = true
 }

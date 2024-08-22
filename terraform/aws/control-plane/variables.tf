@@ -54,12 +54,18 @@ variable "private_package" {
 }
 
 variable "extra_content" {
-  type = map(any)
+  type    = map(any)
   default = {}
 }
 
 variable "command" {
   description = "Control plane image command"
-  type = list(string)
-  default = []
+  type        = list(string)
+  default     = []
+}
+
+variable "cloudWatch_logs" {
+  description = "Control Plane Service CloudWatch logs."
+  type        = bool
+  default     = true
 }

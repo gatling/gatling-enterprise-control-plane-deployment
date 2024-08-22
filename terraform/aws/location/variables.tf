@@ -1,13 +1,13 @@
 variable "id" {
   type        = string
   description = "ID of the location."
-  default = "prl_private_location_example"
+  default     = "prl_private_location_example"
 }
 
 variable "description" {
   type        = string
   description = "Description of the location."
-  default = "Private Location on AWS"
+  default     = "Private Location on AWS"
 }
 
 variable "region" {
@@ -18,25 +18,25 @@ variable "region" {
 variable "instance_type" {
   type        = string
   description = "Instance type of the location."
-  default = "c7i.xlarge"
+  default     = "c7i.xlarge"
 }
 
 variable "spot" {
   type        = bool
   description = "Flag to enable spot instances."
-  default = false
+  default     = false
 }
 
 variable "ami_type" {
   type        = string
   description = "AMI type of the location."
-  default = "certified"
+  default     = "certified"
 }
 
 variable "java_version" {
   type        = string
   description = "Java version of the location."
-  default = "latest"
+  default     = "latest"
 }
 
 variable "subnet_ids" {
@@ -53,25 +53,25 @@ variable "security_group_ids" {
 variable "elastic_ips" {
   type        = list(string)
   description = "Assign elastic IPs to your Locations. You will only be able to deploy a number of load generators up to the number of Elastic IP addresses you have configured."
-  default = []
+  default     = []
 }
 
 variable "profile_name" {
   type        = string
   description = "Profile name to be assigned to the Location."
-  default = ""
+  default     = ""
 }
 
 variable "iam_instance_profile" {
   type        = string
   description = "IAM instance profile to be assigned to the Location."
-  default = ""
+  default     = ""
 }
 
 variable "tags" {
   description = "Tags to be assigned to the Location."
   type        = map(string)
-  default     = {
+  default = {
     # ExampleKey = "ExampleValue"
   }
 }
@@ -79,23 +79,23 @@ variable "tags" {
 variable "tags_for" {
   description = "Tags to be assigned to the resources of the Location."
   type        = map(map(string))
-  default     = {
-        instance : {
-          # ExampleKey = "ExampleValue"
-        }
-        volume : {
-          # ExampleKey = "ExampleValue"
-        }
-        network-interface : {
-          # ExampleKey = "ExampleValue"
-        }
-      }
+  default = {
+    instance : {
+      # ExampleKey = "ExampleValue"
+    }
+    volume : {
+      # ExampleKey = "ExampleValue"
+    }
+    network-interface : {
+      # ExampleKey = "ExampleValue"
+    }
+  }
 }
 
 variable "system_properties" {
   description = "System properties to be assigned to the Location."
   type        = map(string)
-  default     = {
+  default = {
     # ExampleKey = "ExampleValue"
   }
 }
