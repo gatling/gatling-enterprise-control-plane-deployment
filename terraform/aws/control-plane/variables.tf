@@ -67,5 +67,5 @@ variable "command" {
 variable "cloudWatch_logs" {
   description = "Control Plane Service CloudWatch logs."
   type        = bool
-  default     = false
+  default     = true
 }
