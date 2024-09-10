@@ -15,7 +15,7 @@ module "location" {
 
 module "control-plane" {
   source               = "git::git@github.com:gatling/gatling-enterprise-control-plane-deployment//terraform/azure/control-plane"
-  container_name       = "gatling-cp"
+  name                 = "gatling-cp"
   token                = "token"
   region               = "westeurope"
   resource_group_name  = "resource-group-name"
