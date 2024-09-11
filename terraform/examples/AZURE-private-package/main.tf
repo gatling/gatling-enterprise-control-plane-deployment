@@ -1,6 +1,5 @@
 provider "azurerm" {
   features {}
-  subscription_id = "subscription-id"
 }
 
 module "private-package" {
