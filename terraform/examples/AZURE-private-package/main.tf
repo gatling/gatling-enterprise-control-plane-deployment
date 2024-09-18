@@ -16,6 +16,7 @@ module "location" {
   virtual_network     = "vpc-id"
   subnet_name         = "default"
   //size                = "Standard_A4_v2"
+  //engine              = "classic"
 }
 
 module "control-plane" {

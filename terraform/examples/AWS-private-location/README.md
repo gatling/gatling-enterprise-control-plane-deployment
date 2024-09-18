@@ -35,12 +35,15 @@ module "location" {
   region             = "eu-west-1"
   subnet_ids         = ["subnet-a", "subnet-b"]
   security_group_ids = ["sg-id"]
+  instance_type      = "c7i.xlarge"
+  engine             = "classic"
 }
 ```
 
 - `source` (required): The source of the module, pointing to the GitHub repository.
 - `id` (required): ID of the location.
 - `region` (required): The AWS region to deploy to.
+- `engine`: Engine of the location determining the compatible package formats (JavaScript or JVM).
 - `subnet_ids` (required): List of subnet IDs where the resources will be deployed.
 - `security_group_ids` (required): List of security group IDs to be used.
 - `description`: Description of the location.

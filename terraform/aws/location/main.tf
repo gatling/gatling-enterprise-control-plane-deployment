@@ -4,6 +4,7 @@ locals {
     description : var.description,
     type : "aws",
     region : var.region,
+    engine : var.engine,
     ami : {
       type : var.ami_type,
       java : var.java_version

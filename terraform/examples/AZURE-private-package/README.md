@@ -18,7 +18,6 @@ The provider block specifies the Azure subscription to use:
 ```sh
 provider "azurerm" {
   features {}
-  subscription_id = "subscription-id"
 }
 ```
 
@@ -52,12 +51,15 @@ module "location" {
   resource_group_name = "resource-group-name"
   virtual_network     = "vnet-name"
   subnet_name         = "default"
+  size                = "Standard_A4_v2"
+  engine              = "classic"
 }
 ```
 
 - `source` (required): The source of the module, pointing to the GitHub repository.
 - `id` (required): ID of the location.
 - `region` (required): The Azure region to deploy to.
+- `engine`: Engine of the location determining the compatible package formats (JavaScript or JVM).
 - `resource_group_name` (required): The name of the resource group.
 - `virtual_network` (required): The name of the virtual network to deploy resources into.
 - `subnet_name` (required): The name of the subnet within the virtual network.

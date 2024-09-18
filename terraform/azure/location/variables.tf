@@ -15,6 +15,12 @@ variable "region" {
   description = "Region of the location."
 }
 
+variable "engine" {
+  type        = string
+  description = "Engine of the location determining the compatible package formats (JavaScript or JVM)."
+  default     = "classic"
+}
+
 variable "image_type" {
   type        = string
   description = "Image type of the location."

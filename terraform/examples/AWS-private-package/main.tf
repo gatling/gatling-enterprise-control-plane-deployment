@@ -14,6 +14,7 @@ module "location" {
   subnet_ids         = ["subnet-a", "subnet-b"]
   security_group_ids = ["sg-id"]
   //instance_type      = "c7i.xlarge"
+  //engine             = "classic"
 }
 
 module "control-plane" {

@@ -6,6 +6,7 @@ locals {
     description : var.description
     type : "azure"
     region : var.region
+    engine : var.engine,
     image : { type : var.image_type, java : var.java_version }
     size : var.size
     subscription : data.azurerm_client_config.current.subscription_id
