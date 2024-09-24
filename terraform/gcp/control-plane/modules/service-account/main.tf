@@ -22,8 +22,14 @@ locals {
 
 data "google_client_config" "current" {}
 
+resource "random_string" "role_suffix" {
+  length  = 1
+  special = false
+  upper   = false
+}
+
 resource "google_project_iam_custom_role" "custom_role" {
-  role_id     = var.role_id
+  role_id     = "${var.role_id}_${random_string.role_suffix.result}"
   title       = var.role_title
   description = var.role_description
   project     = data.google_client_config.current.project
