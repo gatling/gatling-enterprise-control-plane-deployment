@@ -77,33 +77,23 @@ variable "iam_instance_profile" {
 variable "tags" {
   description = "Tags to be assigned to the Location."
   type        = map(string)
-  default = {
-    # ExampleKey = "ExampleValue"
-  }
+  default = {}
 }
 
 variable "tags_for" {
   description = "Tags to be assigned to the resources of the Location."
   type        = map(map(string))
   default = {
-    instance : {
-      # ExampleKey = "ExampleValue"
-    }
-    volume : {
-      # ExampleKey = "ExampleValue"
-    }
-    network-interface : {
-      # ExampleKey = "ExampleValue"
-    }
+    instance: {}
+    volume: {}
+    network-interface: {}
   }
 }
 
 variable "system_properties" {
   description = "System properties to be assigned to the Location."
   type        = map(string)
-  default = {
-    # ExampleKey = "ExampleValue"
-  }
+  default = {}
 }
 
 variable "java_home" {
