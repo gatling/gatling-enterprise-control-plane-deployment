@@ -43,13 +43,13 @@ module "location" {
 - `source` (required): The source of the module, pointing to the GitHub repository.
 - `id` (required): ID of the location.
 - `region` (required): The Azure region to deploy to.
-- `engine`: Engine of the location determining the compatible package formats (JavaScript or JVM).
 - `resource_group_name` (required): The name of the resource group.
 - `virtual_network` (required): The name of the virtual network to deploy resources into.
 - `subnet_name` (required): The name of the subnet within the virtual network.
-- `description`: Description of the location.
 - `size`: VM size for the location.
+- `engine`: Engine of the location determining the compatible package formats (JavaScript or JVM).
 - `associate_public_ip`: Boolean to associate a public IP to your load generator.
+- `description`: Description of the location.
 - `system_properties`: System properties to be assigned to the Location.
 - `java_home`: Overwrite JAVA_HOME definition.
 - `jvm_options`: Overwrite JAVA_HOME definition.
@@ -77,6 +77,9 @@ module "control-plane" {
 - `resource_group_name` (required): The name of the resource group where the control plane will be deployed.
 - `storage_account_name` (required): The storage account name where configurations will be stored.
 - `locations` (required): The list of location module(s).
+- `image`: Image of the control plane.
+- `description`: Description of the control plane.
+- `conf_share_file_name`: The name of the configuration object in the file share.
 
 ## Usage
 
