@@ -58,15 +58,15 @@ module "location" {
 - `source` (required): The source of the module, pointing to the GitHub repository.
 - `id` (required): ID of the location.
 - `region` (required): The AWS region to deploy to.
-- `engine`: Engine of the location determining the compatible package formats (JavaScript or JVM).
 - `subnet_ids` (required): List of subnet IDs where the resources will be deployed.
 - `security_group_ids` (required): List of security group IDs to be used.
-- `description`: Description of the location.
 - `instance_type`: Instance type of the location.
-- `spot`: Flag to enable spot instances.
+- `engine`: Engine of the location determining the compatible package formats (JavaScript or JVM).
+- `elastic_ips`: Assign elastic IPs to your Locations.
+- `description`: Description of the location.
 - `ami_type`: AMI type of the location.
 - `java_version`: Java version of the location.
-- `elastic_ips`: Assign elastic IPs to your Locations.
+- `spot`: Flag to enable spot instances.
 - `profile_name`: Profile name to be assigned to the Location.
 - `iam_instance_profile`: IAM instance profile to be assigned to the Location.
 - `tags`: Tags to be assigned to the Location.
@@ -95,15 +95,15 @@ module "control-plane" {
 
 - `source` (required): The source of the module, pointing to the GitHub repository.
 - `name` (required): The name of the control plane.
-- `token`: The control plane token for authentication.
+- `token` (required): The control plane token for authentication.
 - `subnet_ids` (required): List of subnet IDs where the resources will be deployed.
 - `security_group_ids` (required): List of security group IDs to be used.
 - `conf_s3_name` (required): The name of the S3 bucket for configuration.
-- `conf_s3_object_name`: The name of the configuration object in the S3 bucket.
 - `locations` (required): The list of location module(s).
 - `private_package` (required): The name of the private package module for configuration.
-- `description`: Description of the control plane.
 - `image`: Image of the control plane.
+- `description`: Description of the control plane.
+- `conf_s3_object_name`: The name of the configuration object in the S3 bucket.
 
 ## Usage
 
