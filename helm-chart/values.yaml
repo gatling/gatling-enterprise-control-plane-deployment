@@ -1,0 +1,94 @@
+replicaCount: 1
+
+namespace: gatling
+
+controlPlane:
+  name: gatling-cp
+  token: token
+  description: My K8s control plane description
+  image:
+    name: gatlingcorp/control-plane:latest
+    pullPolicy: IfNotPresent
+    pullSecrets: []
+  deploymentLabels:
+    app: gatling-cp-deploy
+  podLabels:
+    app: gatling-cp-pod
+  initContainers: []
+  env: [] # Use KUBERNETES_TRUSTSTORE_FILE&KUBERNETES_TRUSTSTORE_PASSPHRASE/KUBERNETES_KEYSTORE_FILE&KUBERNETES_KEYSTORE_PASSPHRASE if custom truststore or keystore is needed to connect to the cluster via HTTPS.
+  command: []
+  volumes: []
+  volumeMounts: []
+  nodeSelector: {}
+  affinity: {}
+  tolerations: {}
+  #resources:
+    #requests:
+      #memory: "64Mi"
+      #cpu: "250m"
+    #limits:
+      #memory: "128Mi"
+      #cpu: "500m"
+  #securityContext:
+    #runAsUser: 1000
+    #runAsGroup: 3000
+  extra_content: {}
+
+privateLocations:
+  - id: "prl_kubernetes"
+    description: "Private Location on Kubernetes"
+    type: "kubernetes"
+    engine: "classic" #classic or javascript
+    image:
+      type: "certified"
+      #java: "latest"
+    #javaHome: "/usr/lib/jvm/zulu"
+    #jvmOptions: ["-Xmx4G", "-Xms512M"]
+    job:
+      spec:
+        template:
+          metadata:
+            annotations: []
+            labels: [
+              {
+                "chart": "{{ .Chart.Name }}-{{ .Chart.Version }}"
+              }
+            ]
+          spec:
+            containers:
+            - env: []
+              name: gatling-container
+              resources:
+                limits:
+                  memory: "512Mi"
+                  cpu: "4"
+                requests:
+                  memory: "512Mi"
+                  cpu: "4"
+            securityContext:
+              sysctls:
+              - name: net.ipv4.tcp_tw_reuse
+                value: "1"
+        ttlSecondsAfterFinished: 60
+
+privatePackage:
+  enabled: false # If true, a persistentVolumeClaim will be created
+  persistentVolumeClaim:
+    storageClassName: ""
+    volumeMode: Filesystem
+    accessModes: [ "ReadWriteOnce" ]
+    storage: 5Gi
+    selector: {}
+  repository:
+    type: "filesystem"
+    directory: "/data/gatling-repository"
+    upload:
+      directory: "/tmp"
+    server:
+      port: 8080
+      #bindAddress: "0.0.0.0"
+      #certificate:
+      #path: "/path/to/certificate.p12"
+      #password: "password"
+    location:
+      download-base-url: "http://www.example.com:8080"

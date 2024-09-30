@@ -1,0 +1,19 @@
+{{- if .Values.privatePackage }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: "{{ .Values.controlPlane.name }}-pvc"
+  namespace: {{ .Values.namespace }}
+spec:
+  storageClassName: {{ .Values.privatePackage.persistentVolumeClaim.storageClassName }}
+  volumeMode: {{ .Values.privatePackage.persistentVolumeClaim.volumeMode }}
+  {{- if .Values.selector }}
+  selector:
+    {{ toYaml .Values.selector | nindent 4 }}
+  {{- end }}
+  accessModes:
+    {{- toYaml .Values.privatePackage.persistentVolumeClaim.accessModes | nindent 4 }}
+  resources:
+    requests:
+      storage: {{ .Values.privatePackage.persistentVolumeClaim.storage }}
+{{- end }}

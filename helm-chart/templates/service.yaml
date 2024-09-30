@@ -1,0 +1,16 @@
+{{- if .Values.privatePackage }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{{ .Values.controlPlane.name }}-service"
+  namespace: {{ .Values.namespace }}
+spec:
+  selector:
+    {{- toYaml .Values.controlPlane.podLabels | nindent 10 }}
+  ports:
+    - protocol: TCP
+      port: {{ .Values.privatePackage.repository.server.port }}
+      targetPort: {{ .Values.privatePackage.repository.server.port }}
+  type: ClusterIP
+{{- end }}

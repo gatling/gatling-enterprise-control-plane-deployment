@@ -1,0 +1,107 @@
+name: Helm Chart CI/CD
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'helm-chart/**'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'helm-chart/**'
+
+jobs:
+  package-and-upload:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: 'latest'
+
+      - name: Determine S3 Bucket Name
+        id: s3-bucket-name
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            echo "bucket=dev-${{ vars.SE_HELM_AWS_S3_BUCKET }}" >> $GITHUB_OUTPUT
+          else
+            echo "bucket=${{ vars.SE_HELM_AWS_S3_BUCKET }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Package Helm Chart
+        working-directory: helm-chart
+        run: |
+          helm package .
+
+      - name: Set up AWS CLI
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.SE_HELM_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.SE_HELM_AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ vars.SE_HELM_AWS_REGION }}
+
+      - name: Download existing index.yaml
+        env:
+          AWS_S3_BUCKET: ${{ steps.s3-bucket-name.outputs.bucket }}
+        run: |
+          aws s3 cp s3://${AWS_S3_BUCKET}/index.yaml index.yaml || echo "No existing index.yaml found"
+
+      - name: Merge new chart with existing index.yaml
+        env:
+          AWS_S3_BUCKET: ${{ steps.s3-bucket-name.outputs.bucket }}
+          AWS_REGION: ${{ vars.SE_HELM_AWS_REGION }}
+        run: |
+          CHART_FILE=$(ls helm-chart/*.tgz)
+          CHART_BASENAME=$(basename $CHART_FILE)
+
+          mv $CHART_FILE ./$CHART_BASENAME
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            if [ -f index.yaml ]; then
+              helm repo index . --url "http://${AWS_S3_BUCKET}.s3.${AWS_REGION}.amazonaws.com/charts/" --merge index.yaml
+            else
+              helm repo index . --url "http://${AWS_S3_BUCKET}.s3.${AWS_REGION}.amazonaws.com/charts/"
+          fi
+          else
+            if [ -f index.yaml ]; then
+              helm repo index . --url "https://helm.gatling.io/charts/" --merge index.yaml
+            else
+              helm repo index . --url "https://helm.gatling.io/charts/"
+            fi
+          fi 
+
+      - name: Upload to S3
+        env:
+          AWS_S3_BUCKET: ${{ steps.s3-bucket-name.outputs.bucket }}
+          AWS_REGION: ${{ vars.SE_HELM_AWS_REGION }}
+        run: |
+          CHART_FILE=$(ls *.tgz)
+          aws s3 cp $CHART_FILE s3://${AWS_S3_BUCKET}/charts/
+          aws s3 cp index.yaml s3://${AWS_S3_BUCKET}/index.yaml
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            PAGE_TITLE="Gatling Helm Repository - Dev"
+            HELM_REPO_URL="http://${AWS_S3_BUCKET}.s3.amazonaws.com"
+          else
+            PAGE_TITLE="Gatling Helm Repository"
+            HELM_REPO_URL="https://helm.gatling.io"
+          fi
+          sed -i "s|{{BUCKET_NAME}}|${AWS_S3_BUCKET}|g" ./helm-chart/public/index.html
+          sed -i "s|{{REGION}}|${AWS_REGION}|g" ./helm-chart/public/index.html
+          sed -i "s|{{PAGE_TITLE}}|${PAGE_TITLE}|g" ./helm-chart/public/index.html
+          sed -i "s|{{HELM_REPO_URL}}|\"${HELM_REPO_URL}\"|g" ./helm-chart/public/index.html
+          aws s3 cp ./helm-chart/public/index.html s3://${AWS_S3_BUCKET}/index.html
+          aws s3 cp ./helm-chart/public/gatling.png s3://${AWS_S3_BUCKET}/gatling.png
+
+      - name: Output S3 URL
+        env:
+          AWS_S3_BUCKET: ${{ steps.s3-bucket-name.outputs.bucket }}
+          AWS_REGION: ${{ vars.SE_HELM_AWS_REGION }}
+        run: |
+          CHART_FILE=$(basename helm-chart/*.tgz)
+          echo "Helm Chart URL: http://${AWS_S3_BUCKET}.s3-website.${AWS_REGION}.amazonaws.com/charts/$CHART_FILE"
+          echo "Helm Repo Index URL: http://${AWS_S3_BUCKET}.s3-website.${AWS_REGION}.amazonaws.com/index.yaml"
