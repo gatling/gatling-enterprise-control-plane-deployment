@@ -74,8 +74,9 @@ module "control-plane" {
 - `token` (required): The control plane token for authentication.
 - `zone` (required): The GCP zone to deploy to.
 - `locations` (required): The list of location module(s).
-- `description`: Description of the control plane.
 - `image`: Image of the control plane.
+- `description`: Description of the control plane.
+- `secret_name`: The name of the configuration secret.
 
 ## Usage
 

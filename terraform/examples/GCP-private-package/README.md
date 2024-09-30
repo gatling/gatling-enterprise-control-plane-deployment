@@ -92,8 +92,9 @@ module "control-plane" {
 - `zone` (required): The GCP zone to deploy to.
 - `locations` (required): The list of location module(s).
 - `private_package` (required): The name of the private package module for configuration.
-- `description`: Description of the control plane.
 - `image`: Image of the control plane.
+- `description`: Description of the control plane.
+- `secret_name`: The name of the configuration secret.
 
 ## Usage
 

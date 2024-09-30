@@ -37,6 +37,12 @@ variable "private_package" {
   default     = {}
 }
 
+variable "secret_name" {
+  type        = string
+  description = "Secret name of the control plane configuration"
+  default     = "control-plane-config"
+}
+
 variable "extra_content" {
   type    = map(any)
   default = {}

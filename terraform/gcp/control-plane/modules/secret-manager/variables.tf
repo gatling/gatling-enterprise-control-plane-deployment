@@ -1,7 +1,6 @@
 variable "name" {
   type        = string
   description = "Configuration file name in Secret Manager."
-  default     = "control-plane-config"
 }
 
 variable "description" {
