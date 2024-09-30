@@ -40,8 +40,9 @@ privateLocations:
     type: "kubernetes"
     engine: "classic" #classic or javascript
     image:
-      type: "certified"
+      type: "certified" #certified or custom
       #java: "latest"
+      #name: "gatlingcorp/classic-openjdk:latest" 
     #javaHome: "/usr/lib/jvm/zulu"
     #jvmOptions: ["-Xmx4G", "-Xms512M"]
     job:

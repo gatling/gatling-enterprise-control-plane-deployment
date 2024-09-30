@@ -20,6 +20,9 @@ control-plane {
         {{- if .image.java }}
         java = "{{ .image.java }}"
         {{- end }}
+        {{- if .image.name }}
+        image = "{{ .image.name }}"
+        {{- end }}
       }
 
       system-properties {
