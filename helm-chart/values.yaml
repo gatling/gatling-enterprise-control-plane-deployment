@@ -48,7 +48,7 @@ privateLocations:
     #keepLoadGeneratorAlive: false
     
 privateLocationJob:
-  enabled: true
+  enabled: false
   spec:
     template:
       metadata:
