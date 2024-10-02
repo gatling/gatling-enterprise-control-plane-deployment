@@ -24,9 +24,9 @@ spec:
         {{- end }}
     spec:
       serviceAccountName: "{{ .Values.controlPlane.name }}-service-account"
-      {{- if .Values.controlPlane.securityContext }}
+      {{- with .Values.controlPlane.securityContext }}
       securityContext:
-        {{- toYaml .Values.controlPlane.securityContext | nindent 8 }}
+        {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- if .Values.controlPlane.nodeSelector }}
       nodeSelector:

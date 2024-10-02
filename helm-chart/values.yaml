@@ -42,7 +42,7 @@ privateLocations:
     image:
       type: "certified" #certified or custom
       #java: "latest"
-      #name: "gatlingcorp/classic-openjdk:latest" 
+      #name: "gatlingcorp/classic-openjdk:latest"
     #javaHome: "/usr/lib/jvm/zulu"
     #jvmOptions: ["-Xmx4G", "-Xms512M"]
     job:
@@ -50,26 +50,22 @@ privateLocations:
         template:
           metadata:
             annotations: []
-            labels: [
-              {
-                "chart": "{{ .Chart.Name }}-{{ .Chart.Version }}"
-              }
-            ]
+            labels: [{ "chart": "{{ .Chart.Name }}-{{ .Chart.Version }}" }]
           spec:
             containers:
-            - env: []
-              name: gatling-container
-              resources:
-                limits:
-                  memory: "512Mi"
-                  cpu: "4"
-                requests:
-                  memory: "512Mi"
-                  cpu: "4"
+              - env: []
+                name: gatling-container
+                resources:
+                  limits:
+                    memory: "512Mi"
+                    cpu: "4"
+                  requests:
+                    memory: "512Mi"
+                    cpu: "4"
             securityContext:
               sysctls:
-              - name: net.ipv4.tcp_tw_reuse
-                value: "1"
+                - name: net.ipv4.tcp_tw_reuse
+                  value: "1"
         ttlSecondsAfterFinished: 60
 
 privatePackage:
@@ -77,7 +73,7 @@ privatePackage:
   persistentVolumeClaim:
     storageClassName: ""
     volumeMode: Filesystem
-    accessModes: [ "ReadWriteOnce" ]
+    accessModes: ["ReadWriteOnce"]
     storage: 5Gi
     selector: {}
   repository:
