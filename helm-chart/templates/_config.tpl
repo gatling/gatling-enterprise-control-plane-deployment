@@ -45,6 +45,9 @@ control-plane {
       {{- if $.Values.privateLocationJob.enabled }}
       job = { include  "job.json" }
       {{- end }}
+      {{- if .keepLoadGeneratorAlive }}
+      debug.keep-load-generator-alive = {{ .keepLoadGeneratorAlive }}
+      {{- end }}
     }
   {{- end }}
   ]
