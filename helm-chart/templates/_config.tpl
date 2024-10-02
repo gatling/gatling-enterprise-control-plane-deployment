@@ -42,20 +42,9 @@ control-plane {
         {{- end }}
       ]
       {{- end }}
-    {{- if .job.enabled }}
-      job = {
-        apiVersion = "batch/v1"
-        kind = "Job"
-        metadata = {
-          generateName = "gatling-job-"
-          namespace = "{{ $.Values.namespace }}"
-        }
-        spec = {
-          template = {{ .Values.job.spec.template | toJson }}
-          ttlSecondsAfterFinished = {{ .Values.job.spec.ttlSecondsAfterFinished }}
-        }
-      }
-    {{- end }}
+      {{- if $.Values.privateLocationJob.enabled }}
+      job = { include  "job.json" }
+      {{- end }}
     }
   {{- end }}
   ]
@@ -82,7 +71,7 @@ control-plane {
       {{- end }}
     }
     location {
-      download-base-url = "{{ index .Values.privatePackage.repository.location "download-base-url" }}"
+      download-base-url = "{{ .Values.privatePackage.repository.location.downloadBaseUrl }}"
     }
   }
   {{- end }}

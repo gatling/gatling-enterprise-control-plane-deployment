@@ -45,28 +45,31 @@ privateLocations:
       #name: "gatlingcorp/classic-openjdk:latest"
     #javaHome: "/usr/lib/jvm/zulu"
     #jvmOptions: ["-Xmx4G", "-Xms512M"]
-    job:
+    
+privateLocationJob:
+  enabled: true
+  spec:
+    template:
+      metadata:
+        annotations: {}
+        labels: { "chart": "{{ .Chart.Name }}-{{ .Chart.Version }}" }
+        namespace: "{{ .Values.namespace }}"
       spec:
-        template:
-          metadata:
-            annotations: []
-            labels: [{ "chart": "{{ .Chart.Name }}-{{ .Chart.Version }}" }]
-          spec:
-            containers:
-              - env: []
-                name: gatling-container
-                resources:
-                  limits:
-                    memory: "512Mi"
-                    cpu: "4"
-                  requests:
-                    memory: "512Mi"
-                    cpu: "4"
-            securityContext:
-              sysctls:
-                - name: net.ipv4.tcp_tw_reuse
-                  value: "1"
-        ttlSecondsAfterFinished: 60
+        containers:
+          - env: []
+            name: gatling-container
+            resources:
+              limits:
+                memory: "512Mi"
+                cpu: "4"
+              requests:
+                memory: "512Mi"
+                cpu: "4"
+        securityContext:
+          sysctls:
+            - name: net.ipv4.tcp_tw_reuse
+              value: "1"
+    ttlSecondsAfterFinished: 60
 
 privatePackage:
   enabled: false # If true, a persistentVolumeClaim will be created
@@ -88,4 +91,4 @@ privatePackage:
       #path: "/path/to/certificate.p12"
       #password: "password"
     location:
-      download-base-url: "http://www.example.com:8080"
+      downloadBaseUrl: "http://www.example.com:8080"
