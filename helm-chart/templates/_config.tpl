@@ -24,21 +24,20 @@ control-plane {
         image = "{{ .image.name }}"
         {{- end }}
       }
-
+      {{- with .systemProperties }}
       system-properties {
-        {{- range $key, $value := index . "system-properties" }}
+        {{- range $key, $value := . }}
         {{ $key }} = "{{ $value }}"
         {{- end }}
       }
-
+      {{- end }}
       {{- if .javaHome }}
       java-home = "{{ .javaHome }}"
       {{- end }}
-
-      {{- if .jvmOptions }}
+      {{- with .jvmOptions }}
       jvm-options = [
-        {{- range $index, $option := .jvmOptions }}
-        "{{ $option }}"{{ if not (eq (add1 $index) (len .jvmOptions)) }},{{ end }}
+        {{- range $index, $option := . }}
+          "{{ $option }}"{{- if ne (add1 $index) (len .) }},{{ end }}
         {{- end }}
       ]
       {{- end }}

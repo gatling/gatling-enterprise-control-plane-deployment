@@ -43,6 +43,7 @@ privateLocations:
       type: "certified" #certified or custom
       #java: "latest"
       #name: "gatlingcorp/classic-openjdk:latest"
+    #systemProperties: {}
     #javaHome: "/usr/lib/jvm/zulu"
     #jvmOptions: ["-Xmx4G", "-Xms512M"]
     #keepLoadGeneratorAlive: false
