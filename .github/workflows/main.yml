@@ -1,4 +1,4 @@
-name: Helm Chart CI/CD
+name: Helm chart CI/CD
 
 on:
   push:
