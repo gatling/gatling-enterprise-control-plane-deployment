@@ -34,7 +34,7 @@ jobs:
             echo "bucket=${{ vars.SE_HELM_AWS_S3_BUCKET }}" >> $GITHUB_OUTPUT
           fi
 
-      - name: Package Helm Chart
+      - name: Package Helm chart
         working-directory: helm-chart
         run: |
           helm package .
