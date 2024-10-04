@@ -101,5 +101,5 @@ jobs:
           AWS_REGION: ${{ vars.SE_HELM_AWS_REGION }}
         run: |
           CHART_FILE=$(basename helm-chart/*.tgz)
-          echo "Helm Chart URL: http://${AWS_S3_BUCKET}.s3-website.${AWS_REGION}.amazonaws.com/charts/$CHART_FILE"
+          echo "Helm chart URL: http://${AWS_S3_BUCKET}.s3-website.${AWS_REGION}.amazonaws.com/charts/$CHART_FILE"
           echo "Helm Repo Index URL: http://${AWS_S3_BUCKET}.s3-website.${AWS_REGION}.amazonaws.com/index.yaml"
