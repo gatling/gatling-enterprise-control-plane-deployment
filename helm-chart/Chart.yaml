@@ -2,7 +2,7 @@ apiVersion: v2
 appVersion: "1.0"
 version: 1.0.0
 name: enterprise-locations-packages
-description: Official Gatling Enterprise Helm Chart for Private Locations & Packages
+description: Official Gatling Enterprise Helm chart for Private Locations & Packages
 home: https://gatling.io
 keywords:
   - load-testing
