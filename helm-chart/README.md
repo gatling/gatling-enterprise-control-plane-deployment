@@ -23,7 +23,7 @@ helm repo add gatling "https://helm.gatling.io"
 helm repo update
 ```
 
-3. Search for Gatling Charts. Optional: To list all versions of the Gatling charts, include the `--versions` flag:
+3. Search for Gatling charts. Optional: To list all versions of the Gatling charts, include the `--versions` flag:
 ```sh
 helm search repo gatling
 ```
