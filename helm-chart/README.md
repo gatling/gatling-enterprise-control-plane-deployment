@@ -1,4 +1,4 @@
-# Helm Chart for Kubernetes Private Locations and Private Packages
+# Helm chart for Kubernetes Private Locations and Private Packages
 
 This Helm Chart sets up the Kubernetes resources for Gatling Enterprise's Private Locations and Private Packages deployment. There are 3 sets of values: `controlPlane`,
 `privateLocations`, `privatePackage` with configurable parameters that can be used to customize the deployment.
