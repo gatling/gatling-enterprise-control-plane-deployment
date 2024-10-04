@@ -10,10 +10,8 @@ controlPlane:
     name: gatlingcorp/control-plane:latest
     pullPolicy: IfNotPresent
     pullSecrets: []
-  deploymentLabels:
-    app: gatling-cp-deploy
-  podLabels:
-    app: gatling-cp-pod
+  deploymentLabels: {}
+  podLabels: {}
   initContainers: []
   env: [] # Use KUBERNETES_TRUSTSTORE_FILE&KUBERNETES_TRUSTSTORE_PASSPHRASE/KUBERNETES_KEYSTORE_FILE&KUBERNETES_KEYSTORE_PASSPHRASE if custom truststore or keystore is needed to connect to the cluster via HTTPS.
   command: []
@@ -22,16 +20,14 @@ controlPlane:
   nodeSelector: {}
   affinity: {}
   tolerations: {}
-  #resources:
-    #requests:
-      #memory: "64Mi"
-      #cpu: "250m"
-    #limits:
-      #memory: "128Mi"
-      #cpu: "500m"
-  #securityContext:
-    #runAsUser: 1000
-    #runAsGroup: 3000
+  resources: 
+    requests:
+      memory: "64Mi"
+      cpu: "250m"
+    limits:
+      memory: "128Mi"
+      cpu: "500m"
+  securityContext: {}
   #extra_content: {}
 
 privateLocations:
