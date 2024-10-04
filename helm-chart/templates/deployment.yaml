@@ -4,7 +4,7 @@ metadata:
   name: {{ .Values.controlPlane.name }}-deploy
   namespace: {{ .Values.namespace }}
   labels:
-    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version }}
     {{- toYaml .Values.controlPlane.deploymentLabels | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
