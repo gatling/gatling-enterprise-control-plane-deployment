@@ -29,15 +29,18 @@ jobs:
         id: s3-bucket-name
         run: |
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-            echo "bucket=dev-${{ vars.SE_HELM_AWS_S3_BUCKET }}" >> $GITHUB_OUTPUT
+            echo "bucket=dev-${{ vars.SE_HELM_AWS_S3_BUCKET }}" >> $GITHUB_ENV
           else
-            echo "bucket=${{ vars.SE_HELM_AWS_S3_BUCKET }}" >> $GITHUB_OUTPUT
+            echo "bucket=${{ vars.SE_HELM_AWS_S3_BUCKET }}" >> $GITHUB_ENV
           fi
 
       - name: Package Helm chart
         working-directory: helm-chart
         run: |
-          helm package .
+          OUTPUT=$(helm package .)
+          CHART_FILE=$(echo "$OUTPUT" | awk '/Successfully packaged chart and saved it to:/{print $NF}')
+          echo "Extracted CHART_FILE path: $CHART_FILE"
+          echo "CHART_FILE=$CHART_FILE" >> $GITHUB_ENV 
 
       - name: Set up AWS CLI
         uses: aws-actions/configure-aws-credentials@v4
@@ -48,22 +51,24 @@ jobs:
 
       - name: Download existing index.yaml
         env:
-          AWS_S3_BUCKET: ${{ steps.s3-bucket-name.outputs.bucket }}
+          AWS_S3_BUCKET: ${{ env.bucket }}
         run: |
           aws s3 cp "s3://${AWS_S3_BUCKET}/index.yaml" index.yaml || echo "No existing index.yaml found"
 
       - name: Merge new chart with existing index.yaml
         env:
-          AWS_S3_BUCKET: ${{ steps.s3-bucket-name.outputs.bucket }}
-          AWS_REGION: ${{ vars.SE_HELM_AWS_REGION }}
+          AWS_S3_BUCKET: ${{ env.bucket }}
+          AWS_REGION: ${{ vars.AWS_REGION }}
         run: |
-          CHART_FILE=$(ls helm-chart/*.tgz)
+          CHART_FILE=${{ env.CHART_FILE }}
+          CHART_DIR=$(dirname "$CHART_FILE")
+
           update_helm_index() {
             local url="$1"
             if [ -f index.yaml ]; then
-              helm repo index "$CHART_FILE" --url "$url" --merge index.yaml
+              helm repo index "$CHART_DIR" --url "$url" --merge index.yaml
             else
-              helm repo index "$CHART_FILE" --url "$url"
+              helm repo index "$CHART_DIR" --url "$url"
             fi
           }
 
@@ -75,10 +80,10 @@ jobs:
 
       - name: Upload to S3
         env:
-          AWS_S3_BUCKET: ${{ steps.s3-bucket-name.outputs.bucket }}
+          AWS_S3_BUCKET: ${{ env.bucket }}
           AWS_REGION: ${{ vars.SE_HELM_AWS_REGION }}
         run: |
-          CHART_FILE=$(ls *.tgz)
+          CHART_FILE=${{ env.CHART_FILE }}
           aws s3 cp $CHART_FILE "s3://${AWS_S3_BUCKET}/charts/"
           aws s3 cp index.yaml "s3://${AWS_S3_BUCKET}/index.yaml"
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
@@ -97,7 +102,7 @@ jobs:
 
       - name: Output S3 URL
         env:
-          AWS_S3_BUCKET: ${{ steps.s3-bucket-name.outputs.bucket }}
+          AWS_S3_BUCKET: ${{ env.bucket }}
           AWS_REGION: ${{ vars.SE_HELM_AWS_REGION }}
         run: |
           CHART_FILE=$(basename helm-chart/*.tgz)
