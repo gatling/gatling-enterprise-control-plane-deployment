@@ -58,22 +58,20 @@ jobs:
           AWS_REGION: ${{ vars.SE_HELM_AWS_REGION }}
         run: |
           CHART_FILE=$(ls helm-chart/*.tgz)
-          CHART_BASENAME=$(basename $CHART_FILE)
-
-          mv $CHART_FILE ./$CHART_BASENAME
-          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+          update_helm_index() {
+            local url="$1"
             if [ -f index.yaml ]; then
-              helm repo index . --url "http://${AWS_S3_BUCKET}.s3.${AWS_REGION}.amazonaws.com/charts/" --merge index.yaml
+              helm repo index "$CHART_FILE" --url "$url" --merge index.yaml
             else
-              helm repo index . --url "http://${AWS_S3_BUCKET}.s3.${AWS_REGION}.amazonaws.com/charts/"
-          fi
-          else
-            if [ -f index.yaml ]; then
-              helm repo index . --url "https://helm.gatling.io/charts/" --merge index.yaml
-            else
-              helm repo index . --url "https://helm.gatling.io/charts/"
+              helm repo index "$CHART_FILE" --url "$url"
             fi
-          fi 
+          }
+
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            update_helm_index "http://${AWS_S3_BUCKET}.s3.${AWS_REGION}.amazonaws.com/charts/"
+          else
+            update_helm_index "https://helm.gatling.io/charts/"
+          fi
 
       - name: Upload to S3
         env:
