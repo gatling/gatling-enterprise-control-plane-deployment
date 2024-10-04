@@ -50,7 +50,7 @@ jobs:
         env:
           AWS_S3_BUCKET: ${{ steps.s3-bucket-name.outputs.bucket }}
         run: |
-          aws s3 cp s3://${AWS_S3_BUCKET}/index.yaml index.yaml || echo "No existing index.yaml found"
+          aws s3 cp "s3://${AWS_S3_BUCKET}/index.yaml" index.yaml || echo "No existing index.yaml found"
 
       - name: Merge new chart with existing index.yaml
         env:
