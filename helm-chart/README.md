@@ -44,7 +44,7 @@ helm install gatling-hybrid gatling/enterprise-locations-packages --namespace ga
 
 ## Uninstallation
 
-1. Uninstall the Gatling Helm Chart
+1. Uninstall the Gatling Helm chart
 ```sh
 helm uninstall gatling-hybrid -n gatling
 ```
