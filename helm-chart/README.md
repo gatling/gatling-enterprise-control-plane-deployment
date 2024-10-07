@@ -45,6 +45,9 @@ helm install gatling-hybrid gatling/enterprise-locations-packages --namespace ga
 
 - In order to activate Private Packages feature, set `privatePackage.enabled` to `true`. Note: A persistent Volume Claim will be created automatically.
 
+> [!IMPORTANT]
+> By default, the Control Plane filesystem is selected as the storage option. Before activating a different solution, comment out the `privatePackage.persistentVolumeClaim` and the repository filesystem section.
+
 ## Uninstallation
 
 1. Uninstall the Gatling Helm chart
