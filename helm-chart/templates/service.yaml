@@ -12,8 +12,6 @@ spec:
         {{ toYaml . | nindent 8 }}
       {{- end }}
   ports:
-    - protocol: TCP
-      port: {{ .Values.privatePackage.repository.servicePort }}
-      targetPort: {{ .Values.privatePackage.repository.server.port }}
-  type: ClusterIP
+  {{ toYaml .Values.privatePackage.repository.service.ports | nindent 2 }}
+  type: {{ .Values.privatePackage.repository.service.type }}
 {{- end }}

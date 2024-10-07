@@ -103,7 +103,13 @@ privatePackage:
       #certificate:  # SSL certificate configuration
         #path: "/path/to/certificate.p12"
         #password: "password"
-    servicePort: 80 # Port on which the ClusterIP service listens
+    service:
+      type: NodePort # Service type on which you expose the control plane pod
+      ports:
+      - name: http # Name of the port on which the Service listens
+        protocol: TCP # Protocol of the port
+        port: 80 # Port on which the Service listens
+        targetPort: 8080 # Port on which the repository server listens
     type: "filesystem"  # Choose the repository type: "filesystem", "aws", "azure", or "gcp"
     configurations:
       aws:
