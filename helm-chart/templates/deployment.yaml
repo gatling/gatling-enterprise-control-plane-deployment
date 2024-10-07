@@ -69,7 +69,7 @@ spec:
             - mountPath: /app/conf/
               name: "{{ .Values.controlPlane.name }}-conf-volume"
           {{- if and (.Values.privatePackage.enabled) (eq .Values.privatePackage.repository.type "filesystem") }}
-            - mountPath: {{ .Values.privatePackage.repository.directory }}
+            - mountPath: {{ .Values.privatePackage.repository.configurations.filesystem.directory }}
               name: "{{ .Values.controlPlane.name }}-pv-volume"
           {{- end }}
           {{- if .Values.controlPlane.volumeMounts }}

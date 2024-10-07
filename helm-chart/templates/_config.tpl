@@ -29,15 +29,21 @@ control-plane {
         }
       }
       {{- end }}
-      {{- if .keepLoadGeneratorAlive }}
-      debug.keep-load-generator-alive = {{ .keepLoadGeneratorAlive }}
-      {{- end }}
+      debug.keep-load-generator-alive = {{ toJson .keepLoadGeneratorAlive }}
     }
   {{- end }}
   ]
-
   {{- if .Values.privatePackage.enabled }}
-  repository = {{ toJson .Values.privatePackage.repository }}
+  {{- $repoType := .Values.privatePackage.repository.type }}
+  {{- $config := index .Values.privatePackage.repository.configurations $repoType }}
+  repository = {
+    upload: {{ toJson .Values.privatePackage.repository.upload }},
+    server: {{ toJson .Values.privatePackage.repository.server }},
+    type: "{{ $repoType }}"
+    {{- range $key, $value := $config }}
+    {{ $key }}: {{ toJson $value }},
+    {{- end }}
+  }
   {{- end }}
 }
 {{- end }}
