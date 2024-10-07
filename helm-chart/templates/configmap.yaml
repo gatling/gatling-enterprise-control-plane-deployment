@@ -6,5 +6,3 @@ metadata:
 data:
   control-plane.conf: |
 {{ tpl (include "configFileContent" .) . | indent 4 }}
-  job.json: |
-{{ tpl (include "jobContent" .) . | indent 4 }}

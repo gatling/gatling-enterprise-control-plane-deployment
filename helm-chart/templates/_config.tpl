@@ -41,8 +41,19 @@ control-plane {
         {{- end }}
       ]
       {{- end }}
-      {{- if $.Values.privateLocationJob.enabled }}
-      job = { include  "job.json" }
+      {{- with .job }}
+      job = {
+        "apiVersion": "batch/v1",
+        "kind": "Job",
+        "metadata": {
+            "generateName": "gatling-job-",
+            "namespace": "{{ $.Values.namespace }}"
+        },
+        "spec": {
+            "template": {{ toJson .spec.template | indent 8 }},
+            "ttlSecondsAfterFinished": {{ .spec.ttlSecondsAfterFinished }}
+        }
+      }
       {{- end }}
       {{- if .keepLoadGeneratorAlive }}
       debug.keep-load-generator-alive = {{ .keepLoadGeneratorAlive }}

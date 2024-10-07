@@ -22,11 +22,11 @@ controlPlane:
   tolerations: {}
   resources: 
     requests:
-      memory: "64Mi"
-      cpu: "250m"
+      memory: "512Mi"
+      cpu: "1"
     limits:
-      memory: "128Mi"
-      cpu: "500m"
+      memory: "512Mi"
+      cpu: "1"
   securityContext: {}
   #extra_content: {}
 
@@ -43,31 +43,29 @@ privateLocations:
     #javaHome: "/usr/lib/jvm/zulu"
     #jvmOptions: ["-Xmx4G", "-Xms512M"]
     #keepLoadGeneratorAlive: false
-    
-privateLocationJob:
-  enabled: false
-  spec:
-    template:
-      metadata:
-        annotations: {}
-        labels: { "chart": "{{ .Chart.Name }}-{{ .Chart.Version }}" }
-        namespace: "{{ .Values.namespace }}"
+    job:
       spec:
-        containers:
-          - env: []
-            name: gatling-container
-            resources:
-              limits:
-                memory: "512Mi"
-                cpu: "4"
-              requests:
-                memory: "512Mi"
-                cpu: "4"
-        securityContext:
-          sysctls:
-            - name: net.ipv4.tcp_tw_reuse
-              value: "1"
-    ttlSecondsAfterFinished: 60
+        template:
+          metadata:
+            annotations: {}
+            labels: { "chart": "{{ .Chart.Name }}-{{ .Chart.Version }}" }
+            namespace: "{{ .Values.namespace }}"
+          spec:
+            containers:
+              - env: []
+                name: gatling-container
+                resources:
+                  limits:
+                    memory: "512Mi"
+                    cpu: "4"
+                  requests:
+                    memory: "512Mi"
+                    cpu: "4"
+            securityContext:
+              sysctls:
+                - name: net.ipv4.tcp_tw_reuse
+                  value: "1"
+        ttlSecondsAfterFinished: 60
 
 privatePackage:
   enabled: false # If true, a persistentVolumeClaim will be created
