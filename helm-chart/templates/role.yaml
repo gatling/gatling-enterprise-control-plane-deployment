@@ -10,7 +10,7 @@ rules:
   - apiGroups: ["batch"]
     resources: ["jobs"]
     verbs: ["create", "get", "deletecollection"]
- - apiGroups: [""]
+  - apiGroups: [""]
     resources: ["pods"]
     verbs: ["list"]
   - apiGroups: [""]

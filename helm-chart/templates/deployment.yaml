@@ -1,10 +1,10 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.controlPlane.name }}-deploy
-  namespace: {{ .Values.namespace }}
+  name: "{{ .Values.controlPlane.name }}-deploy"
+  namespace: "{{ .Values.namespace }}"
   labels:
-    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
   {{- if .Values.controlPlane.deploymentLabels }}
     {{ toYaml .Values.controlPlane.deploymentLabels | nindent 6 }}
   {{- end }}
