@@ -93,7 +93,7 @@ privateLocations:
         ttlSecondsAfterFinished: 60  # Time (in seconds) to retain the job after completion
 
 privatePackage:
-  enabled: true  # Enable or disable the private package feature
+  enabled: false  # Enable or disable the private package feature
   repository:
     upload:
       directory: "/tmp"  # Directory where files will be uploaded temporarily
@@ -103,6 +103,7 @@ privatePackage:
       #certificate:  # SSL certificate configuration
         #path: "/path/to/certificate.p12"
         #password: "password"
+    servicePort: 80 # Port on which the ClusterIP service listens
     type: "filesystem"  # Choose the repository type: "filesystem", "aws", "azure", or "gcp"
     configurations:
       aws:

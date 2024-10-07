@@ -1,4 +1,4 @@
-{{- if .Values.privatePackage }}
+{{- if .Values.privatePackage.enabled }}
 ---
 apiVersion: v1
 kind: Service
@@ -7,10 +7,13 @@ metadata:
   namespace: "{{ .Values.namespace }}"
 spec:
   selector:
-    {{- toYaml .Values.controlPlane.podLabels | nindent 10 }}
+    app.kubernetes.io/name: {{ .Values.controlPlane.name }}
+      {{- with .Values.controlPlane.podLabels }}
+        {{ toYaml . | nindent 8 }}
+      {{- end }}
   ports:
     - protocol: TCP
-      port: {{ .Values.privatePackage.repository.server.port }}
+      port: {{ .Values.privatePackage.repository.servicePort }}
       targetPort: {{ .Values.privatePackage.repository.server.port }}
   type: ClusterIP
 {{- end }}
