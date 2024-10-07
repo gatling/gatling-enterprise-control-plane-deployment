@@ -48,7 +48,8 @@ privateLocations:
         template:
           metadata:
             annotations: {}
-            labels: { "chart": "{{ .Chart.Name }}-{{ .Chart.Version }}" }
+            labels: 
+              helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
             namespace: "{{ .Values.namespace }}"
           spec:
             containers:
@@ -62,29 +63,46 @@ privateLocations:
                     memory: "512Mi"
                     cpu: "4"
             securityContext:
-              sysctls:
-                - name: net.ipv4.tcp_tw_reuse
-                  value: "1"
+              sysctls: []
         ttlSecondsAfterFinished: 60
 
 privatePackage:
-  enabled: false # If true, a persistentVolumeClaim will be created
-  persistentVolumeClaim:
+  enabled: false
+  persistentVolumeClaim: #Comment if you do not intend to use a repository.type = filesystem
     storageClassName: ""
     volumeMode: Filesystem
     accessModes: ["ReadWriteOnce"]
     storage: 5Gi
     selector: {}
   repository:
-    type: "filesystem"
-    directory: "/data/gatling-repository"
     upload:
       directory: "/tmp"
     server:
       port: 8080
       #bindAddress: "0.0.0.0"
       #certificate:
-      #path: "/path/to/certificate.p12"
-      #password: "password"
+        #path: "/path/to/certificate.p12"
+        #password: "password"
+
+    ########Filesystem########
+    type: "filesystem"
+    directory: "/data/gatling-repository"
     location:
-      downloadBaseUrl: "http://www.example.com:8080"
+      download-base-url: "http://www.example.com:8080"
+
+    ########AWS S3 Bucket########
+    #type: "aws"
+    #bucket: "bucket-name"
+    #path: "folder/to/upload"
+
+    ########Azure Blob Storage########
+    #type = "azure"
+    #storage-account = "storage-account-name"
+    #container = "container-name"
+    #path = "folder/to/upload"
+
+    ########GCP Cloud Storage Bucket########
+    #type = "gcp"
+    #bucket = "bucket-name"
+    #path = "folder/to/upload" # (optional, default: root)
+    #project = "project-name"

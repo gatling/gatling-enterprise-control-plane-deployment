@@ -5,23 +5,23 @@ metadata:
   namespace: "{{ .Values.namespace }}"
   labels:
     helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
-  {{- if .Values.controlPlane.deploymentLabels }}
-    {{ toYaml .Values.controlPlane.deploymentLabels | nindent 6 }}
+  {{- with .Values.controlPlane.deploymentLabels }}
+    {{ toYaml . | nindent 4 }}
   {{- end }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ .Values.controlPlane.name }}
-    {{- if .Values.controlPlane.podLabels }}
-      {{ toYaml .Values.controlPlane.podLabels | nindent 6 }}
+    {{- with .Values.controlPlane.podLabels }}
+      {{ toYaml . | nindent 6 }}
     {{- end }}
   template:
     metadata:
       labels:
         app.kubernetes.io/name: {{ .Values.controlPlane.name }}
-      {{- if .Values.controlPlane.podLabels }}
-        {{ toYaml .Values.controlPlane.podLabels | nindent 8 }}
+      {{- with .Values.controlPlane.podLabels }}
+        {{ toYaml . | nindent 8 }}
       {{- end }}
     spec:
       serviceAccountName: "{{ .Values.controlPlane.name }}-service-account"
@@ -68,7 +68,7 @@ spec:
           volumeMounts:
             - mountPath: /app/conf/
               name: "{{ .Values.controlPlane.name }}-conf-volume"
-          {{- if .Values.privatePackage.enabled }}
+          {{- if and (.Values.privatePackage.enabled) (eq .Values.privatePackage.repository.type "filesystem") }}
             - mountPath: {{ .Values.privatePackage.repository.directory }}
               name: "{{ .Values.controlPlane.name }}-pv-volume"
           {{- end }}
@@ -79,7 +79,7 @@ spec:
         - name: "{{ .Values.controlPlane.name }}-conf-volume"
           configMap:
             name: "{{ .Values.controlPlane.name }}-config"
-      {{- if .Values.privatePackage.enabled }}
+      {{- if and (.Values.privatePackage.enabled) (eq .Values.privatePackage.repository.type "filesystem") }}
         - name: "{{ .Values.controlPlane.name }}-pv-volume"
           persistentVolumeClaim:
             claimName: "{{ .Values.controlPlane.name }}-pvc"
