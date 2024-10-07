@@ -13,7 +13,7 @@ controlPlane:
   deploymentLabels: {}
   podLabels: {}
   initContainers: []
-  env: [] # Use KUBERNETES_TRUSTSTORE_FILE&KUBERNETES_TRUSTSTORE_PASSPHRASE/KUBERNETES_KEYSTORE_FILE&KUBERNETES_KEYSTORE_PASSPHRASE if custom truststore or keystore is needed to connect to the cluster via HTTPS.
+  env: []
   command: []
   volumes: []
   volumeMounts: []
