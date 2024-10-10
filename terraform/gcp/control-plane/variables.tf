@@ -48,6 +48,7 @@ variable "confidential_instance_type" {
 variable "min_cpu_platform" {
   description = "Specifies a minimum CPU platform for the VM instance."
   type        = string
+  default     = ""
 }
 
 variable "enable_external_ip" {

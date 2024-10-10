@@ -3,9 +3,9 @@ locals {
 }
 
 resource "google_compute_instance" "default" {
-  name         = var.name
-  machine_type = var.machine_type
-  zone         = var.zone
+  name             = var.name
+  machine_type     = var.machine_type
+  zone             = var.zone
   min_cpu_platform = var.min_cpu_platform
 
   boot_disk {
@@ -15,7 +15,7 @@ resource "google_compute_instance" "default" {
   }
 
   network_interface {
-    network = var.network
+    network    = var.network
     subnetwork = var.subnetwork
     dynamic "access_config" {
       for_each = var.enable_external_ip ? [1] : []
@@ -48,7 +48,7 @@ resource "google_compute_instance" "default" {
 
   confidential_instance_config {
     enable_confidential_compute = var.enable_confidential_compute
-    confidential_instance_type = var.confidential_instance_type
+    confidential_instance_type  = var.confidential_instance_type
   }
 
 }
