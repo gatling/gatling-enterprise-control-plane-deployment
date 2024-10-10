@@ -33,6 +33,11 @@ variable "confidential_instance_type" {
   type        = string
 }
 
+variable "enable_external_ip" {
+  description = "Whether to enable external IP for the instance"
+  type        = bool
+}
+
 variable "image" {
   type        = string
   description = "Image of the control plane."

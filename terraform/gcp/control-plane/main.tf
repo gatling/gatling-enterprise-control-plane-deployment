@@ -23,6 +23,7 @@ module "virtual-machine" {
   subnetwork                  = var.subnetwork
   enable_confidential_compute = var.enable_confidential_compute
   confidential_instance_type  = var.confidential_instance_type
+  enable_external_ip          = var.enable_external_ip
   secret_name                 = module.secret-manager.secret_name
   service_email               = module.service-account.email
   private_package             = var.private_package

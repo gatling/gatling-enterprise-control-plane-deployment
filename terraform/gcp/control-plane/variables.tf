@@ -45,6 +45,12 @@ variable "confidential_instance_type" {
   default     = "SEV"
 }
 
+variable "enable_external_ip" {
+  description = "Whether to enable external IP for the instance"
+  type        = bool
+  default     = true
+}
+
 variable "secret_location" {
   type        = string
   description = "Secret Location."

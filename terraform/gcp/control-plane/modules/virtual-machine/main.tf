@@ -16,7 +16,10 @@ resource "google_compute_instance" "default" {
   network_interface {
     network = var.network
     subnetwork = var.subnetwork
-    access_config {
+    dynamic "access_config" {
+      for_each = var.enable_external_ip ? [1] : []
+      content {
+      }
     }
   }
 
