@@ -21,6 +21,7 @@ module "virtual-machine" {
   machine_type                = var.machine_type
   network                     = var.network
   subnetwork                  = var.subnetwork
+  min_cpu_platform            = var.min_cpu_platform
   enable_confidential_compute = var.enable_confidential_compute
   confidential_instance_type  = var.confidential_instance_type
   enable_external_ip          = var.enable_external_ip

@@ -45,6 +45,11 @@ variable "confidential_instance_type" {
   default     = "SEV"
 }
 
+variable "min_cpu_platform" {
+  description = "Specifies a minimum CPU platform for the VM instance."
+  type        = string
+}
+
 variable "enable_external_ip" {
   description = "Whether to enable external IP for the instance"
   type        = bool

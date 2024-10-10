@@ -38,6 +38,11 @@ variable "enable_external_ip" {
   type        = bool
 }
 
+variable "min_cpu_platform" {
+  description = "Specifies a minimum CPU platform for the VM instance."
+  type        = string
+}
+
 variable "image" {
   type        = string
   description = "Image of the control plane."
