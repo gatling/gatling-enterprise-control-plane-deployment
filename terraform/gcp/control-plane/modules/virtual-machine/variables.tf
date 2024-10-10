@@ -8,6 +8,11 @@ variable "zone" {
   type        = string
 }
 
+variable "machine_type" {
+  description = "The zone for the control plane deployment."
+  type        = string
+}
+
 variable "image" {
   type        = string
   description = "Image of the control plane."

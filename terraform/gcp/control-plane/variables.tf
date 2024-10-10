@@ -15,6 +15,12 @@ variable "description" {
   default     = "My GCP control plane description"
 }
 
+variable "machine_type" {
+  description = "The zone for the control plane deployment."
+  type        = string
+  default     = "e2-standard-2"
+}
+
 variable "image" {
   type        = string
   description = "Image of the control plane."
