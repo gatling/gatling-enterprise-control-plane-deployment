@@ -1,7 +1,10 @@
 resource "google_secret_manager_secret" "control_plane_secret" {
   secret_id = var.name
   replication {
-    auto {
+    user_managed {
+      replicas {
+        location = var.secret_location
+      }
     }
   }
 }

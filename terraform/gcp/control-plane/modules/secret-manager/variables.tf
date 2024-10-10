@@ -14,6 +14,11 @@ variable "token" {
   sensitive   = true
 }
 
+variable "secret_location" {
+  type        = string
+  description = "Secret Location."
+}
+
 variable "locations" {
   description = "JSON configuration for the locations."
   type        = list(any)

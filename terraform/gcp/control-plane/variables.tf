@@ -21,6 +21,11 @@ variable "machine_type" {
   default     = "e2-standard-2"
 }
 
+variable "secret_location" {
+  type        = string
+  description = "Secret Location."
+}
+
 variable "image" {
   type        = string
   description = "Image of the control plane."

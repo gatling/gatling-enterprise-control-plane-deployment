@@ -4,6 +4,7 @@ module "secret-manager" {
   token           = var.token
   description     = var.description
   locations       = var.locations
+  secret_location = var.secret_location
   private_package = var.private_package
 }
 
