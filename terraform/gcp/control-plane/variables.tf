@@ -21,7 +21,7 @@ variable "machine_type" {
   default     = "e2-standard-2"
 }
 
-variable "network_interface" {
+variable "network" {
   description = "VM custom network interface."
   type        = string
   default     = "default"

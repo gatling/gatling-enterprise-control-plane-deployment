@@ -13,8 +13,8 @@ variable "machine_type" {
   type        = string
 }
 
-variable "network_interface" {
-  description = "VM custom network interface."
+variable "network" {
+  description = "VM custom network name."
   type        = string
 }
 
