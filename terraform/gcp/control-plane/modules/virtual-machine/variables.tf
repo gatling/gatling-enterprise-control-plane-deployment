@@ -13,6 +13,11 @@ variable "machine_type" {
   type        = string
 }
 
+variable "network_interface" {
+  description = "VM custom network interface."
+  type        = string
+}
+
 variable "image" {
   type        = string
   description = "Image of the control plane."

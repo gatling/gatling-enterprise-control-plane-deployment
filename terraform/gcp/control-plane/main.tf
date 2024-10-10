@@ -19,6 +19,7 @@ module "virtual-machine" {
   zone            = var.zone
   image           = var.image
   machine_type    = var.machine_type
+  network_interface = var.network_interface
   secret_name     = module.secret-manager.secret_name
   service_email   = module.service-account.email
   private_package = var.private_package

@@ -21,6 +21,12 @@ variable "machine_type" {
   default     = "e2-standard-2"
 }
 
+variable "network_interface" {
+  description = "VM custom network interface."
+  type        = string
+  default     = "default"
+}
+
 variable "secret_location" {
   type        = string
   description = "Secret Location."
