@@ -41,4 +41,10 @@ resource "google_compute_instance" "default" {
     enable_vtpm                 = true
     enable_integrity_monitoring = true
   }
+
+  confidential_instance_config {
+    enable_confidential_compute = var.enable_confidential_compute
+    confidential_instance_type = var.confidential_instance_type
+  }
+
 }

@@ -33,6 +33,18 @@ variable "subnetwork" {
   default     = ""
 }
 
+variable "enable_confidential_compute" {
+  description = "Option to enable confidential compute."
+  type        = bool
+  default     = false
+}
+
+variable "confidential_instance_type" {
+  description = "Set an Confidential Instance Type."
+  type        = string
+  default     = "SEV"
+}
+
 variable "secret_location" {
   type        = string
   description = "Secret Location."

@@ -14,14 +14,16 @@ module "service-account" {
 }
 
 module "virtual-machine" {
-  source          = "../../gcp/control-plane/modules/virtual-machine"
-  name            = var.name
-  zone            = var.zone
-  image           = var.image
-  machine_type    = var.machine_type
-  network         = var.network
-  subnetwork      = var.subnetwork
-  secret_name     = module.secret-manager.secret_name
-  service_email   = module.service-account.email
-  private_package = var.private_package
+  source                      = "../../gcp/control-plane/modules/virtual-machine"
+  name                        = var.name
+  zone                        = var.zone
+  image                       = var.image
+  machine_type                = var.machine_type
+  network                     = var.network
+  subnetwork                  = var.subnetwork
+  enable_confidential_compute = var.enable_confidential_compute
+  confidential_instance_type  = var.confidential_instance_type
+  secret_name                 = module.secret-manager.secret_name
+  service_email               = module.service-account.email
+  private_package             = var.private_package
 }

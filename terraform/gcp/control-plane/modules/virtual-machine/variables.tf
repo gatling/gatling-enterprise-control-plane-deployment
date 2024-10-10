@@ -23,6 +23,16 @@ variable "subnetwork" {
   type        = string
 }
 
+variable "enable_confidential_compute" {
+  description = "Option to enable confidential compute."
+  type        = bool
+}
+
+variable "confidential_instance_type" {
+  description = "Set an Confidential Instance Type."
+  type        = string
+}
+
 variable "image" {
   type        = string
   description = "Image of the control plane."
