@@ -16,19 +16,19 @@ variable "description" {
 }
 
 variable "machine_type" {
-  description = "The zone for the control plane deployment."
+  description = "The machine type to be used for hosting the control plane container."
   type        = string
   default     = "e2-standard-2"
 }
 
 variable "network" {
-  description = "VM custom network interface."
+  description = "The name or self_link of the network to be used to attach the VM network interface"
   type        = string
-  default     = "default"
+  default     = ""
 }
 
 variable "subnetwork" {
-  description = "VM custom subnetwork name."
+  description = "The name or self_link of the subnetwork to be used to attach the VM network interface"
   type        = string
   default     = ""
 }
@@ -40,7 +40,7 @@ variable "enable_confidential_compute" {
 }
 
 variable "confidential_instance_type" {
-  description = "Set an Confidential Instance Type."
+  description = "Set a Confidential Instance Type."
   type        = string
   default     = ""
 }
@@ -55,12 +55,6 @@ variable "enable_external_ip" {
   description = "Whether to enable external IP for the instance"
   type        = bool
   default     = true
-}
-
-variable "secret_location" {
-  type        = string
-  description = "Secret Location."
-  default     = ""
 }
 
 variable "image" {
@@ -89,6 +83,12 @@ variable "secret_name" {
   type        = string
   description = "Secret name of the control plane configuration"
   default     = "control-plane-config"
+}
+
+variable "secret_location" {
+  type        = string
+  description = "Secret replication location."
+  default     = ""
 }
 
 variable "extra_content" {

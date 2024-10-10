@@ -81,6 +81,7 @@ module "control-plane" {
   name            = "name"
   token           = "token"
   zone            = "zone-a"
+  network         = "network"
   locations       = [module.location]
   private_package = module.private-package
 }
@@ -90,11 +91,19 @@ module "control-plane" {
 - `name` (required): The name of the control plane.
 - `token` (required): The control plane token for authentication.
 - `zone` (required): The GCP zone to deploy to.
+- `network` (Either network or subnetwork must be provided): The name or self_link of the network to be used to attach the VM network interface.
+- `subnetwork` (Either network or subnetwork must be provided):  The name or self_link of the subnetwork to be used to attach the VM network interface.
 - `locations` (required): The list of location module(s).
 - `private_package` (required): The name of the private package module for configuration.
+- `enable_external_ip`: Whether to enable external IP for the instance.
+- `machine_type`: The machine type to be used for hosting the control plane container.
 - `image`: Image of the control plane.
 - `description`: Description of the control plane.
+- `enable_confidential_compute`: Option to enable confidential compute.
+- `confidential_instance_type`: Set a Confidential Instance Type.
+- `min_cpu_platform`: Specifies a minimum CPU platform for the VM instance.
 - `secret_name`: The name of the configuration secret.
+- `secret_location`: Secret replication location.
 
 ## Usage
 
