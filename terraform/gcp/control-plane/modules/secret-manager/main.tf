@@ -1,16 +1,20 @@
 resource "google_secret_manager_secret" "control_plane_secret" {
   secret_id = var.name
-  replication {
-    user_managed {
-      replicas {
-        location = var.secret_location
+  dynamic "replication" {
+    for_each = var.secret_location != "" ? ["user_managed"] : ["auto"]
+    content {
+      user_managed {
+        replicas {
+          location = var.secret_location
+        }
       }
+      auto {}
     }
   }
 }
 
 resource "google_secret_manager_secret_version" "control_plane_secret_version" {
-  secret      = google_secret_manager_secret.control_plane_secret.id
+  secret = google_secret_manager_secret.control_plane_secret.id
   secret_data = jsonencode({
     "control-plane" = merge(var.extra_content, {
       token       = var.token
