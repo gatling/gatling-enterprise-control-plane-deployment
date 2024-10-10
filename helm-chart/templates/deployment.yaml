@@ -1,0 +1,89 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ .Values.controlPlane.name }}-deploy"
+  namespace: "{{ .Values.namespace }}"
+  labels:
+    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+  {{- with .Values.controlPlane.deploymentLabels }}
+    {{ toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ .Values.controlPlane.name }}
+    {{- with .Values.controlPlane.podLabels }}
+      {{ toYaml . | nindent 6 }}
+    {{- end }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ .Values.controlPlane.name }}
+      {{- with .Values.controlPlane.podLabels }}
+        {{ toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      serviceAccountName: "{{ .Values.controlPlane.name }}-service-account"
+      {{- if .Values.controlPlane.securityContext }}
+      securityContext:
+        {{ toYaml .Values.controlPlane.securityContext | nindent 8 }}
+      {{- end }}
+      {{- if .Values.controlPlane.nodeSelector }}
+      nodeSelector:
+        {{ toYaml .Values.controlPlane.nodeSelector | nindent 8 }}
+      {{- end }}
+      {{- if .Values.controlPlane.affinity }}
+      affinity:
+        {{ toYaml .Values.controlPlane.affinity | nindent 8 }}
+      {{- end }}
+      {{- if .Values.controlPlane.tolerations }}
+      tolerations:
+        {{ toYaml .Values.controlPlane.tolerations | nindent 8 }}
+      {{- end }}
+      {{- if .Values.controlPlane.image.pullSecrets }}
+      imagePullSecrets:
+        {{ toYaml .Values.controlPlane.image.pullSecrets | nindent 8 }}
+      {{- end }}
+      {{- if .Values.controlPlane.initContainers }}
+      initContainers:
+        {{ toYaml .Values.controlPlane.initContainers | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ .Values.controlPlane.name }}
+          image: {{ .Values.controlPlane.image.name }}
+          imagePullPolicy: {{ .Values.controlPlane.image.pullPolicy }}
+          {{- if .Values.controlPlane.command }}
+          command:  
+            {{ toYaml .Values.controlPlane.command | nindent 12 }}
+          {{- end }}
+          {{- if .Values.controlPlane.env }}
+          env:
+            {{ toYaml .Values.controlPlane.env | nindent 12 }}
+          {{- end }}
+          {{- if .Values.controlPlane.resources }}
+          resources:
+            {{ toYaml .Values.controlPlane.resources | nindent 12 }}
+          {{- end }}
+          volumeMounts:
+            - mountPath: /app/conf/
+              name: "{{ .Values.controlPlane.name }}-conf-volume"
+          {{- if and (.Values.privatePackage.enabled) (eq .Values.privatePackage.repository.type "filesystem") }}
+            - mountPath: {{ .Values.privatePackage.repository.configurations.filesystem.directory }}
+              name: "{{ .Values.controlPlane.name }}-pv-volume"
+          {{- end }}
+          {{- if .Values.controlPlane.volumeMounts }}
+            {{ toYaml .Values.controlPlane.volumeMounts | nindent 12 }}
+          {{- end }}
+      volumes:
+        - name: "{{ .Values.controlPlane.name }}-conf-volume"
+          configMap:
+            name: "{{ .Values.controlPlane.name }}-config"
+      {{- if and (.Values.privatePackage.enabled) (eq .Values.privatePackage.repository.type "filesystem") }}
+        - name: "{{ .Values.controlPlane.name }}-pv-volume"
+          persistentVolumeClaim:
+            claimName: "{{ .Values.controlPlane.name }}-pvc"
+      {{- end }}
+      {{- if .Values.controlPlane.volumes }}
+        {{ toYaml .Values.controlPlane.volumes | nindent 8 }}
+      {{- end }}

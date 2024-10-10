@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Gatling Helm Repository</title>
+    <link rel="icon" href="gatling.png">
+    <style>
+      html, body {
+        height: 100%;
+        margin: 0;
+      }
+      body {
+        display: flex;
+        flex-direction: column;
+        font-family: Arial, sans-serif;
+        background-color: #f5f5f5;
+      }
+      header {
+        background-color: #2c3e50;
+        color: #ecf0f1;
+        padding: 20px;
+        text-align: center;
+      }
+      header img {
+        width: 50px;
+        vertical-align: middle;
+      }
+      header h1 {
+        display: inline-block;
+        margin: 0;
+        margin-left: 10px;
+        vertical-align: middle;
+        font-size: 24px;
+      }
+      main {
+        flex-grow: 1;
+        padding: 20px;
+        max-width: 800px;
+        margin: auto;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      h2 {
+        border-bottom: 2px solid #bdc3c7;
+        padding-bottom: 10px;
+        color: #34495e;
+      }
+      p {
+        line-height: 1.6;
+      }
+      pre {
+        background-color: #ecf0f1;
+        padding: 10px;
+        overflow-x: auto;
+      }
+      ul#file-list {
+        list-style-type: none;
+        padding: 0;
+      }
+      ul#file-list li {
+        padding: 5px 0;
+      }
+      ul#file-list li a {
+        text-decoration: none;
+        color: #2980b9;
+      }
+      ul#file-list li a:hover {
+        text-decoration: underline;
+      }
+      code {
+        background-color: #ecf0f1;
+        padding: 2px 4px;
+        border-radius: 4px;
+      }
+      footer {
+        text-align: center;
+        padding: 15px;
+        color: #7f8c8d;
+        background-color: #ecf0f1;
+        flex-shrink: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <img src="gatling.png" alt="Gatling Logo">
+      <h1>{{PAGE_TITLE}}</h1>
+    </header>
+    <main>
+      <h2>Usage</h2>
+      <p>
+        Helm must be installed to use the charts. Please refer to
+        <a href="https://helm.sh/docs/" target="_blank">Helm's documentation</a> to get started.
+      </p>
+      <p>Once Helm is set up properly, add the repo as follows:</p>
+      <pre>helm repo add gatling {{HELM_REPO_URL}}</pre>
+      <p>You can then run <code>helm search repo gatling</code> to see the charts.</p>
+      <p>Chart documentation is available in
+        <a href="https://github.com/gatling/gatling-enterprise-control-plane-deployment/tree/main/helm-chart/private-locations-packages" target="_blank">Gatling Enterprise control plane deployment repository</a>.
+      </p>
+      <h2>Available Charts</h2>
+      <ul id="file-list"></ul>
+    </main>
+    <footer>
+      &copy; <span id="year"></span> Gatling Corp.
+    </footer>
+
+    <script>
+      document.getElementById('year').textContent = new Date().getFullYear();
+
+      const bucketName = "{{BUCKET_NAME}}";
+      const region = "{{REGION}}";
+      const helmRepoUrl = bucketName.startsWith("dev-") ? `http://${bucketName}.s3.amazonaws.com` : "https://helm.gatling.io";
+
+      async function listFiles() {
+        try {
+          const response = await fetch(helmRepoUrl);
+          const text = await response.text();
+          const parser = new DOMParser();
+          const xml = parser.parseFromString(text, "application/xml");
+
+          const contents = xml.getElementsByTagName("Contents");
+          const fileList = document.getElementById("file-list");
+
+          for (let i = 0; i < contents.length; i++) {
+            const key = contents[i].getElementsByTagName("Key")[0].textContent;
+
+            if (
+              key === "index.html" ||
+              key === "gatling.png" ||
+              key.endsWith("/") ||
+              key.endsWith(".png")
+            ) {
+              continue;
+            }
+
+            const li = document.createElement("li");
+            const a = document.createElement("a");
+            a.href = `${helmRepoUrl}/${key}`;
+            a.textContent = key;
+            li.appendChild(a);
+            fileList.appendChild(li);
+          }
+        } catch (error) {
+          console.error("Error fetching file list:", error);
+        }
+      }
+
+      listFiles();
+    </script>
+  </body>
+</html>
