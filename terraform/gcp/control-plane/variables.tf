@@ -42,7 +42,7 @@ variable "enable_confidential_compute" {
 variable "confidential_instance_type" {
   description = "Set an Confidential Instance Type."
   type        = string
-  default     = "SEV"
+  default     = ""
 }
 
 variable "min_cpu_platform" {

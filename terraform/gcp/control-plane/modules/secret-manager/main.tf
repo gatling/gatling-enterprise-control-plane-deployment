@@ -11,7 +11,7 @@ resource "google_secret_manager_secret" "control_plane_secret" {
       }
     }
   }
-   dynamic "replication" {
+  dynamic "replication" {
     for_each = var.secret_location == "" ? [1] : []
     content {
       auto {}
