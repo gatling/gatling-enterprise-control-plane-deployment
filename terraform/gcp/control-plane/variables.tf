@@ -27,6 +27,12 @@ variable "network" {
   default     = "default"
 }
 
+variable "subnetwork" {
+  description = "VM custom subnetwork name."
+  type        = string
+  default     = ""
+}
+
 variable "secret_location" {
   type        = string
   description = "Secret Location."

@@ -18,6 +18,11 @@ variable "network" {
   type        = string
 }
 
+variable "subnetwork" {
+  description = "VM custom subnetwork name."
+  type        = string
+}
+
 variable "image" {
   type        = string
   description = "Image of the control plane."
