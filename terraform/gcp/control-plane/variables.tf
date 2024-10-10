@@ -60,6 +60,7 @@ variable "enable_external_ip" {
 variable "secret_location" {
   type        = string
   description = "Secret Location."
+  default     = ""
 }
 
 variable "image" {
