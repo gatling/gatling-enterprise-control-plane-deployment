@@ -57,10 +57,9 @@ privateLocations:
     type: "kubernetes"  # Type of the private location
     engine: "classic" # Execution engine type (classic or javascript)
     image:
-      # Image type (certified or custom)
-      type: "certified"
+      type: "certified" # Image type (certified or custom)
       #java: "latest"  # Java version to use (optional if engine = java, noop if engine type = javascript)
-      #name: "gatlingcorp/classic-openjdk:latest"  # Custom image name
+      #image: "gatlingcorp/classic-openjdk:latest"  # Custom image name
     #systemProperties: {}  # System properties for the JVM
     #javaHome: "/usr/lib/jvm/zulu"  # Java home path
     #jvmOptions: ["-Xmx4G", "-Xms512M"]  # JVM options 
