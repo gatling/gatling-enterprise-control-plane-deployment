@@ -74,7 +74,7 @@ Resources:
   IAMStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub "${BaseTemplateURL}/templates/control-plane/templates/iam/template.yaml"
+      TemplateURL: !Sub "${BaseTemplateURL}/control-plane/templates/iam/template.yaml"
       Parameters:
         Name: !Sub "${Name}-role"
         BucketName: !Ref ConfS3Bucket
@@ -85,7 +85,7 @@ Resources:
   LambdaStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub "${BaseTemplateURL}/templates/control-plane/templates/lambda/template.yaml"
+      TemplateURL: !Sub "${BaseTemplateURL}/control-plane/templates/lambda/template.yaml"
       Parameters:
         LambdaRoleARN: !GetAtt IAMStack.Outputs.LambdaRoleARN
         Token: !Ref Token
@@ -100,7 +100,7 @@ Resources:
     DependsOn:
     - LambdaStack
     Properties:
-      TemplateURL: !Sub "${BaseTemplateURL}/templates/control-plane/templates/ecs/template.yaml"
+      TemplateURL: !Sub "${BaseTemplateURL}/control-plane/templates/ecs/template.yaml"
       Parameters:
         Name: !Ref Name
         ECSTaskRoleARN: !GetAtt IAMStack.Outputs.ECSTaskRoleARN

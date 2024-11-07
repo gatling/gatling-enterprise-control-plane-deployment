@@ -12,7 +12,7 @@ Resources:
   Location:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub "${BaseTemplateURL}/templates/location/template.yaml"
+      TemplateURL: !Sub "${BaseTemplateURL}/location/template.yaml"
       Parameters:
         Id: "prl_aws"
         Region: "eu-west-3"
@@ -24,7 +24,7 @@ Resources:
   ControlPlane:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub "${BaseTemplateURL}/templates/control-plane/template.yaml"
+      TemplateURL: !Sub "${BaseTemplateURL}/control-plane/template.yaml"
       Parameters:
         Name: "name"
         Token: "token"
