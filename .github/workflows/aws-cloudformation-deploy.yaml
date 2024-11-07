@@ -30,8 +30,8 @@ jobs:
       - name: Deploy to S3
         run: |
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-            S3_BUCKET="dev-cloudformation-enterprise-templates"
+            S3_BUCKET="dev-${{ vars.SE_CF_S3_BUCKET }}"
           else
-            S3_BUCKET="cloudformation-enterprise-templates"
+            S3_BUCKET=${{ vars.SE_CF_S3_BUCKET }}
           fi
           aws s3 sync aws/cloudformation/templates s3://$S3_BUCKET --exclude ".git/*" --delete

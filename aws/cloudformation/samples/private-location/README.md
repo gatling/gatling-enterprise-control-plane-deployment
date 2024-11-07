@@ -26,17 +26,17 @@ The main components in this CloudFormation template are:
 The Location stack defines the private locations where load generators will operate.
 
 ```sh
-  Location:
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      TemplateURL: !Sub "${BaseTemplateURL}/templates/location/template.yaml"
-      Parameters:
-        Id: "prl_aws"
-        Region: "eu-west-3"
-        SubnetIDs: "subnet-a,subnet-b"
-        SecurityGroupIDs: "sg-id"
-        #Engine: "classic"
-        #InstanceType: "c7i.xlarge"
+Location:
+  Type: AWS::CloudFormation::Stack
+  Properties:
+    TemplateURL: !Sub "${BaseTemplateURL}/templates/location/template.yaml"
+    Parameters:
+      Id: "prl_aws"
+      Region: "eu-west-3"
+      SubnetIDs: "subnet-a,subnet-b"
+      SecurityGroupIDs: "sg-id"
+      #Engine: "classic"
+      #InstanceType: "c7i.xlarge"
 ```
 
 - `Id`: Identifier for the location. Default is `"prl_aws"`.
@@ -64,19 +64,19 @@ The Location stack defines the private locations where load generators will oper
 The Control Plane stack configures networking, security, and storage for Gatling's control plane.
 
 ```sh
-  ControlPlane:
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      TemplateURL: !Sub "${BaseTemplateURL}/templates/control-plane/template.yaml"
-      Parameters:
-        Name: "name"
-        Token: "token"
-        SubnetIDs: "subnet-a,subnet-b"
-        SecurityGroupIDs: "sg-id"
-        ConfS3Bucket: "control-plane-conf"
-        Locations: !Sub "${Location.Outputs.Conf}"
-        #CloudWatchLogs: "true"
-        #UseECR: "false"
+ControlPlane:
+  Type: AWS::CloudFormation::Stack
+  Properties:
+    TemplateURL: !Sub "${BaseTemplateURL}/templates/control-plane/template.yaml"
+    Parameters:
+      Name: "name"
+      Token: "token"
+      SubnetIDs: "subnet-a,subnet-b"
+      SecurityGroupIDs: "sg-id"
+      ConfS3Bucket: "control-plane-conf"
+      Locations: !Sub "${Location.Outputs.Conf}"
+      #CloudWatchLogs: "true"
+      #UseECR: "false"
 ```
 
 - `Name` (required): The name of the control plane.

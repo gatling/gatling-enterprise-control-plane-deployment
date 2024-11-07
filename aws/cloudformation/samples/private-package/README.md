@@ -27,11 +27,11 @@ The Private Package stack defines a secure S3 bucket where private packages are 
 
 ```sh
 PrivatePackage:
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      TemplateURL: !Sub "${BaseTemplateURL}/templates/private-package/template.yaml"
-      Parameters:
-        Bucket: "bucket"
+  Type: AWS::CloudFormation::Stack
+  Properties:
+    TemplateURL: !Sub "${BaseTemplateURL}/templates/private-package/template.yaml"
+    Parameters:
+      Bucket: "bucket"
 ```
 
 - `Bucket` (required): Name of the S3 bucket used to store private packages.
@@ -47,16 +47,16 @@ The Location stack defines the private locations where load generators will oper
 
 ```sh
 Location:
-    Type: AWS::CloudFormation::Stack
-    Properties:
-    TemplateURL: !Sub "${BaseTemplateURL}/templates/location/template.yaml"
-    Parameters:
-        Id: "prl_aws"
-        Region: "eu-west-3"
-        SubnetIDs: "subnet-a,subnet-b"
-        SecurityGroupIDs: "sg-id"
-        #Engine: "classic"
-        #InstanceType: "c7i.xlarge"
+  Type: AWS::CloudFormation::Stack
+  Properties:
+  TemplateURL: !Sub "${BaseTemplateURL}/templates/location/template.yaml"
+  Parameters:
+    Id: "prl_aws"
+    Region: "eu-west-3"
+    SubnetIDs: "subnet-a,subnet-b"
+    SecurityGroupIDs: "sg-id"
+    #Engine: "classic"
+    #InstanceType: "c7i.xlarge"
 ```
 
 - `Id`: Identifier for the location. Default is `"prl_aws"`.
@@ -85,19 +85,19 @@ The Control Plane stack configures networking, security, and storage for Gatling
 
 ```sh
 ControlPlane:
-    Type: AWS::CloudFormation::Stack
-    Properties:
-        TemplateURL: !Sub "${BaseTemplateURL}/templates/control-plane/template.yaml"
-        Parameters:
-        Name: "name"
-        Token: "token"
-        SubnetIDs: "subnet-a,subnet-b"
-        SecurityGroupIDs: "sg-id"
-        ConfS3Bucket: "control-plane-conf"
-        Locations: !Sub "${Location.Outputs.Conf}"
-        PrivatePackage: !GetAtt PrivatePackage.Outputs.Conf
-        #CloudWatchLogs: "true"
-        #UseECR: "false"
+  Type: AWS::CloudFormation::Stack
+  Properties:
+    TemplateURL: !Sub "${BaseTemplateURL}/templates/control-plane/template.yaml"
+    Parameters:
+    Name: "name"
+    Token: "token"
+    SubnetIDs: "subnet-a,subnet-b"
+    SecurityGroupIDs: "sg-id"
+    ConfS3Bucket: "control-plane-conf"
+    Locations: !Sub "${Location.Outputs.Conf}"
+    PrivatePackage: !GetAtt PrivatePackage.Outputs.Conf
+    #CloudWatchLogs: "true"
+    #UseECR: "false"
 ```
 
 - `Name` (required): The name of the control plane.
