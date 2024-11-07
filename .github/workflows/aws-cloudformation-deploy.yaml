@@ -1,0 +1,37 @@
+name: AWS CloudFormation Deploy
+
+on:
+    push:
+      branches:
+        - main
+      paths:
+        - 'aws/cloudformation/**'
+    pull_request:
+      branches:
+        - main
+      paths:
+        - 'aws/cloudformation/**'
+
+jobs:
+  package-and-upload:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up AWS CLI
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.SE_CF_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.SE_CF_AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-3
+
+      - name: Deploy to S3
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            S3_BUCKET="dev-cloudformation-enterprise-templates"
+          else
+            S3_BUCKET="cloudformation-enterprise-templates"
+          fi
+          aws s3 sync aws/cloudformation/templates s3://$S3_BUCKET --exclude ".git/*" --delete

@@ -1,0 +1,127 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: CloudFormation template equivalent to the provided Terraform code.
+
+Parameters:
+
+  Name:
+    Type: String
+    Description: The base name for resources.
+
+  ECSTaskRoleARN:
+    Type: String
+    Description: The ARN of the IAM role for ECS tasks.
+
+  SubnetIDs:
+    Type: List<AWS::EC2::Subnet::Id>
+    Description: The list of subnet IDs for the ECS service.
+
+  SecurityGroupIDs:
+    Type: List<AWS::EC2::SecurityGroup::Id>
+    Description: The list of security group IDs for the ECS service.
+
+  BucketName:
+    Type: String
+    Description: The S3 bucket name containing the control-plane.conf file.
+
+  Image:
+    Type: String
+    Description: The Docker image for the control-plane container.
+
+  Command:
+    Type: String
+    Description: The command to run in the control-plane container.
+
+  PrivatePackage:
+    Type: String
+    Description: Indicates if there is a private package.
+
+  CloudWatchLogs:
+    Type: String
+    AllowedValues: ["true", "false"]
+    Description: Whether to enable CloudWatch logs.
+
+Conditions:
+
+  HasPrivatePackage: !Not [ !Equals [ !Ref PrivatePackage, "{}" ] ]
+
+  UseCloudWatchLogs: !Equals [ !Ref CloudWatchLogs, "true" ]
+
+Resources:
+
+  GatlingCluster:
+    Type: AWS::ECS::Cluster
+    Properties:
+      ClusterName: !Sub "${Name}-cluster"
+      
+  GatlingTaskDefinition:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Family: !Sub "${Name}-task"
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+        - FARGATE
+      TaskRoleArn: !Ref ECSTaskRoleARN
+      ExecutionRoleArn: !Ref ECSTaskRoleARN
+      Cpu: "1024"
+      Memory: "3072"
+      ContainerDefinitions:
+        - Name: conf-loader-init-container
+          Image: amazon/aws-cli
+          Cpu: 0
+          Essential: false
+          EntryPoint:
+            - aws
+            - s3
+            - cp
+            - !Sub "s3://${BucketName}/control-plane.conf"
+            - /app/conf/control-plane.conf
+          MountPoints:
+            - SourceVolume: control-plane-conf
+              ContainerPath: /app/conf
+              ReadOnly: false
+        - Name: control-plane
+          Image: !Ref Image
+          Command: [!Ref Command]
+          Cpu: 0
+          Essential: true
+          WorkingDirectory: /app/conf
+          MountPoints:
+            - SourceVolume: control-plane-conf
+              ContainerPath: /app/conf
+              ReadOnly: true
+          DependsOn:
+            - ContainerName: conf-loader-init-container
+              Condition: SUCCESS
+          PortMappings:
+            !If
+              - HasPrivatePackage
+              - - ContainerPort: !ImportValue GatlingPrivatePackagePort
+                  HostPort: !ImportValue GatlingPrivatePackagePort
+                  Protocol: tcp
+              - []
+          LogConfiguration:
+            !If
+              - UseCloudWatchLogs
+              - LogDriver: awslogs
+                Options:
+                  awslogs-group: !Sub "/ecs/${Name}-service"
+                  awslogs-region: !Ref AWS::Region
+                  awslogs-create-group: "true"
+                  awslogs-stream-prefix: ecs
+              - !Ref "AWS::NoValue"
+      Volumes:
+        - Name: control-plane-conf
+
+  GatlingService:
+    Type: AWS::ECS::Service
+    Properties:
+      ServiceName: !Sub "${Name}-service"
+      Cluster: !Ref GatlingCluster
+      TaskDefinition: !Ref GatlingTaskDefinition
+      DesiredCount: 1
+      LaunchType: FARGATE
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          Subnets: !Ref SubnetIDs
+          SecurityGroups: !Ref SecurityGroupIDs
+          AssignPublicIp: ENABLED

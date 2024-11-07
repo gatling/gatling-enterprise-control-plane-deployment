@@ -1,0 +1,95 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Template to define and export the private_package data.
+
+Parameters:
+
+  Bucket:
+    Type: String
+    Description: The S3 bucket name.
+
+  Path:
+    Type: String
+    Description: The path within the S3 bucket.
+    Default: ""
+
+  UploadDirectory:
+    Type: String
+    Description: The directory to upload.
+    Default: "/tmp"
+
+  Port:
+    Type: Number
+    Description: The server port.
+    Default: 8080
+
+  BindAddress:
+    Type: String
+    Description: The server bind address.
+    Default: "0.0.0.0"
+
+  CertPath:
+    Type: String
+    Default: ""
+    Description: The path to the certificate file. Leave empty if not provided.
+
+  CertPassword:
+    Type: String
+    Default: ""
+    Description: The password for the certificate. Leave empty if not provided.
+
+Conditions:
+
+  HasCertPath: !Not [ !Equals [ !Ref CertPath, "" ] ]
+
+  HasCertPassword: !Not [ !Equals [ !Ref CertPassword, "" ] ]
+
+Resources:
+
+  DummyResource:
+    Type: "AWS::CloudFormation::WaitConditionHandle"
+
+Outputs:
+  Conf:
+    Description: The private_package data as a JSON string.
+    Value: !Sub
+      - |
+        {
+          "type": "aws",
+          "bucket": "${Bucket}",
+          "path": "${Path}",
+          "upload": {
+            "directory": "${UploadDirectory}"
+          },
+          "server": {
+            "port": ${Port},
+            "bindAddress": "${BindAddress}"
+            ${ServerCert}
+          }
+        }
+      - ServerCert:
+          !If
+            - HasCertPath
+            - !Sub
+                - |
+                 , "certificate": {
+                    "path": "${CertPath}"
+                    ${CertPassword}
+                  }
+                - CertPassword:
+                    !If
+                      - HasCertPassword
+                      - !Sub ', "password": "${CertPassword}"'
+                      - ""
+            - ""
+
+  Bucket:
+    Description: The S3 bucket name.
+    Value: !Ref Bucket
+    Export:
+      Name: "GatlingPrivatePackageBucketName"
+
+  Port:
+    Description: The control plane server repository listening port.
+    Value: !Ref Port
+    Export:
+      Name: "GatlingPrivatePackagePort"

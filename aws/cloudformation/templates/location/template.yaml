@@ -1,0 +1,126 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Template to define the location data.
+
+Parameters:
+
+  Id:
+    Type: String
+    Description: Identifier for the location.
+
+  Description:
+    Type: String
+    Description: Description of the location.
+    Default: "Private Location on AWS"
+
+  Region:
+    Type: String
+    Description: AWS region for the location.
+    Default: "eu-west-3"
+
+  Engine:
+    Type: String
+    Description: Engine type.
+    Default: "classic"
+
+  AMItype:
+    Type: String
+    Description: AMI type.
+    Default: "certified"
+
+  JavaVersion:
+    Type: String
+    Description: Java version.
+    Default: "latest"
+
+  SubnetIDs:
+    Type: String
+    Description: Comma-separated list of subnet IDs.
+
+  SecurityGroupIDs:
+    Type: String
+    Description: Comma-separated list of security group IDs.
+
+  InstanceType:
+    Type: String
+    Description: EC2 instance type.
+    Default: "c7i.xlarge"
+
+  Spot:
+    Type: String
+    AllowedValues: ["true", "false"]
+    Description: Whether to use spot instances.
+    Default: "false"
+
+  ElasticIPs:
+    Type: String
+    Description: List of Elastic IP addresses.
+    Default: ""
+
+  ProfileName:
+    Type: String
+    Description: Profile name.
+    Default: ""
+
+  IAMInstanceProfile:
+    Type: String
+    Description: IAM instance profile name.
+    Default: ""
+
+  Tags:
+    Type: String
+    Description: JSON-formatted string of tags.
+    Default: "{}"
+
+  TagsFor:
+    Type: String
+    Description: JSON-formatted string of tags for specific resources.
+    Default: "{}"
+
+  SystemProperties:
+    Type: String
+    Description: JSON-formatted string of tags for specific resources.
+    Default: "{}"
+
+  JavaHome:
+    Type: String
+    Description: Java home path.
+    Default: ""
+
+  JvmOptions:
+    Type: String
+    Description: List of JVM options.
+    Default: "" 
+
+Resources:
+
+  DummyResource:
+    Type: "AWS::CloudFormation::WaitConditionHandle"
+
+Outputs:
+
+  Conf:
+    Description: "Combined location data as a JSON string."
+    Value: !Sub |
+      {
+        "id": "${Id}",
+        "description": "${Description}",
+        "type": "aws",
+        "region": "${Region}",
+        "engine": "${Engine}",
+        "ami": {
+          "type": "${AMItype}",
+          "java": "${JavaVersion}"
+        },
+        "subnets": "${SubnetIDs}",
+        "security-groups": "${SecurityGroupIDs}",
+        "instance-type": "${InstanceType}",
+        "spot": ${Spot},
+        "elastic-ips": "${ElasticIPs}",
+        "profile_name": "${ProfileName}",
+        "iam-instance-profile": "${IAMInstanceProfile}",
+        "tags": ${Tags},
+        "tags-for": ${TagsFor},
+        "system-properties": ${SystemProperties},
+        "java-home": "${JavaHome}",
+        "jvm-options": "${JvmOptions}"
+      }

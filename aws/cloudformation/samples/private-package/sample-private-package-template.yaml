@@ -1,0 +1,45 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Gatling Enterprise Private Locations & Packages Cloudformation Template
+
+Parameters:
+
+  BaseTemplateURL:
+    Type: String
+    Description: The root URL for CloudFormation templates
+
+Resources:
+
+  PrivatePackage:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub "${BaseTemplateURL}/templates/private-package/template.yaml"
+      Parameters:
+        Bucket: "bucket"
+
+  Location:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub "${BaseTemplateURL}/templates/location/template.yaml"
+      Parameters:
+        Id: "prl_aws"
+        Region: "eu-west-3"
+        SubnetIDs: "subnet-a,subnet-b"
+        SecurityGroupIDs: "sg-id"
+        #Engine: "classic"
+        #InstanceType: "c7i.xlarge"
+
+  ControlPlane:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub "${BaseTemplateURL}/templates/control-plane/template.yaml"
+      Parameters:
+        BaseTemplateURL: !Ref BaseTemplateURL
+        Name: "name"
+        Token: "token"
+        SubnetIDs: "subnet-a,subnet-b"
+        SecurityGroupIDs: "sg-id"
+        ConfS3Bucket: "control-plane-conf"
+        Locations: !Sub "${Location.Outputs.Conf}"
+        PrivatePackage: !GetAtt PrivatePackage.Outputs.Conf
+        #CloudWatchLogs: "true"
+        #UseECR: "false"

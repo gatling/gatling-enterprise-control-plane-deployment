@@ -1,0 +1,178 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: CloudFormation template equivalent to the provided Terraform code.
+
+Parameters:
+
+  Name:
+    Type: String
+    Description: The name of the IAM role.
+
+  BucketName:
+    Type: String
+    Description: The S3 bucket name containing the control-plane.conf file.
+
+  UseECR:
+    Type: String
+    AllowedValues: ["true", "false"]
+    Description: Indicates if ECR permissions should be created.
+
+  PrivatePackage:
+    Type: String
+    Description: Indicates if there is a private package.
+
+  CloudWatchLogs:
+    Type: String
+    AllowedValues: ["true", "false"]
+    Description: Indicates if CloudWatch Logs are enabled.
+
+Conditions:
+
+  HasECRPolicy: !Equals [ !Ref UseECR, "true"]
+
+  HasPrivatePackage: !Not [ !Equals [ !Ref PrivatePackage, "{}" ] ]
+        
+  UseCloudWatchLogs: !Equals [ !Ref CloudWatchLogs, "true"]
+
+Resources:
+
+  ECSTaskRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Ref Name
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+            Action: sts:AssumeRole
+
+  S3Policy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: !Sub "${Name}-ConfInitContainerPolicy"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - s3:GetObject
+            Resource: !Sub "arn:aws:s3:::${BucketName}/control-plane.conf"
+      Roles:
+        - !Ref ECSTaskRole
+
+  EC2Policy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: !Sub "${Name}-EC2Policy"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - ec2:Describe*
+              - ec2:CreateTags
+              - ec2:RunInstances
+              - ec2:TerminateInstances
+              - ec2:AssociateAddress
+              - ec2:DisassociateAddress
+            Resource: "*"
+      Roles:
+        - !Ref ECSTaskRole
+
+  ECRPolicy:
+    Condition: HasECRPolicy
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: !Sub "${Name}-ECRPolicy"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - ecr:GetAuthorizationToken
+              - ecr:BatchCheckLayerAvailability
+              - ecr:GetDownloadUrlForLayer
+              - ecr:BatchGetImage
+            Resource: "*"
+      Roles:
+        - !Ref ECSTaskRole
+
+  CloudWatchLogsPolicy:
+    Condition: UseCloudWatchLogs
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: !Sub "${Name}-CloudWatchLogsPolicy"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - logs:CreateLogGroup
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+            Resource: "*"
+      Roles:
+        - !Ref ECSTaskRole
+
+  PrivatePackagePolicy:
+    Condition: HasPrivatePackage
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: !Sub "${Name}-PackagePolicy"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - s3:GetObject
+              - s3:PutObject
+              - s3:DeleteObject
+            Resource: !Join
+              - ''
+              - - 'arn:aws:s3:::'
+                - !ImportValue GatlingPrivatePackageBucketName
+                - '/*'
+      Roles:
+        - !Ref ECSTaskRole
+
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: LambdaS3Policy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:PutObject
+                  - s3:DeleteObject
+                Resource: !Sub arn:aws:s3:::${BucketName}/*
+        - PolicyName: LambdaCloudWatchLogsPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: "*"
+
+Outputs:
+
+  ECSTaskRoleARN:
+    Description: Control Plane IAM Role ARN.
+    Value: !GetAtt ECSTaskRole.Arn
+
+  LambdaRoleARN:
+    Description: Lambda IAM Role ARN.
+    Value: !GetAtt LambdaExecutionRole.Arn
