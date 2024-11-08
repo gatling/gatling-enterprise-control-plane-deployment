@@ -91,6 +91,9 @@ jobs:
           AWS_REGION: ${{ vars.SE_HELM_AWS_REGION }}
         run: |
           CHART_FILE=${{ env.CHART_FILE }}
+          CHART_DIR=$(dirname "$CHART_FILE")
+          
+          cd "$CHART_DIR"
           aws s3 cp $CHART_FILE "s3://${AWS_S3_BUCKET}/charts/"
           aws s3 cp index.yaml "s3://${AWS_S3_BUCKET}/index.yaml"
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
