@@ -64,6 +64,10 @@ privateLocations:
     #javaHome: "/usr/lib/jvm/zulu"  # Java home path
     #jvmOptions: ["-Xmx4G", "-Xms512M"]  # JVM options 
     #keepLoadGeneratorAlive: false  # Whether to keep the load generator alive (for debugging)
+
+    # Working at the template spec level, not the job spec level.
+    # For a detailed structure, refer to this example JSON job definition:
+    # https://docs.gatling.io/reference/install/cloud/private-locations/kubernetes/configuration/#example-json-job-definition
     job:
       spec:
         template:

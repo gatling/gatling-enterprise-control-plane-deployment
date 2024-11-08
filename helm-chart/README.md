@@ -33,6 +33,9 @@ helm search repo gatling
 helm show values gatling/enterprise-locations-packages > values.yaml
 ```
 
+> [!IMPORTANT]
+> For `privateLocations.job`, we're working at the job template spec level, rather than the job spec level. To get a closer look at the structure, refer to the example JSON job definition [here].(https://docs.gatling.io/reference/install/cloud/private-locations/kubernetes/configuration/#example-json-job-definition).
+
 > [!TIP]
 > When connecting to the cluster using HTTPS, if a custom truststore and/or keystore is needed, `KUBERNETES_TRUSTSTORE_FILE`, `KUBERNETES_TRUSTSTORE_PASSPHRASE` and/or `KUBERNETES_KEYSTORE_FILE`, `KUBERNETES_KEYSTORE_PASSPHRASE` environment variables should be set.
 
@@ -43,7 +46,7 @@ helm install gatling-hybrid gatling/enterprise-locations-packages --namespace ga
 
 ### Activate Private Packages:
 
-- In order to activate Private Packages feature, set `privatePackage.enabled` to `true`. Note: A persistent Volume Claim will be created automatically.
+- In order to activate Private Packages feature, set `privatePackage.enabled` to `true`. Note: A persistent Volume Claim will be created automatically if type = 'filesystem'.
 
 > [!IMPORTANT]
 > By default, the Control Plane filesystem is selected as the storage option. Before activating a different solution, comment out the `privatePackage.persistentVolumeClaim` and the repository filesystem section.
