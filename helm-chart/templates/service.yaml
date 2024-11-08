@@ -5,6 +5,8 @@ kind: Service
 metadata:
   name: "{{ .Values.controlPlane.name }}-service"
   namespace: "{{ .Values.namespace }}"
+  labels:
+    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
 spec:
   selector:
     app.kubernetes.io/name: {{ .Values.controlPlane.name }}

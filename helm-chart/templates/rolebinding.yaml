@@ -3,6 +3,8 @@ kind: RoleBinding
 metadata:
   name: "{{ .Values.controlPlane.name }}-role-binding"
   namespace: "{{ .Values.namespace }}"
+  labels:
+    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role

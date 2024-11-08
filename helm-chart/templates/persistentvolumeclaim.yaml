@@ -4,6 +4,8 @@ kind: PersistentVolumeClaim
 metadata:
   name: "{{ .Values.controlPlane.name }}-pvc"
   namespace: "{{ .Values.namespace }}"
+  labels:
+    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
 spec:
   storageClassName: {{ .Values.privatePackage.persistentVolumeClaim.storageClassName }}
   volumeMode: {{ .Values.privatePackage.persistentVolumeClaim.volumeMode }}
