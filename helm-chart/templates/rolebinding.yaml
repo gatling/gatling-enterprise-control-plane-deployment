@@ -1,0 +1,15 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: "{{ .Values.controlPlane.name }}-role-binding"
+  namespace: "{{ .Values.namespace }}"
+  labels:
+    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: "{{ .Values.controlPlane.name }}-role"
+subjects:
+  - kind: ServiceAccount
+    name: "{{ .Values.controlPlane.name }}-service-account"
+    namespace: "{{ .Values.namespace }}"

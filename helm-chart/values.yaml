@@ -1,0 +1,137 @@
+# Number of replicas (instances) to deploy
+replicaCount: 1
+
+# Kubernetes namespace where resources will be deployed
+namespace: gatling
+
+controlPlane:
+  # Name of the control plane deployment
+  name: gatling-cp
+  # Authentication token for the control plane
+  token: token
+  # Description of the control plane
+  description: My K8s control plane description
+  image:
+    # Docker image name for the control plane
+    name: gatlingcorp/control-plane:latest
+    # Image pull policy (Always, IfNotPresent, Never)
+    pullPolicy: IfNotPresent
+    # Image pull secrets for private registry (list of secrets)
+    pullSecrets: []
+  # Additional labels to add to the deployment
+  deploymentLabels: {}
+  # Additional labels to add to the pods
+  podLabels: {}
+  # List of init containers to run before the app containers
+  initContainers: []
+  # Environment variables to set in the container
+  env: []
+  # Command to override default entrypoint of the container
+  command: []
+  # Volumes to attach to the pod
+  volumes: []
+  # Volume mounts for the container
+  volumeMounts: []
+  # Node selector to constrain pods to nodes with specific labels
+  nodeSelector: {}
+  # Affinity rules for pod scheduling
+  affinity: {}
+  # Tolerations to allow pods to be scheduled on tainted nodes
+  tolerations: {}
+  resources: 
+    # Resource requests for the container
+    requests:
+      memory: "512Mi"
+      cpu: "1"
+    # Resource limits for the container
+    limits:
+      memory: "512Mi"
+      cpu: "1"
+  # Security context for the pod or container
+  securityContext: {}
+  #extra_content: {}  # Extra content (currently commented out)
+
+privateLocations:
+  - id: "prl_kubernetes"  # Unique identifier for the private location
+    description: "Private Location on Kubernetes"  # Description of the private location
+    type: "kubernetes"  # Type of the private location
+    engine: "classic" # Execution engine type (classic or javascript)
+    image:
+      type: "certified" # Image type (certified or custom)
+      #java: "latest"  # Java version to use (optional if engine = java, noop if engine type = javascript)
+      #image: "gatlingcorp/classic-openjdk:latest"  # Custom image name
+    #systemProperties: {}  # System properties for the JVM
+    #javaHome: "/usr/lib/jvm/zulu"  # Java home path
+    #jvmOptions: ["-Xmx4G", "-Xms512M"]  # JVM options 
+    #keepLoadGeneratorAlive: false  # Whether to keep the load generator alive (for debugging)
+
+    # Working at the template spec level, not the job spec level.
+    # For a detailed structure, refer to this example JSON job definition:
+    # https://docs.gatling.io/reference/install/cloud/private-locations/kubernetes/configuration/#example-json-job-definition
+    job:
+      spec:
+        template:
+          metadata:
+            annotations: {}  # Annotations to add to the pod
+            labels: {} # Labels to add to the pod
+            namespace: "{{ .Values.namespace }}"  # Namespace for the pod
+          spec:
+            containers:
+              - env: []  # Environment variables for the container
+                name: gatling-container  # Name of the container
+                resources:
+                  # Resource requests for the container
+                  limits": 
+                    memory: "512Mi"
+                    cpu: "4"
+                  # Resource limits for the container
+                  requests:
+                    memory: "512Mi"
+                    cpu: "4"
+            # Security context for the pod or container
+            securityContext:
+              sysctls: []  # List of sysctls to set in the pod
+        ttlSecondsAfterFinished: 60  # Time (in seconds) to retain the job after completion
+
+privatePackage:
+  enabled: false  # Enable or disable the private package feature
+  repository:
+    upload:
+      directory: "/tmp"  # Directory where files will be uploaded temporarily
+    server:
+      port: 8080  # Port on which the repository server listens
+      #bindAddress: "0.0.0.0"  # Bind address for the server
+      #certificate:  # SSL certificate configuration
+        #path: "/path/to/certificate.p12"
+        #password: "password"
+    service:
+      type: NodePort # Service type on which you expose the control plane pod
+      ports:
+      - name: http # Name of the port on which the Service listens
+        protocol: TCP # Protocol of the port
+        port: 80 # Port on which the Service listens
+        targetPort: 8080 # Port on which the repository server listens
+    type: "filesystem"  # Choose the repository type: "filesystem", "aws", "azure", or "gcp"
+    configurations:
+      aws:
+        bucket: "bucket-name"  # S3 bucket name
+        path: "folder/to/upload"  # Path within the S3 bucket
+      azure:
+        storage-account: "storage-account-name"  # Azure storage account name
+        container: "container-name"  # Azure Blob Storage container name
+        path: "folder/to/upload"  # Path within the container
+      gcp:
+        bucket: "bucket-name"  # GCS bucket name
+        path: "folder/to/upload"  # Path within the GCS bucket
+        project: "project-name"  # GCP project name
+      filesystem:
+        directory: "/data/gatling-repository"  # Directory for filesystem storage
+        location:
+          download-base-url: "http://www.example.com:8080"  # Base URL for downloading packages
+  # PersistentVolumeClaim configuration (only if you're using filesystem repository)
+  persistentVolumeClaim:  # Comment out if you do not intend to use a repository.type = filesystem
+    storageClassName: ""  # Storage class name for the PVC
+    volumeMode: Filesystem  # Volume mode (Filesystem or Block)
+    accessModes: ["ReadWriteOnce"]  # Access modes for the PVC
+    storage: 5Gi  # Requested storage size
+    selector: {}  # Selector to match an existing PV (optional)

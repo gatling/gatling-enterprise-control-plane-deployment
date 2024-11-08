@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "{{ .Values.controlPlane.name }}-config"
+  namespace: {{ .Values.namespace }}
+  labels:
+    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+data:
+  control-plane.conf: |
+{{ tpl (include "configFileContent" .) . | indent 4 }}

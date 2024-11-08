@@ -1,0 +1,19 @@
+{{- if .Values.privatePackage.enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{{ .Values.controlPlane.name }}-service"
+  namespace: "{{ .Values.namespace }}"
+  labels:
+    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+spec:
+  selector:
+    app.kubernetes.io/name: {{ .Values.controlPlane.name }}
+      {{- with .Values.controlPlane.podLabels }}
+        {{ toYaml . | nindent 8 }}
+      {{- end }}
+  ports:
+  {{ toYaml .Values.privatePackage.repository.service.ports | nindent 2 }}
+  type: {{ .Values.privatePackage.repository.service.type }}
+{{- end }}

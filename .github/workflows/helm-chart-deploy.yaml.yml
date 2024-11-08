@@ -1,0 +1,110 @@
+name: Helm chart CI/CD
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'helm-chart/**'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'helm-chart/**'
+
+jobs:
+  package-and-upload:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: 'latest'
+
+      - name: Determine S3 Bucket Name
+        id: s3-bucket-name
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            echo "bucket=dev-${{ vars.SE_HELM_AWS_S3_BUCKET }}" >> $GITHUB_ENV
+          else
+            echo "bucket=${{ vars.SE_HELM_AWS_S3_BUCKET }}" >> $GITHUB_ENV
+          fi
+
+      - name: Package Helm chart
+        working-directory: helm-chart
+        run: |
+          OUTPUT=$(helm package .)
+          CHART_FILE=$(echo "$OUTPUT" | awk '/Successfully packaged chart and saved it to:/{print $NF}')
+          echo "Extracted CHART_FILE path: $CHART_FILE"
+          echo "CHART_FILE=$CHART_FILE" >> $GITHUB_ENV 
+
+      - name: Set up AWS CLI
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.SE_HELM_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.SE_HELM_AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ vars.SE_HELM_AWS_REGION }}
+
+      - name: Download existing index.yaml
+        env:
+          AWS_S3_BUCKET: ${{ env.bucket }}
+        run: |
+          aws s3 cp "s3://${AWS_S3_BUCKET}/index.yaml" index.yaml || echo "No existing index.yaml found"
+
+      - name: Merge new chart with existing index.yaml
+        env:
+          AWS_S3_BUCKET: ${{ env.bucket }}
+          AWS_REGION: ${{ vars.AWS_REGION }}
+        run: |
+          CHART_FILE=${{ env.CHART_FILE }}
+          CHART_DIR=$(dirname "$CHART_FILE")
+
+          update_helm_index() {
+            local url="$1"
+            if [ -f index.yaml ]; then
+              helm repo index "$CHART_DIR" --url "$url" --merge index.yaml
+            else
+              helm repo index "$CHART_DIR" --url "$url"
+            fi
+          }
+
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            update_helm_index "http://${AWS_S3_BUCKET}.s3.${AWS_REGION}.amazonaws.com/charts/"
+          else
+            update_helm_index "https://helm.gatling.io/charts/"
+          fi
+
+      - name: Upload to S3
+        env:
+          AWS_S3_BUCKET: ${{ env.bucket }}
+          AWS_REGION: ${{ vars.SE_HELM_AWS_REGION }}
+        run: |
+          CHART_FILE=${{ env.CHART_FILE }}
+          aws s3 cp $CHART_FILE "s3://${AWS_S3_BUCKET}/charts/"
+          aws s3 cp index.yaml "s3://${AWS_S3_BUCKET}/index.yaml"
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            PAGE_TITLE="Gatling Helm Repository - Dev"
+            HELM_REPO_URL="http://${AWS_S3_BUCKET}.s3.amazonaws.com"
+          else
+            PAGE_TITLE="Gatling Helm Repository"
+            HELM_REPO_URL="https://helm.gatling.io"
+          fi
+          sed -i "s|{{BUCKET_NAME}}|${AWS_S3_BUCKET}|g" ./helm-chart/public/index.html
+          sed -i "s|{{REGION}}|${AWS_REGION}|g" ./helm-chart/public/index.html
+          sed -i "s|{{PAGE_TITLE}}|${PAGE_TITLE}|g" ./helm-chart/public/index.html
+          sed -i "s|{{HELM_REPO_URL}}|\"${HELM_REPO_URL}\"|g" ./helm-chart/public/index.html
+          aws s3 cp ./helm-chart/public/index.html "s3://${AWS_S3_BUCKET}/index.html"
+          aws s3 cp ./helm-chart/public/gatling.png "s3://${AWS_S3_BUCKET}/gatling.png"
+
+      - name: Output S3 URL
+        env:
+          AWS_S3_BUCKET: ${{ env.bucket }}
+          AWS_REGION: ${{ vars.SE_HELM_AWS_REGION }}
+        run: |
+          CHART_FILE=$(basename helm-chart/*.tgz)
+          echo "Helm chart URL: http://${AWS_S3_BUCKET}.s3-website.${AWS_REGION}.amazonaws.com/charts/$CHART_FILE"
+          echo "Helm Repo Index URL: http://${AWS_S3_BUCKET}.s3-website.${AWS_REGION}.amazonaws.com/index.yaml"
