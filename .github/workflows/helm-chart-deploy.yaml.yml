@@ -6,11 +6,13 @@ on:
       - main
     paths:
       - 'helm-chart/**'
+      - '.github/workflows/helm-chart-deploy.yaml.yml'
   pull_request:
     branches:
       - main
     paths:
       - 'helm-chart/**'
+      - '.github/workflows/helm-chart-deploy.yaml.yml'
 
 jobs:
   package-and-upload:
@@ -53,7 +55,12 @@ jobs:
         env:
           AWS_S3_BUCKET: ${{ env.bucket }}
         run: |
-          aws s3 cp "s3://${AWS_S3_BUCKET}/index.yaml" index.yaml || echo "No existing index.yaml found"
+          if aws s3 ls "s3://${AWS_S3_BUCKET}/index.yaml" >/dev/null 2>&1; then
+            aws s3 cp "s3://${AWS_S3_BUCKET}/index.yaml" index.yaml
+            echo "index.yaml downloaded."
+          else
+            echo "No existing index.yaml found. A new index.yaml will be created."
+          fi
 
       - name: Merge new chart with existing index.yaml
         env:
@@ -84,8 +91,8 @@ jobs:
           AWS_REGION: ${{ vars.SE_HELM_AWS_REGION }}
         run: |
           CHART_FILE=${{ env.CHART_FILE }}
-          aws s3 cp $CHART_FILE "s3://${AWS_S3_BUCKET}/charts/"
-          aws s3 cp index.yaml "s3://${AWS_S3_BUCKET}/index.yaml"
+          CHART_DIR=$(dirname "$CHART_FILE")
+
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
             PAGE_TITLE="Gatling Helm Repository - Dev"
             HELM_REPO_URL="http://${AWS_S3_BUCKET}.s3.amazonaws.com"
@@ -93,12 +100,17 @@ jobs:
             PAGE_TITLE="Gatling Helm Repository"
             HELM_REPO_URL="https://helm.gatling.io"
           fi
+          
           sed -i "s|{{BUCKET_NAME}}|${AWS_S3_BUCKET}|g" ./helm-chart/public/index.html
           sed -i "s|{{REGION}}|${AWS_REGION}|g" ./helm-chart/public/index.html
           sed -i "s|{{PAGE_TITLE}}|${PAGE_TITLE}|g" ./helm-chart/public/index.html
           sed -i "s|{{HELM_REPO_URL}}|\"${HELM_REPO_URL}\"|g" ./helm-chart/public/index.html
           aws s3 cp ./helm-chart/public/index.html "s3://${AWS_S3_BUCKET}/index.html"
           aws s3 cp ./helm-chart/public/gatling.png "s3://${AWS_S3_BUCKET}/gatling.png"
+
+          cd "$CHART_DIR"
+          aws s3 cp $CHART_FILE "s3://${AWS_S3_BUCKET}/charts/"
+          aws s3 cp index.yaml "s3://${AWS_S3_BUCKET}/index.yaml"
 
       - name: Output S3 URL
         env:
