@@ -71,7 +71,6 @@ privateLocations:
             annotations: {}  # Annotations to add to the pod
             labels: 
               # Labels to add to the pod
-              helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
             namespace: "{{ .Values.namespace }}"  # Namespace for the pod
           spec:
             containers:
