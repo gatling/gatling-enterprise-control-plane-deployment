@@ -6,13 +6,13 @@ on:
       - main
     paths:
       - 'helm-chart/**'
-      - '.github/workflows/helm-chart-deploy.yaml.yml'
+      - '.github/workflows/helm-chart-deploy.yaml'
   pull_request:
     branches:
       - main
     paths:
       - 'helm-chart/**'
-      - '.github/workflows/helm-chart-deploy.yaml.yml'
+      - '.github/workflows/helm-chart-deploy.yaml'
 
 jobs:
   package-and-upload:
