@@ -65,7 +65,7 @@ jobs:
       - name: Merge new chart with existing index.yaml
         env:
           AWS_S3_BUCKET: ${{ env.bucket }}
-          AWS_REGION: ${{ vars.AWS_REGION }}
+          AWS_REGION: ${{ vars.SE_HELM_AWS_REGION }}
         run: |
           CHART_FILE=${{ env.CHART_FILE }}
           CHART_DIR=$(dirname "$CHART_FILE")
