@@ -109,7 +109,7 @@
 
       const bucketName = "{{BUCKET_NAME}}";
       const region = "{{REGION}}";
-      const helmRepoUrl = bucketName.startsWith("dev-") ? `http://${bucketName}.s3.amazonaws.com` : "https://helm.gatling.io";
+      const helmRepoUrl = `http://${bucketName}.s3.amazonaws.com`
 
       async function listFiles() {
         try {
