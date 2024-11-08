@@ -69,8 +69,7 @@ privateLocations:
         template:
           metadata:
             annotations: {}  # Annotations to add to the pod
-            labels: 
-              # Labels to add to the pod
+            labels: {} # Labels to add to the pod
             namespace: "{{ .Values.namespace }}"  # Namespace for the pod
           spec:
             containers:
