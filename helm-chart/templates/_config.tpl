@@ -13,7 +13,9 @@ control-plane {
       engine = "{{ .engine }}"
       image = {{ toJson .image }}
       system-properties = {{ toJson .systemProperties }}
+    {{- if .javaHome }}
       java-home = "{{ .javaHome }}"
+    {{- end }}
       jvm-options = {{ toJson .jvmOptions }}
       {{- with .job }}
       job = {
