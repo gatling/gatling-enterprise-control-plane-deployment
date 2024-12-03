@@ -3,9 +3,21 @@ Description: CloudFormation template equivalent to the provided Terraform code.
 
 Parameters:
 
+  Token:
+    Type: String
+    Description: The command to run in the control-plane container.
+
+  SecretsPrefix:
+    Type: String
+    Description: Token secret prefix.
+
   Name:
     Type: String
     Description: The base name for resources.
+
+  Description:
+    Type: String
+    Description: My AWS control plane description
 
   ECSTaskRoleARN:
     Type: String
@@ -19,10 +31,6 @@ Parameters:
     Type: List<AWS::EC2::SecurityGroup::Id>
     Description: The list of security group IDs for the ECS service.
 
-  BucketName:
-    Type: String
-    Description: The S3 bucket name containing the control-plane.conf file.
-
   Image:
     Type: String
     Description: The Docker image for the control-plane container.
@@ -30,6 +38,10 @@ Parameters:
   Command:
     Type: String
     Description: The command to run in the control-plane container.
+
+  Locations:
+    Type: String
+    Description: Indicates if there is a private package.
 
   PrivatePackage:
     Type: String
@@ -52,7 +64,13 @@ Resources:
     Type: AWS::ECS::Cluster
     Properties:
       ClusterName: !Sub "${Name}-cluster"
-      
+  
+  TokenSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: !Sub ${SecretsPrefix}/ControlPlane/Token
+      SecretString: !Ref Token
+
   GatlingTaskDefinition:
     Type: AWS::ECS::TaskDefinition
     Properties:
@@ -66,25 +84,47 @@ Resources:
       Memory: "3072"
       ContainerDefinitions:
         - Name: conf-loader-init-container
-          Image: amazon/aws-cli
+          Image: busybox
           Cpu: 0
           Essential: false
           EntryPoint:
-            - aws
-            - s3
-            - cp
-            - !Sub "s3://${BucketName}/control-plane.conf"
-            - /app/conf/control-plane.conf
+            - /bin/sh
+            - -c
+            - echo "$CONFIG_CONTENT" > /app/conf/control-plane.conf; echo "$CONFIG_CONTENT"
+          Environment:
+            - Name: CONFIG_CONTENT
+              Value: !Sub |
+                {
+                  "control-plane": {
+                    "token": ${!?CONTROL_PLANE_TOKEN},
+                    "description": ${Description},
+                    "locations": [${Locations}],
+                    "repository": ${PrivatePackage}
+                  }
+                }
           MountPoints:
             - SourceVolume: control-plane-conf
               ContainerPath: /app/conf
               ReadOnly: false
+          LogConfiguration:
+            !If
+              - UseCloudWatchLogs
+              - LogDriver: awslogs
+                Options:
+                  awslogs-group: !Sub "/ecs/${Name}-service"
+                  awslogs-region: !Ref AWS::Region
+                  awslogs-create-group: "true"
+                  awslogs-stream-prefix: init
+              - !Ref "AWS::NoValue"
         - Name: control-plane
           Image: !Ref Image
           Command: [!Ref Command]
           Cpu: 0
           Essential: true
           WorkingDirectory: /app/conf
+          Secrets:
+            - Name: CONTROL_PLANE_TOKEN
+              ValueFrom: !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${SecretsPrefix}/ControlPlane/Token
           MountPoints:
             - SourceVolume: control-plane-conf
               ContainerPath: /app/conf
@@ -107,7 +147,7 @@ Resources:
                   awslogs-group: !Sub "/ecs/${Name}-service"
                   awslogs-region: !Ref AWS::Region
                   awslogs-create-group: "true"
-                  awslogs-stream-prefix: ecs
+                  awslogs-stream-prefix: main
               - !Ref "AWS::NoValue"
       Volumes:
         - Name: control-plane-conf

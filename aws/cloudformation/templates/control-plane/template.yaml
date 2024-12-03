@@ -7,14 +7,24 @@ Parameters:
     Type: String
     Description: The root URL for CloudFormation templates
 
-  Name:
-    Type: String
-    Description: The base name for resources.
-
   Token:
     Type: String
     Description: The token value to include in the JSON configuration.
     NoEcho: true
+
+  SecretsPrefix:
+    Type: String
+    Description: Token secret name.
+    Default: "GatlingEnterprise"
+
+  Name:
+    Type: String
+    Description: The base name for resources.
+
+  Description:
+    Type: String
+    Description: Description of the control plane.
+    Default: My AWS control plane description
 
   SubnetIDs:
     Type: String
@@ -23,19 +33,6 @@ Parameters:
   SecurityGroupIDs:
     Type: String
     Description: The list of security group IDs for the ECS service.
-
-  Locations:
-    Type: String
-    Description: A list of location configurations (as JSON strings).
-
-  ConfS3Bucket:
-    Type: String
-    Description: The S3 bucket name containing the configuration file.
-
-  ObjectKey:
-    Type: String
-    Description: The key name for the S3 object.
-    Default: "control-plane.conf"
 
   Image:
     Type: String
@@ -46,6 +43,15 @@ Parameters:
     Type: String
     Description: The command to run in the control-plane container.
     Default: ""
+
+  Locations:
+    Type: String
+    Description: A list of location configurations (as JSON strings).
+
+  PrivatePackage:
+    Type: String
+    Description: The S3 bucket name containing the configuration file.
+    Default: "{}"
 
   CloudWatchLogs:
     Type: String
@@ -59,55 +65,33 @@ Parameters:
     Description: Indicates if ECR IAM permissions should be created.
     Default: "false"
 
-  PrivatePackage:
-    Type: String
-    Description: The S3 bucket name containing the configuration file.
-    Default: "{}"
-
-  ExtraContent:
-    Type: String
-    Description: Additional JSON configuration to merge into the control-plane section (as a JSON string).
-    Default: "{}"
-
 Resources:
 
   IAMStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub "${BaseTemplateURL}/control-plane/templates/iam/template.yaml"
+      TemplateURL: "${BaseTemplateURL}/control-plane/templates/iam/template.yaml"
       Parameters:
         Name: !Sub "${Name}-role"
-        BucketName: !Ref ConfS3Bucket
+        SecretsPrefix: !Ref SecretsPrefix
+        PrivatePackage: !Ref PrivatePackage
         CloudWatchLogs: !Ref CloudWatchLogs
-        PrivatePackage: !Ref PrivatePackage
         UseECR: !Ref UseECR
-
-  LambdaStack:
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      TemplateURL: !Sub "${BaseTemplateURL}/control-plane/templates/lambda/template.yaml"
-      Parameters:
-        LambdaRoleARN: !GetAtt IAMStack.Outputs.LambdaRoleARN
-        Token: !Ref Token
-        BucketName: !Ref ConfS3Bucket
-        ObjectKey: !Ref ObjectKey
-        Locations: !Ref Locations
-        PrivatePackage: !Ref PrivatePackage
-        ExtraContent: !Ref ExtraContent
 
   ECSStack:
     Type: AWS::CloudFormation::Stack
-    DependsOn:
-    - LambdaStack
     Properties:
-      TemplateURL: !Sub "${BaseTemplateURL}/control-plane/templates/ecs/template.yaml"
+      TemplateURL: "${BaseTemplateURL}/control-plane/templates/ecs/template.yaml"
       Parameters:
-        Name: !Ref Name
         ECSTaskRoleARN: !GetAtt IAMStack.Outputs.ECSTaskRoleARN
+        Token: !Ref Token
+        SecretsPrefix: !Ref SecretsPrefix
+        Name: !Ref Name
+        Description: !Ref Description
         SubnetIDs: !Ref SubnetIDs
         SecurityGroupIDs: !Ref SecurityGroupIDs
-        BucketName: !Ref ConfS3Bucket
         Image: !Ref Image
         Command: !Ref Command
+        Locations: !Ref Locations
         PrivatePackage: !Ref PrivatePackage
         CloudWatchLogs: !Ref CloudWatchLogs

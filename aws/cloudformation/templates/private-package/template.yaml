@@ -86,10 +86,10 @@ Outputs:
     Description: The S3 bucket name.
     Value: !Ref Bucket
     Export:
-      Name: "GatlingPrivatePackageBucketName"
+      Name: GatlingPrivatePackageBucket
 
   Port:
     Description: The control plane server repository listening port.
     Value: !Ref Port
     Export:
-      Name: "GatlingPrivatePackagePort"
+      Name: GatlingPrivatePackagePort

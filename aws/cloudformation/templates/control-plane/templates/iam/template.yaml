@@ -6,10 +6,10 @@ Parameters:
   Name:
     Type: String
     Description: The name of the IAM role.
-
-  BucketName:
+  
+  SecretsPrefix:
     Type: String
-    Description: The S3 bucket name containing the control-plane.conf file.
+    Description: Token secret prefix.
 
   UseECR:
     Type: String
@@ -47,20 +47,6 @@ Resources:
               Service: ecs-tasks.amazonaws.com
             Action: sts:AssumeRole
 
-  S3Policy:
-    Type: AWS::IAM::ManagedPolicy
-    Properties:
-      ManagedPolicyName: !Sub "${Name}-ConfInitContainerPolicy"
-      PolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Effect: Allow
-            Action:
-              - s3:GetObject
-            Resource: !Sub "arn:aws:s3:::${BucketName}/control-plane.conf"
-      Roles:
-        - !Ref ECSTaskRole
-
   EC2Policy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
@@ -77,6 +63,21 @@ Resources:
               - ec2:AssociateAddress
               - ec2:DisassociateAddress
             Resource: "*"
+      Roles:
+        - !Ref ECSTaskRole
+    
+  SecretsPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: !Sub "${Name}-SecretsPolicy"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - "secretsmanager:GetSecretValue"
+              - "secretsmanager:DescribeSecret"
+            Resource: !Sub "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${SecretsPrefix}/*"
       Roles:
         - !Ref ECSTaskRole
 
@@ -131,48 +132,13 @@ Resources:
             Resource: !Join
               - ''
               - - 'arn:aws:s3:::'
-                - !ImportValue GatlingPrivatePackageBucketName
+                - !ImportValue GatlingPrivatePackageBucket
                 - '/*'
       Roles:
         - !Ref ECSTaskRole
-
-  LambdaExecutionRole:
-    Type: AWS::IAM::Role
-    Properties:
-      AssumeRolePolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service: lambda.amazonaws.com
-            Action: sts:AssumeRole
-      Policies:
-        - PolicyName: LambdaS3Policy
-          PolicyDocument:
-            Version: '2012-10-17'
-            Statement:
-              - Effect: Allow
-                Action:
-                  - s3:PutObject
-                  - s3:DeleteObject
-                Resource: !Sub arn:aws:s3:::${BucketName}/*
-        - PolicyName: LambdaCloudWatchLogsPolicy
-          PolicyDocument:
-            Version: '2012-10-17'
-            Statement:
-              - Effect: Allow
-                Action:
-                  - logs:CreateLogGroup
-                  - logs:CreateLogStream
-                  - logs:PutLogEvents
-                Resource: "*"
 
 Outputs:
 
   ECSTaskRoleARN:
     Description: Control Plane IAM Role ARN.
     Value: !GetAtt ECSTaskRole.Arn
-
-  LambdaRoleARN:
-    Description: Lambda IAM Role ARN.
-    Value: !GetAtt LambdaExecutionRole.Arn

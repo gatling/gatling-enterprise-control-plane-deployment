@@ -17,21 +17,6 @@ Parameters:
     Description: AWS region for the location.
     Default: "eu-west-3"
 
-  Engine:
-    Type: String
-    Description: Engine type.
-    Default: "classic"
-
-  AMItype:
-    Type: String
-    Description: AMI type.
-    Default: "certified"
-
-  JavaVersion:
-    Type: String
-    Description: Java version.
-    Default: "latest"
-
   SubnetIDs:
     Type: String
     Description: Comma-separated list of subnet IDs.
@@ -39,11 +24,6 @@ Parameters:
   SecurityGroupIDs:
     Type: String
     Description: Comma-separated list of security group IDs.
-
-  InstanceType:
-    Type: String
-    Description: EC2 instance type.
-    Default: "c7i.xlarge"
 
   Spot:
     Type: String
@@ -54,7 +34,27 @@ Parameters:
   ElasticIPs:
     Type: String
     Description: List of Elastic IP addresses.
-    Default: ""
+    Default: "[]"
+
+  AMItype:
+    Type: String
+    Description: AMI type.
+    Default: "certified"
+
+  Engine:
+    Type: String
+    Description: Engine type.
+    Default: "classic"
+
+  JavaVersion:
+    Type: String
+    Description: Java version.
+    Default: "latest"
+
+  InstanceType:
+    Type: String
+    Description: EC2 instance type.
+    Default: "c7i.xlarge"
 
   ProfileName:
     Type: String
@@ -84,12 +84,12 @@ Parameters:
   JavaHome:
     Type: String
     Description: Java home path.
-    Default: ""
+    Default: "/usr/lib/jvm/zulu"
 
   JvmOptions:
     Type: String
     Description: List of JVM options.
-    Default: "" 
+    Default: "[]" 
 
 Resources:
 
@@ -102,25 +102,25 @@ Outputs:
     Description: "Combined location data as a JSON string."
     Value: !Sub |
       {
+        "type": "aws",
         "id": "${Id}",
         "description": "${Description}",
-        "type": "aws",
         "region": "${Region}",
-        "engine": "${Engine}",
+        "subnets": ${SubnetIDs},
+        "security-groups": ${SecurityGroupIDs},
+        "instance-type": "${InstanceType}",
+        "spot": ${Spot},
         "ami": {
           "type": "${AMItype}",
           "java": "${JavaVersion}"
         },
-        "subnets": "${SubnetIDs}",
-        "security-groups": "${SecurityGroupIDs}",
-        "instance-type": "${InstanceType}",
-        "spot": ${Spot},
-        "elastic-ips": "${ElasticIPs}",
-        "profile_name": "${ProfileName}",
-        "iam-instance-profile": "${IAMInstanceProfile}",
+        "engine": "${Engine}",
+        "elastic-ips": ${ElasticIPs},
         "tags": ${Tags},
         "tags-for": ${TagsFor},
+        "profile_name": "${ProfileName}",
+        "iam-instance-profile": "${IAMInstanceProfile}",
         "system-properties": ${SystemProperties},
         "java-home": "${JavaHome}",
-        "jvm-options": "${JvmOptions}"
+        "jvm-options": ${JvmOptions}
       }
