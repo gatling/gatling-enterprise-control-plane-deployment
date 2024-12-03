@@ -29,35 +29,35 @@ The Location stack defines the private locations where load generators will oper
 Location:
   Type: AWS::CloudFormation::Stack
   Properties:
-    TemplateURL: !Sub "${BaseTemplateURL}/templates/location/template.yaml"
+    TemplateURL: !Sub ${BaseTemplateURL}/location/template.yaml
     Parameters:
       Id: "prl_aws"
       Region: "eu-west-3"
-      SubnetIDs: "subnet-a,subnet-b"
-      SecurityGroupIDs: "sg-id"
+      SubnetIDs: "[\"subnet-a\",\"subnet-b\"]"
+      SecurityGroupIDs: "[\"sg-id\"]"
       #Engine: "classic"
       #InstanceType: "c7i.xlarge"
 ```
 
 - `Id`: Identifier for the location. Default is `"prl_aws"`.
-- `Region`: AWS region for deployment, specified as `"eu-west-1"`.
-- `SubnetIDs`: Comma-separated list of subnet IDs (e.g., `"subnet-a,subnet-b"`).
-- `SecurityGroupIDs`: Security group ID to control network access (e.g., `"sg-id"`).
-- `Description` (optional): Description of the location.
-- `AMItype` (optional): Description of the location.
-- `ElasticIPs`: Assign elastic IPs to your Locations.
 - `Description`: Description of the location.
-- `AMItype`: AMI type of the location.
-- `JavaVersion`: Java version of the location.
+- `Region`: AWS region for deployment, specified as `"eu-west-1"`.
+- `SubnetIDs`: string JSON array of subnet IDs (e.g., `"[\"subnet-a\",\"subnet-b\"]"`).
+- `SecurityGroupIDs`: string JSON array of security group IDs to control network access (e.g., `"[\"sg-id\"]"`).
+- `ElasticIPs`: string JSON array of elastic IPs assigned to your location.
+- `InstanceType`: Instance type of the location.
 - `Spot`: Flag to enable spot instances.
-- `ProfileName`: Profile name to be assigned to the Location.
-- `IAMInstanceProfile`: IAM instance profile to be assigned to the Location.
+- `AMItype`: AMI type of the location.
+- `engine`: Engine of the location determining the compatible package formats (JavaScript or JVM).
+- `JavaVersion`: Java version of the location.
+- `ProfileName`: Profile name to be assigned to the location.
+- `IAMInstanceProfile`: IAM instance profile to be assigned to the location.
 - `Tags`: Tags to be assigned to the Location.
-- `TagsFor`: Tags to be assigned to the resources of the Location.
-- `SystemProperties`: System properties to be assigned on the Location.
-- `JvmOptions`: System properties to be assigned to the Location.
+- `TagsFor`: Tags to be assigned to the resources of the location.
+- `SystemProperties`: System properties to be assigned on the location.
+- `JvmOptions`: System properties to be assigned to the location.
 - `JavaHome`: Overwrite JAVA_HOME definition.
-- `JvmOptions`: Overwrite JAVA_HOME definition.
+- `JvmOptions`: string JSON array to assign JvmOptions to your location.
 
 #### Control Plane Stack
 
@@ -67,29 +67,26 @@ The Control Plane stack configures networking, security, and storage for Gatling
 ControlPlane:
   Type: AWS::CloudFormation::Stack
   Properties:
-    TemplateURL: !Sub "${BaseTemplateURL}/templates/control-plane/template.yaml"
+    TemplateURL: !Sub "${BaseTemplateURL}/control-plane/template.yaml"
     Parameters:
+      BaseTemplateURL: !Ref BaseTemplateURL
       Name: "name"
       Token: "token"
       SubnetIDs: "subnet-a,subnet-b"
       SecurityGroupIDs: "sg-id"
-      ConfS3Bucket: "control-plane-conf"
       Locations: !Sub "${Location.Outputs.Conf}"
       #CloudWatchLogs: "true"
       #UseECR: "false"
 ```
-
+- `BaseTemplateURL` (required): The root URL for locating the CloudFormation templates. (Use Gatling's official distribution: https://cloudformation-enterprise-templates.s3.eu-west-3.amazonaws.com)
 - `Name` (required): The name of the control plane.
+- `Description`: Description of the control plane.
 - `Token` (required): The control plane token for authentication.
 - `SubnetIDs` (required): List of subnet IDs where the resources will be deployed.
 - `SecurityGroupIDs` (required): List of security group IDs to be used.
-- `ConfS3Bucket` (required): The name of the S3 bucket for configuration.
-- `Locations` (required): The list of location module(s).
 - `Image`: Image of the control plane.
-- `Description`: Description of the control plane.
-- `ObjectKey`: The key of the configuration object in the S3 bucket.
-- `Image`: The Docker image for the control-plane container.
 - `Command`: The command to run in the control-plane container.
+- `Locations` (required): The list of location module(s).
 - `CloudWatchLogs`: Indicates if CloudWatch Logs are enabled.
 - `UseECR`: Indicates if ECR IAM permissions should be created.
 
