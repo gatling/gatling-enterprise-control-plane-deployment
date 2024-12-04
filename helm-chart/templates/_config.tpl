@@ -2,7 +2,11 @@
 control-plane {
   token = "{{ .Values.controlPlane.token }}"
   description = "{{ .Values.controlPlane.description }}"
-  extra_content = {{ toJson .extra_content }}
+  {{- with .Values.controlPlane.extraContent }}
+  {{- range $key, $value := . }}
+  {{ $key }} = {{ toJson $value }}
+  {{- end }}
+  {{- end }}
   locations = [
   {{- range .Values.privateLocations }}
     {
@@ -31,7 +35,12 @@ control-plane {
         }
       }
       {{- end }}
-      debug.keep-load-generator-alive = {{ toJson .keepLoadGeneratorAlive }}
+      {{- with .extraContent }}
+      {{- range $key, $value := . }}
+      {{ $key }} = {{ toJson $value }}
+      {{- end }}
+      {{- end }}
+      debug.keep-load-generator-alive = {{ toJson (default false .keepLoadGeneratorAlive) }}
     }
   {{- end }}
   ]
