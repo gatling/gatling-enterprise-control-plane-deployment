@@ -40,7 +40,7 @@ helm show values gatling/enterprise-locations-packages > values.yaml
 > When connecting to the cluster using HTTPS, if a custom truststore and/or keystore is needed, `KUBERNETES_TRUSTSTORE_FILE`, `KUBERNETES_TRUSTSTORE_PASSPHRASE` and/or `KUBERNETES_KEYSTORE_FILE`, `KUBERNETES_KEYSTORE_PASSPHRASE` environment variables should be set.
 
 > [!TIP]
-> The control plane and location configurations allow for the setup of a reverse proxy. To enable this, uncomment the extraContent section and its associated values in the configuration file for the control plane and/or location. Ensure the reverse proxy is configured to rewrite the Host header to `api.gatling.io` to ensure proper functionality.
+> The control plane and location configurations allow for the setup of a forward proxy. To enable this, uncomment the extraContent section and its associated values in the configuration file for the control plane and/or location. Ensure the forward proxy is configured to rewrite the Host header to `api.gatling.io` to ensure proper functionality.
 
 5. Install the Gatling Enterprise Helm Chart. Optional: To install specific chart version, include the `--versions` flag:
 ```sh

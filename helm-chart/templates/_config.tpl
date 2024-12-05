@@ -7,6 +7,13 @@ control-plane {
   {{ $key }} = {{ toJson $value }}
   {{- end }}
   {{- end }}
+{{- if .Values.controlPlane.enterpriseCloud }}
+  enterprise-cloud = {
+    {{- if .Values.controlPlane.enterpriseCloud.url }}
+    url = "{{ .Values.controlPlane.enterpriseCloud.url }}"
+    {{- end }}
+  }
+{{- end }}
   locations = [
   {{- range .Values.privateLocations }}
     {
@@ -21,6 +28,13 @@ control-plane {
       java-home = "{{ .javaHome }}"
     {{- end }}
       jvm-options = {{ toJson .jvmOptions }}
+    {{- if .enterpriseCloud }}
+      enterprise-cloud = {
+        {{- if .enterpriseCloud.url }}
+        url = "{{ .enterpriseCloud.url }}"
+        {{- end }}
+      }
+    {{- end }}
       {{- with .job }}
       job = {
         "apiVersion": "batch/v1",
