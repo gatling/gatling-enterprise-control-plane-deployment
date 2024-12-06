@@ -41,12 +41,12 @@ controlPlane:
   resources: 
     # Resource requests for the container
     requests:
-      memory: "512Mi"
+      memory: "1Gi"
       cpu: "1"
     # Resource limits for the container
     limits:
-      memory: "1024Mi"
-      cpu: "2"
+      memory: "1Gi"
+      cpu: "1"
   # Security context for the pod or container
   securityContext: {}
   #enterpriseCloud:
@@ -85,12 +85,12 @@ privateLocations:
                 resources:
                   # Resource requests for the container
                   limits": 
-                    memory: "512Mi"
-                    cpu: "1"
+                    memory: "2Gi"
+                    cpu: "2"
                   # Resource limits for the container
                   requests:
-                    memory: "1024Mi"
-                    cpu: "2"
+                    memory: "1Gi"
+                    cpu: "1"
             # Security context for the pod or container
             securityContext:
               sysctls: []  # List of sysctls to set in the pod

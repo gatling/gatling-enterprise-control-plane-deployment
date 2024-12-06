@@ -63,11 +63,11 @@ spec:
           {{- end }}
           resources:
             requests:
-              memory: {{ .Values.controlPlane.resources.requests.memory | default "512Mi" }}
+              memory: {{ .Values.controlPlane.resources.requests.memory | default "1Gi" }}
               cpu: {{ .Values.controlPlane.resources.requests.cpu | default "1" }}
             limits:
-              memory: {{ .Values.controlPlane.resources.limits.memory | default "1024Mi" }}
-              cpu: {{ .Values.controlPlane.resources.limits.cpu | default "2" }}
+              memory: {{ .Values.controlPlane.resources.limits.memory | default "1Gi" }}
+              cpu: {{ .Values.controlPlane.resources.limits.cpu | default "1" }}
           volumeMounts:
             - mountPath: /app/conf/
               name: "{{ .Values.controlPlane.name }}-conf-volume"
