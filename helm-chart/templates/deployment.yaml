@@ -61,10 +61,13 @@ spec:
           env:
             {{ toYaml .Values.controlPlane.env | nindent 12 }}
           {{- end }}
-          {{- if .Values.controlPlane.resources }}
           resources:
-            {{ toYaml .Values.controlPlane.resources | nindent 12 }}
-          {{- end }}
+            requests:
+              memory: {{ .Values.controlPlane.resources.requests.memory | default "512Mi" }}
+              cpu: {{ .Values.controlPlane.resources.requests.cpu | default "1" }}
+            limits:
+              memory: {{ .Values.controlPlane.resources.limits.memory | default "1024Mi" }}
+              cpu: {{ .Values.controlPlane.resources.limits.cpu | default "2" }}
           volumeMounts:
             - mountPath: /app/conf/
               name: "{{ .Values.controlPlane.name }}-conf-volume"
