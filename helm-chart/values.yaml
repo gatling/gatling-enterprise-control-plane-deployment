@@ -51,7 +51,6 @@ controlPlane:
   securityContext: {}
   #enterpriseCloud:
     #url: "http://private-control-plane-forward-proxy/gatling" # Set up a forward proxy for the control plane
-  #extraContent: {} # Extra content
 
 privateLocations:
   - id: "prl_kubernetes"  # Unique identifier for the private location
@@ -68,7 +67,6 @@ privateLocations:
     #keepLoadGeneratorAlive: false  # Whether to keep the load generator alive (for debugging)
     #enterpriseCloud:
       #url: "http://location-forward-proxy/gatling"  # Set up a forward proxy for your location configuration
-    #extraContent: {} # Extra content
 
     # Working at the template spec level, not the job spec level.
     # For a detailed structure, refer to this example JSON job definition:

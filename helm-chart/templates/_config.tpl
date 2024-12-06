@@ -2,16 +2,11 @@
 control-plane {
   token = "{{ .Values.controlPlane.token }}"
   description = "{{ .Values.controlPlane.description }}"
-  {{- with .Values.controlPlane.extraContent }}
-  {{- range $key, $value := . }}
-  {{ $key }} = {{ toJson $value }}
-  {{- end }}
-  {{- end }}
 {{- if .Values.controlPlane.enterpriseCloud }}
   enterprise-cloud = {
-    {{- if .Values.controlPlane.enterpriseCloud.url }}
+  {{- if .Values.controlPlane.enterpriseCloud.url }}
     url = "{{ .Values.controlPlane.enterpriseCloud.url }}"
-    {{- end }}
+  {{- end }}
   }
 {{- end }}
   locations = [
@@ -30,12 +25,12 @@ control-plane {
       jvm-options = {{ toJson .jvmOptions }}
     {{- if .enterpriseCloud }}
       enterprise-cloud = {
-        {{- if .enterpriseCloud.url }}
+      {{- if .enterpriseCloud.url }}
         url = "{{ .enterpriseCloud.url }}"
-        {{- end }}
+      {{- end }}
       }
     {{- end }}
-      {{- with .job }}
+    {{- with .job }}
       job = {
         "apiVersion": "batch/v1",
         "kind": "Job",
@@ -48,12 +43,7 @@ control-plane {
             "ttlSecondsAfterFinished": {{ .spec.ttlSecondsAfterFinished }}
         }
       }
-      {{- end }}
-      {{- with .extraContent }}
-      {{- range $key, $value := . }}
-      {{ $key }} = {{ toJson $value }}
-      {{- end }}
-      {{- end }}
+    {{- end }}
       debug.keep-load-generator-alive = {{ toJson (default false .keepLoadGeneratorAlive) }}
     }
   {{- end }}
