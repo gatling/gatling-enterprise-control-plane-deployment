@@ -49,7 +49,8 @@ controlPlane:
       cpu: "1"
   # Security context for the pod or container
   securityContext: {}
-  #extra_content: {}  # Extra content (currently commented out)
+  #enterpriseCloud:
+    #url: "http://private-control-plane-forward-proxy/gatling" # Set up a forward proxy for the control plane
 
 privateLocations:
   - id: "prl_kubernetes"  # Unique identifier for the private location
@@ -62,8 +63,10 @@ privateLocations:
       #image: "gatlingcorp/classic-openjdk:latest"  # Custom image name
     #systemProperties: {}  # System properties for the JVM
     #javaHome: "/usr/lib/jvm/zulu"  # Java home path
-    #jvmOptions: ["-Xmx4G", "-Xms512M"]  # JVM options 
+    #jvmOptions: ["-Xmx4G", "-Xms512M"]  # JVM options
     #keepLoadGeneratorAlive: false  # Whether to keep the load generator alive (for debugging)
+    #enterpriseCloud:
+      #url: "http://location-forward-proxy/gatling"  # Set up a forward proxy for your location configuration
 
     # Working at the template spec level, not the job spec level.
     # For a detailed structure, refer to this example JSON job definition:

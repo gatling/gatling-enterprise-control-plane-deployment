@@ -120,3 +120,9 @@ jobs:
           CHART_FILE=$(basename helm-chart/*.tgz)
           echo "Helm chart URL: http://${AWS_S3_BUCKET}.s3-website.${AWS_REGION}.amazonaws.com/charts/$CHART_FILE"
           echo "Helm Repo Index URL: http://${AWS_S3_BUCKET}.s3-website.${AWS_REGION}.amazonaws.com/index.yaml"
+
+      - name: Create CloudFront invalidation
+        if: ${{ github.event_name != 'pull_request' }}
+        env:
+          CLOUDFRONT_DISTRIBUTION_ID: ${{ vars.SE_HELM_AWS_CLOUDFRONT_DISTRIBUTION_ID }}
+        run: aws cloudfront create-invalidation --distribution-id ${CLOUDFRONT_DISTRIBUTION_ID} --paths "/*"

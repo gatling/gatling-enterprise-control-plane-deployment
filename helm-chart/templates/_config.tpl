@@ -2,7 +2,13 @@
 control-plane {
   token = "{{ .Values.controlPlane.token }}"
   description = "{{ .Values.controlPlane.description }}"
-  extra_content = {{ toJson .extra_content }}
+{{- if .Values.controlPlane.enterpriseCloud }}
+  enterprise-cloud = {
+  {{- if .Values.controlPlane.enterpriseCloud.url }}
+    url = "{{ .Values.controlPlane.enterpriseCloud.url }}"
+  {{- end }}
+  }
+{{- end }}
   locations = [
   {{- range .Values.privateLocations }}
     {
@@ -17,7 +23,14 @@ control-plane {
       java-home = "{{ .javaHome }}"
     {{- end }}
       jvm-options = {{ toJson .jvmOptions }}
-      {{- with .job }}
+    {{- if .enterpriseCloud }}
+      enterprise-cloud = {
+      {{- if .enterpriseCloud.url }}
+        url = "{{ .enterpriseCloud.url }}"
+      {{- end }}
+      }
+    {{- end }}
+    {{- with .job }}
       job = {
         "apiVersion": "batch/v1",
         "kind": "Job",
@@ -30,8 +43,8 @@ control-plane {
             "ttlSecondsAfterFinished": {{ .spec.ttlSecondsAfterFinished }}
         }
       }
-      {{- end }}
-      debug.keep-load-generator-alive = {{ toJson .keepLoadGeneratorAlive }}
+    {{- end }}
+      debug.keep-load-generator-alive = {{ toJson (default false .keepLoadGeneratorAlive) }}
     }
   {{- end }}
   ]
