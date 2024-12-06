@@ -38,7 +38,7 @@ controlPlane:
   affinity: {}
   # Tolerations to allow pods to be scheduled on tainted nodes
   tolerations: {}
-  resources: # Recommended: Guaranteed QoS class.
+  resources: # We recommend aligning resource requests with limits to maintain consistent performance
     # Resource requests for the container
     requests:
       memory: "1Gi"
@@ -82,15 +82,15 @@ privateLocations:
             containers:
               - env: []  # Environment variables for the container
                 name: gatling-container  # Name of the container
-                resources: # Recommended: Burstable QoS class.
+                resources: # We recommend aligning resource requests with limits to maintain consistent performance
                   # Resource requests for the container
                   limits": 
                     memory: "2Gi"
                     cpu: "2"
                   # Resource limits for the container
                   requests:
-                    memory: "1Gi"
-                    cpu: "1"
+                    memory: "2Gi"
+                    cpu: "2"
             # Security context for the pod or container
             securityContext:
               sysctls: []  # List of sysctls to set in the pod
