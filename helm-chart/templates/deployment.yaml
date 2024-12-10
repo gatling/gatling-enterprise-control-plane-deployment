@@ -23,6 +23,8 @@ spec:
       {{- with .Values.controlPlane.podLabels }}
         {{ toYaml . | nindent 8 }}
       {{- end }}
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
     spec:
       serviceAccountName: "{{ .Values.controlPlane.name }}-service-account"
       {{- if .Values.controlPlane.securityContext }}
