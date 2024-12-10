@@ -45,7 +45,7 @@ export class ECSstack extends NestedStack {
         "control-plane": {
           token = \${?CONTROL_PLANE_TOKEN},
           description: ${description},
-          enterprise-cloud: ${enterpriseCloud},
+          enterprise-cloud: ${JSON.stringify(enterpriseCloud)},
           locations: ${JSON.stringify(
             locations.map((location) => ({
               type: "aws",
