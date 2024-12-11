@@ -8,6 +8,8 @@ import com.gatlingenterprise.records.locationProps.TagsFor;
 import com.gatlingenterprise.records.packageProps.PrivatePackage;
 import com.gatlingenterprise.records.packageProps.Server;
 import com.gatlingenterprise.records.packageProps.Upload;
+import com.gatlingenterprise.stacks.ControlPlaneStack;
+
 import java.util.List;
 import java.util.Map;
 import software.amazon.awscdk.App;

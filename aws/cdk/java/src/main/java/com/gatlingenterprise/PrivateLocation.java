@@ -5,6 +5,8 @@ import com.gatlingenterprise.records.locationProps.AMI;
 import com.gatlingenterprise.records.locationProps.EnterpriseCloud;
 import com.gatlingenterprise.records.locationProps.Location;
 import com.gatlingenterprise.records.locationProps.TagsFor;
+import com.gatlingenterprise.stacks.ControlPlaneStack;
+
 import java.util.List;
 import java.util.Map;
 import software.amazon.awscdk.App;

@@ -1,4 +1,4 @@
-package com.gatlingenterprise;
+package com.gatlingenterprise.stacks;
 
 import static com.gatlingenterprise.stacks.IAMstack.ecsTaskRoleArn;
 import static com.gatlingenterprise.stacks.SecretsManagerStack.secretToken;
@@ -8,9 +8,7 @@ import com.gatlingenterprise.records.controlPlaneProps.ECSstackProps;
 import com.gatlingenterprise.records.controlPlaneProps.IAMStackProps;
 import com.gatlingenterprise.records.controlPlaneProps.SecretsManagerStackProps;
 import com.gatlingenterprise.records.locationProps.EnterpriseCloud;
-import com.gatlingenterprise.stacks.ECSstack;
-import com.gatlingenterprise.stacks.IAMstack;
-import com.gatlingenterprise.stacks.SecretsManagerStack;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
