@@ -122,7 +122,7 @@ Location location =
 
 The Private Package object defines a secure S3 bucket where private packages are stored.
 
-```typescript
+```java
 PrivatePackage privatePackage =
     new PrivatePackage("bucket-name", "/", new Upload(null), new Server(null, null, null));
 ```
