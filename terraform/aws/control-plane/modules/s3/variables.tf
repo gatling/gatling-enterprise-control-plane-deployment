@@ -29,7 +29,10 @@ variable "private_package" {
   type        = map(any)
 }
 
+variable "enterprise_cloud" {
+  type    = map(any)
+}
+
 variable "extra_content" {
   type    = map(any)
-  default = {}
 }

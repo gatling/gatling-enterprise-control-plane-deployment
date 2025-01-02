@@ -4,9 +4,10 @@ data "aws_s3_bucket" "s3_conf" {
 
 locals {
   base_content = {
-    token        = var.token
-    description  = var.description
-    locations    = [for location in var.locations : location.conf]
+    token        : var.token
+    description  : var.description
+    enterprise-cloud : var.enterprise_cloud
+    locations    : [for location in var.locations : location.conf]
   }
 
   full_content = {
@@ -14,7 +15,7 @@ locals {
       var.extra_content,
       local.base_content,
       length(var.private_package) > 0 ? {
-        repository = var.private_package.conf
+        repository : var.private_package.conf
       } : {}
     )
   }

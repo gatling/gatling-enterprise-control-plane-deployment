@@ -7,14 +7,15 @@ module "iam" {
 }
 
 module "s3" {
-  source          = "./modules/s3"
-  name            = var.conf_s3_name
-  object_name     = var.conf_s3_object_name
-  token           = var.token
-  description     = var.description
-  locations       = var.locations
-  private_package = var.private_package
-  extra_content   = var.extra_content
+  source           = "./modules/s3"
+  name             = var.conf_s3_name
+  object_name      = var.conf_s3_object_name
+  token            = var.token
+  description      = var.description
+  locations        = var.locations
+  private_package  = var.private_package
+  enterprise_cloud = var.enterprise_cloud
+  extra_content    = var.extra_content
 }
 
 module "ecs" {

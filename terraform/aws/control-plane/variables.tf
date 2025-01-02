@@ -58,6 +58,11 @@ variable "extra_content" {
   default = {}
 }
 
+variable "enterprise_cloud" {
+  type    = map(any)
+  default = {}
+}
+
 variable "command" {
   description = "Control plane image command"
   type        = list(string)

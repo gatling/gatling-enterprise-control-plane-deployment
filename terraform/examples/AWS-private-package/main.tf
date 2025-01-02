@@ -15,6 +15,9 @@ module "location" {
   security_group_ids = ["sg-id"]
   //instance_type      = "c7i.xlarge"
   //engine             = "classic"
+  //enterprise_cloud = {
+    //url = "http://private-control-plane-forward-proxy/gatling"
+  //}
 }
 
 module "control-plane" {
@@ -28,4 +31,7 @@ module "control-plane" {
   locations          = [module.location]
   private_package    = module.private-package
   //cloudWatch_logs    = true
+  //enterprise_cloud = {
+    //url = "http://private-control-plane-forward-proxy/gatling"
+  //}
 }
