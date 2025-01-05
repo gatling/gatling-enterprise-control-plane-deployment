@@ -1,11 +1,16 @@
+variable "ecs_tasks_iam_role_arn" {
+  type        = string
+  description = "Control Plane IAM Role ARN."
+}
+
 variable "name" {
   type        = string
   description = "Name of the control plane."
 }
 
-variable "image" {
+variable "description" {
   type        = string
-  description = "Image of the control plane."
+  description = "Description of the control plane."
 }
 
 variable "subnet_ids" {
@@ -18,19 +23,9 @@ variable "security_group_ids" {
   description = "Security group IDs to be used with the control plane."
 }
 
-variable "ecs_tasks_iam_role_arn" {
+variable "image" {
   type        = string
-  description = "Control Plane IAM Role ARN."
-}
-
-variable "conf_s3_name" {
-  type        = string
-  description = "S3 bucket name to be used with the control plane."
-}
-
-variable "private_package" {
-  description = "JSON configuration for the Private Package."
-  type        = map(any)
+  description = "Image of the control plane."
 }
 
 variable "command" {
@@ -39,7 +34,39 @@ variable "command" {
   default     = []
 }
 
+variable "secrets" {
+  type = list(map(string))
+}
+
+variable "environment" {
+  description = "Control plane environment variables."
+  type        = list(map(string))
+}
+
+variable "locations" {
+  description = "JSON configuration for the locations."
+  type        = list(any)
+}
+
+variable "private_package" {
+  description = "JSON configuration for the Private Package."
+  type        = map(any)
+}
+
+variable "enterprise_cloud" {
+  type = map(any)
+}
+
+variable "extra_content" {
+  type = map(any)
+}
+
 variable "cloudWatch_logs" {
   description = "Control Plane CloudWatch Logs."
   type        = bool
+}
+
+variable "token_secret_arn" {
+  type        = string
+  description = "Secret Token ARN of the control plane"
 }
