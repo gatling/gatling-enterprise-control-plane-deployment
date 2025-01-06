@@ -5,7 +5,7 @@ This Terraform configuration sets up the AWS infrastructure for Gatling Enterpri
 ## Prerequisites
 
 - Gatling Enterprise [account](https://auth.gatling.io/auth/realms/gatling/protocol/openid-connect/auth?client_id=gatling-enterprise-cloud-public&response_type=code&scope=openid&redirect_uri=https%3A%2F%2Fcloud.gatling.io%2Fr%2Fgatling) with Private Locations enabled. To access this feature, please contact our [technical support](https://gatlingcorp.atlassian.net/servicedesk/customer/portal/8/group/12/create/59?summary=Private+Locations&description=Contact%20email%3A%20%3Cemail%3E%0A%0AHello%2C%20we%20would%20like%20to%20enable%20the%20private%20locations%20feature%20on%20our%20organization.).
-- A control plane [token](https://docs.gatling.io/reference/install/cloud/private-locations/introduction/#token).
+- A control plane [token](https://docs.gatling.io/reference/install/cloud/private-locations/introduction/#token) stored in AWS Secrets Manager as a plaintext secret.
 - Terraform installed on your local machine
 - AWS credentials configured
 
@@ -37,6 +37,9 @@ module "location" {
   security_group_ids = ["sg-id"]
   instance_type      = "c7i.xlarge"
   engine             = "classic"
+  //enterprise_cloud = {
+    //url = ""  // http://private-control-plane-forward-proxy/gatling
+  //}
 }
 ```
 
@@ -59,6 +62,7 @@ module "location" {
 - `system_properties`: System properties to be assigned to the Location.
 - `java_home`: Overwrite JAVA_HOME definition.
 - `jvm_options`: Overwrite JAVA_HOME definition.
+- `enterprise_cloud.url`: Set up a forward proxy for the control plane.
 
 ### Control Plane
 
@@ -68,24 +72,29 @@ Sets up the control plane with configurations for networking, security, and S3 s
 module "control-plane" {
   source              = "git::git@github.com:gatling/gatling-enterprise-control-plane-deployment//terraform/aws/control-plane"
   name                = "name"
-  token               = "token"
+  token_secret_arn    = "aws-secrets-manager-secret-arn"
   subnet_ids          = ["subnet-a", "subnet-b"]
   security_group_ids  = ["sg-id"]
-  conf_s3_name        = "conf_s3_name"
   locations           = [module.location]
+  //cloudWatch_logs   = true
+  //ecr               = false
+  //enterprise_cloud  = {
+    //url = ""  // http://private-control-plane-forward-proxy/gatling
+  //}
 }
 ```
 
 - `source` (required): The source of the module, pointing to the GitHub repository.
 - `name` (required): The name of the control plane.
-- `token` (required): The control plane token for authentication.
+- `token_secret_arn` (required): AWS Secrets Manager Plaintext secret ARN of the stored control plane token.
 - `subnet_ids` (required): List of subnet IDs where the resources will be deployed.
 - `security_group_ids` (required): List of security group IDs to be used.
-- `conf_s3_name` (required): The name of the S3 bucket for configuration.
 - `locations` (required): The list of location module(s).
 - `image`: Image of the control plane.
 - `description`: Description of the control plane.
-- `conf_s3_object_name`: The name of the configuration object in the S3 bucket.
+- `cloudWatch_logs`: Indicates if CloudWatch Logs are enabled.
+- `ecr`: Indicates if ECR IAM permissions should be created.
+- `enterprise_cloud.url`: Set up a forward proxy for the control plane.
 
 ## Usage
 

@@ -77,23 +77,23 @@ variable "iam_instance_profile" {
 variable "tags" {
   description = "Tags to be assigned to the Location."
   type        = map(string)
-  default = {}
+  default     = {}
 }
 
 variable "tags_for" {
   description = "Tags to be assigned to the resources of the Location."
   type        = map(map(string))
   default = {
-    instance: {}
-    volume: {}
-    network-interface: {}
+    instance : {}
+    volume : {}
+    network-interface : {}
   }
 }
 
 variable "system_properties" {
   description = "System properties to be assigned to the Location."
   type        = map(string)
-  default = {}
+  default     = {}
 }
 
 variable "java_home" {
@@ -103,7 +103,11 @@ variable "java_home" {
 }
 
 variable "jvm_options" {
-  description = "Overwrite JAVA_HOME definition."
+  description = "Pass JVM Options."
   type        = list(string)
   default     = []
+}
+variable "enterprise_cloud" {
+  type    = map(any)
+  default = {}
 }

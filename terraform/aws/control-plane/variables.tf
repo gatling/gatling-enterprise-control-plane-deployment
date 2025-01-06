@@ -15,12 +15,6 @@ variable "image" {
   default     = "gatlingcorp/control-plane:latest"
 }
 
-variable "token" {
-  type        = string
-  description = "Token of the control plane"
-  sensitive   = true
-}
-
 variable "subnet_ids" {
   type        = list(string)
   description = "The subnet IDs for the control plane."
@@ -29,17 +23,6 @@ variable "subnet_ids" {
 variable "security_group_ids" {
   type        = list(string)
   description = "Security group IDs to be used with the control plane."
-}
-
-variable "conf_s3_name" {
-  type        = string
-  description = "S3 bucket name to be used with the control plane."
-}
-
-variable "conf_s3_object_name" {
-  type        = string
-  description = "Configuration object name to be stored in the S3 bucket."
-  default     = "control-plane.conf"
 }
 
 variable "locations" {
@@ -58,9 +41,25 @@ variable "extra_content" {
   default = {}
 }
 
+variable "enterprise_cloud" {
+  type    = map(any)
+  default = {}
+}
+
 variable "command" {
   description = "Control plane image command"
   type        = list(string)
+  default     = []
+}
+
+variable "secrets" {
+  type    = list(map(string))
+  default = []
+}
+
+variable "environment" {
+  description = "Control plane image environment variables."
+  type        = list(map(string))
   default     = []
 }
 
@@ -68,4 +67,15 @@ variable "cloudWatch_logs" {
   description = "Control Plane Service CloudWatch logs."
   type        = bool
   default     = true
+}
+
+variable "ecr" {
+  description = "Enable ECR IAM Permissions."
+  type        = bool
+  default     = false
+}
+
+variable "token_secret_arn" {
+  type        = string
+  description = "Control plane secret token ARN."
 }

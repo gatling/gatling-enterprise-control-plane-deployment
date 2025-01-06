@@ -1,5 +1,5 @@
 resource "aws_iam_role" "gatling_role" {
-  name = var.name
+  name = "${var.name}-role"
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
     Statement = [
@@ -14,22 +14,8 @@ resource "aws_iam_role" "gatling_role" {
   })
 }
 
-resource "aws_iam_policy" "s3_policy" {
-  name = "${var.name}-ConfInitContainerPolicy"
-  policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [
-      {
-        Effect   = "Allow",
-        Action   = ["s3:GetObject"],
-        Resource = "arn:aws:s3:::${var.s3_bucket_name}/control-plane.conf"
-      }
-    ]
-  })
-}
-
 resource "aws_iam_policy" "ec2_policy" {
-  name = "${var.name}-EC2Policy"
+  name = "${var.name}-ec2-policy"
   policy = jsonencode({
     Version = "2012-10-17",
     Statement = [
@@ -49,9 +35,9 @@ resource "aws_iam_policy" "ec2_policy" {
   })
 }
 
-resource "aws_iam_policy" "pp_s3_policy" {
+resource "aws_iam_policy" "package_s3_policy" {
   count = length(var.private_package) > 0 ? 1 : 0
-  name  = "${var.name}-PackagePolicy"
+  name  = "${var.name}-package-s3-policy"
   policy = jsonencode({
     Version = "2012-10-17",
     Statement = [
@@ -68,9 +54,45 @@ resource "aws_iam_policy" "pp_s3_policy" {
   })
 }
 
+resource "aws_iam_policy" "asm_policy" {
+  name = "${var.name}-asm-policy"
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "secretsmanager:GetSecretValue"
+        ],
+        Resource = var.token_secret_arn
+      }
+    ]
+  })
+}
+
+resource "aws_iam_policy" "ecr_policy" {
+  count = var.ecr ? 1 : 0
+  name  = "${var.name}-ecr-policy"
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "ecr:GetAuthorizationToken",
+          "ecr:BatchCheckLayerAvailability",
+          "ecr:GetDownloadUrlForLayer",
+          "ecr:BatchGetImage"
+        ],
+        Resource = "*"
+      }
+    ]
+  })
+}
+
 resource "aws_iam_policy" "cloudwatch_logs_policy" {
   count = var.cloudWatch_logs ? 1 : 0
-  name  = "${var.name}-CloudWatchLogsPolicy"
+  name  = "${var.name}-cloudwatch-logs-policy"
   policy = jsonencode({
     Version = "2012-10-17",
     Statement = [
@@ -87,24 +109,30 @@ resource "aws_iam_policy" "cloudwatch_logs_policy" {
   })
 }
 
-resource "aws_iam_role_policy_attachment" "s3_policy_attachment" {
-  role       = aws_iam_role.gatling_role.name
-  policy_arn = aws_iam_policy.s3_policy.arn
-}
-
 resource "aws_iam_role_policy_attachment" "ec2_policy_attachment" {
   role       = aws_iam_role.gatling_role.name
   policy_arn = aws_iam_policy.ec2_policy.arn
 }
 
-resource "aws_iam_role_policy_attachment" "pp_s3_policy_attachment" {
+resource "aws_iam_role_policy_attachment" "package_s3_policy_attachment" {
   count      = length(var.private_package) > 0 ? 1 : 0
   role       = aws_iam_role.gatling_role.name
-  policy_arn = aws_iam_policy.pp_s3_policy[0].arn
+  policy_arn = aws_iam_policy.package_s3_policy[0].arn
 }
 
 resource "aws_iam_role_policy_attachment" "cloudwatch_logs_policy_attachment" {
   count      = var.cloudWatch_logs ? 1 : 0
   role       = aws_iam_role.gatling_role.name
   policy_arn = aws_iam_policy.cloudwatch_logs_policy[0].arn
+}
+
+resource "aws_iam_role_policy_attachment" "asm_policy_attachment" {
+  role       = aws_iam_role.gatling_role.name
+  policy_arn = aws_iam_policy.asm_policy.arn
+}
+
+resource "aws_iam_role_policy_attachment" "ecr_policy_attachment" {
+  count      = var.ecr ? 1 : 0
+  role       = aws_iam_role.gatling_role.name
+  policy_arn = aws_iam_policy.ecr_policy[0].arn
 }

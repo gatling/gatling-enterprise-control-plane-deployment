@@ -4,6 +4,28 @@ resource "aws_ecs_cluster" "gatling_cluster" {
 
 data "aws_region" "current" {}
 
+locals {
+  path           = "/app/conf"
+  volume_name    = "control-plane-conf"
+  config_content = <<-EOF
+    control-plane {
+      token = $${?CONTROL_PLANE_TOKEN}
+      description = "${var.description}"
+      enterprise-cloud = { %{for key, value in var.enterprise_cloud} ${key} = "${value}" %{endfor} }
+      locations = [ %{for location in var.locations} ${jsonencode(location.conf)}, %{endfor} ]
+      %{if length(var.private_package) > 0}repository = ${jsonencode(var.private_package.conf)}%{endif}
+      %{for key, value in var.extra_content}${key} = "${value}"%{endfor}
+    }
+  EOF
+  log_group = {
+    "awslogs-group" : "/ecs/${var.name}-service"
+    "awslogs-region" : data.aws_region.current.name
+    "awslogs-create-group" : "true"
+  }
+  token_secret = { name = "CONTROL_PLANE_TOKEN", valueFrom = var.token_secret_arn }
+  ecs_secrets  = concat(var.secrets, [local.token_secret])
+}
+
 resource "aws_ecs_task_definition" "gatling_task" {
   family                   = "${var.name}-task"
   network_mode             = "awsvpc"
@@ -16,22 +38,36 @@ resource "aws_ecs_task_definition" "gatling_task" {
   container_definitions = jsonencode([
     {
       name : "conf-loader-init-container"
-      image : "amazon/aws-cli"
+      image : "busybox"
       cpu : 0
       essential : false
-      entryPoint : ["aws", "s3", "cp", "s3://${var.conf_s3_name}/control-plane.conf", "/app/conf/control-plane.conf"]
+      command : [
+        "/bin/sh",
+        "-c",
+        "echo \"$CONFIG_CONTENT\" > ${local.path}/control-plane.conf"
+      ]
+      environment : [
+        {
+          name : "CONFIG_CONTENT",
+          value : local.config_content
+        }
+      ]
       mountPoints : [
         {
-          sourceVolume : "control-plane-conf"
-          containerPath : "/app/conf"
+          sourceVolume : local.volume_name
+          containerPath : local.path
           readOnly : false
         }
       ]
+      logConfiguration : var.cloudWatch_logs ? {
+        logDriver : "awslogs"
+        options : merge(local.log_group, { "awslogs-stream-prefix" : "init" })
+      } : null
     },
     {
       name : "control-plane"
       image : var.image
-      command : var.command,
+      command : var.command
       cpu : 0
       essential : true
       portMappings : length(var.private_package) > 0 ? [
@@ -40,23 +76,20 @@ resource "aws_ecs_task_definition" "gatling_task" {
           hostPort : var.private_package.conf.server.port,
           protocol : "tcp"
         }
-      ] : [],
-      workingDirectory : "/app/conf"
+      ] : []
+      workingDirectory : local.path
+      secrets : local.ecs_secrets
+      environment : var.environment
       mountPoints : [
         {
-          sourceVolume : "control-plane-conf"
-          containerPath : "/app/conf"
+          sourceVolume : local.volume_name
+          containerPath : local.path
           readOnly : true
         }
       ]
       logConfiguration : var.cloudWatch_logs ? {
         logDriver : "awslogs"
-        options : {
-          "awslogs-group" : "/ecs/${var.name}-service"
-          "awslogs-region" : data.aws_region.current.name
-          "awslogs-create-group" : "true"
-          "awslogs-stream-prefix" : "ecs"
-        }
+        options : merge(local.log_group, { "awslogs-stream-prefix" : "main" })
       } : null
       dependsOn : [
         {
@@ -68,7 +101,7 @@ resource "aws_ecs_task_definition" "gatling_task" {
   ])
 
   volume {
-    name = "control-plane-conf"
+    name = local.volume_name
   }
 }
 
