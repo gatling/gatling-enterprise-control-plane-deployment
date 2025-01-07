@@ -1,9 +1,8 @@
-import { Stack } from "aws-cdk-lib";
 import "source-map-support/register";
+import { Stack } from "aws-cdk-lib";
 import { Construct } from "constructs";
 import { ECSstack } from "./stacks/ecs-stack";
 import { IAMstack } from "./stacks/iam-stack";
-import { SecretsManagerStack } from "./stacks/secretsmanager-stack";
 import { ControlPlaneProps } from "./interfaces/control-plane-interface";
 
 export class ControlPlaneStack extends Stack {
@@ -12,11 +11,10 @@ export class ControlPlaneStack extends Stack {
 
     const {
       vpcId,
-      availabilityZones,
       subnetIds,
+      availabilityZones,
       securityGroupIds,
-      token,
-      tokenSecretName = "GatlingEnterprise/ControlPlane/Token",
+      tokenSecretARN,
       name,
       description,
       image,
@@ -48,7 +46,7 @@ export class ControlPlaneStack extends Stack {
       image,
       command,
       environment,
-      secrets: { CONTROL_PLANE_TOKEN: ControlPlaneSecret.token, ...secrets },
+      secrets: { CONTROL_PLANE_TOKEN: tokenSecretARN, ...secrets },
       locations,
       privatePackage,
       cloudWatchLogs,
