@@ -4,12 +4,13 @@ import {
   FargateTaskDefinition,
   FargateService,
   ContainerImage,
-  Secret,
   Protocol,
   LogDrivers,
-  ContainerDependencyCondition
+  ContainerDependencyCondition,
+  Secret as EcsSecret,
 } from "aws-cdk-lib/aws-ecs";
 import { Vpc, Subnet, SecurityGroup } from "aws-cdk-lib/aws-ec2";
+import { Secret } from "aws-cdk-lib/aws-secretsmanager";
 import { Role } from "aws-cdk-lib/aws-iam";
 import { LogGroup, RetentionDays } from "aws-cdk-lib/aws-logs";
 import { Construct } from "constructs";
@@ -25,16 +26,16 @@ export class ECSstack extends NestedStack {
       subnetIds,
       securityGroupIds,
       name,
-      secrets,
       description,
       ecsTaskRoleArn,
       image,
-      environment,
       command,
+      secrets,
+      environment,
       locations,
       privatePackage,
       cloudWatchLogs,
-      enterpriseCloud
+      enterpriseCloud,
     } = props;
 
     const volumeNname: string = "control-plane-conf";
@@ -49,7 +50,7 @@ export class ECSstack extends NestedStack {
           locations: ${JSON.stringify(
             locations.map((location) => ({
               type: "aws",
-              ...location
+              ...location,
             }))
           )},
           repository: ${JSON.stringify(privatePackage ? { type: "aws", ...privatePackage } : {})}
@@ -60,12 +61,12 @@ export class ECSstack extends NestedStack {
     const vpc = Vpc.fromVpcAttributes(this, "ExistingVpc", {
       vpcId: vpcId,
       availabilityZones: availabilityZones,
-      privateSubnetIds: subnetIds
+      privateSubnetIds: subnetIds,
     });
 
     const cluster = new Cluster(this, "GatlingEnterpriseCluster", {
       clusterName: `${name}-cluster`,
-      vpc
+      vpc,
     });
 
     const taskRole = Role.fromRoleArn(this, "EcsTaskRole", ecsTaskRoleArn);
@@ -74,92 +75,111 @@ export class ECSstack extends NestedStack {
       ? new LogGroup(this, "LogGroup", {
           logGroupName: `/ecs/${name}-service`,
           retention: RetentionDays.ONE_MONTH,
-          removalPolicy: RemovalPolicy.DESTROY
+          removalPolicy: RemovalPolicy.DESTROY,
         })
       : undefined;
 
-    const taskDefinition = new FargateTaskDefinition(this, "GatlingTaskDefinition", {
-      family: `${name}-task`,
-      taskRole,
-      executionRole: taskRole,
-      cpu: 1024,
-      memoryLimitMiB: 3072,
-      volumes: [
-        {
-          name: volumeNname
-        }
-      ]
-    });
+    const taskDefinition = new FargateTaskDefinition(
+      this,
+      "GatlingTaskDefinition",
+      {
+        family: `${name}-task`,
+        taskRole,
+        executionRole: taskRole,
+        cpu: 1024,
+        memoryLimitMiB: 3072,
+        volumes: [
+          {
+            name: volumeNname,
+          },
+        ],
+      }
+    );
 
-    const initContainer = taskDefinition.addContainer("ConfLoaderInitContainer", {
-      image: ContainerImage.fromRegistry("busybox"),
-      essential: false,
-      environment: {
-        CONFIG_CONTENT: configContent
-      },
-      command: [
-        "/bin/sh",
-        "-c",
-        `echo "$CONFIG_CONTENT" > ${path}/control-plane.conf; echo "$CONFIG_CONTENT"`
-      ],
-      readonlyRootFilesystem: false,
-      logging: cloudWatchLogs
-        ? LogDrivers.awsLogs({
-            logGroup,
-            streamPrefix: "init"
-          })
-        : undefined
-    });
+    const initContainer = taskDefinition.addContainer(
+      "ConfLoaderInitContainer",
+      {
+        image: ContainerImage.fromRegistry("busybox"),
+        essential: false,
+        environment: {
+          CONFIG_CONTENT: configContent,
+        },
+        command: [
+          "/bin/sh",
+          "-c",
+          `echo "$CONFIG_CONTENT" > ${path}/control-plane.conf`,
+        ],
+        readonlyRootFilesystem: false,
+        logging: cloudWatchLogs
+          ? LogDrivers.awsLogs({
+              logGroup,
+              streamPrefix: "init",
+            })
+          : undefined,
+      }
+    );
 
     initContainer.addMountPoints({
       sourceVolume: volumeNname,
       containerPath: path,
-      readOnly: false
+      readOnly: false,
     });
 
-    const ecsSecrets: { [key: string]: Secret } = {};
+    const ecsSecrets: { [key: string]: EcsSecret } = {};
     if (secrets) {
-      for (const [key, secret] of Object.entries(secrets)) {
-        if (secret) {
-          ecsSecrets[key] = Secret.fromSecretsManager(secret);
+      for (const [key, secretArn] of Object.entries(secrets)) {
+        if (secretArn) {
+          const secret = Secret.fromSecretCompleteArn(
+            this,
+            "ImportedSecret",
+            secretArn
+          );
+          ecsSecrets[key] = EcsSecret.fromSecretsManager(secret);
           secret.grantRead(taskDefinition.taskRole);
         }
       }
     }
 
-    const controlPlaneContainer = taskDefinition.addContainer("ControlPlaneContainer", {
-      image: ContainerImage.fromRegistry(image),
-      essential: true,
-      secrets: ecsSecrets,
-      environment: environment,
-      command: command,
-      workingDirectory: path,
-      portMappings: privatePackage
-        ? [
-            {
-              containerPort: privatePackage?.server?.port ? privatePackage?.server?.port : 8080,
-              hostPort: privatePackage?.server?.port ? privatePackage?.server?.port : 8080,
-              protocol: Protocol.TCP
-            }
-          ]
-        : [],
-      logging: cloudWatchLogs
-        ? LogDrivers.awsLogs({
-            logGroup,
-            streamPrefix: "main"
-          })
-        : undefined
-    });
+    const controlPlaneContainer = taskDefinition.addContainer(
+      "ControlPlaneContainer",
+      {
+        image: ContainerImage.fromRegistry(image),
+        essential: true,
+        secrets: ecsSecrets,
+        environment: environment,
+        command: command,
+        workingDirectory: path,
+        portMappings: privatePackage
+          ? [
+              {
+                containerPort: privatePackage?.server?.port
+                  ? privatePackage?.server?.port
+                  : 8080,
+                hostPort: privatePackage?.server?.port
+                  ? privatePackage?.server?.port
+                  : 8080,
+                protocol: Protocol.TCP,
+              },
+            ]
+          : [],
+        logging: cloudWatchLogs
+          ? LogDrivers.awsLogs({
+              logGroup,
+              streamPrefix: "main",
+            })
+          : undefined,
+      }
+    );
 
     controlPlaneContainer.addMountPoints({
       sourceVolume: volumeNname,
       containerPath: path,
-      readOnly: true
+      readOnly: true,
     });
 
     controlPlaneContainer.addContainerDependencies({
       container: initContainer,
-      condition: ContainerDependencyCondition.SUCCESS
+      condition: ContainerDependencyCondition.SUCCESS,
     });
 
     new FargateService(this, "GatlingEnterpriseService", {
@@ -169,11 +189,13 @@ export class ECSstack extends NestedStack {
       desiredCount: 1,
       assignPublicIp: true,
       vpcSubnets: {
-        subnets: subnetIds.map((subnetId) => Subnet.fromSubnetId(this, subnetId, subnetId))
+        subnets: subnetIds.map((subnetId) =>
+          Subnet.fromSubnetId(this, subnetId, subnetId)
+        ),
       },
       securityGroups: securityGroupIds.map((sgId) =>
         SecurityGroup.fromSecurityGroupId(this, `SecurityGroup-${sgId}`, sgId)
-      )
+      ),
     });
   }
 }

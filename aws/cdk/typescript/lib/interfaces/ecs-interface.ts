@@ -1,5 +1,4 @@
 import { StackProps } from "aws-cdk-lib";
-import { ISecret } from "aws-cdk-lib/aws-secretsmanager";
 import { enterpriseCloud, Location, PrivatePackage } from "./common-interface";
 
 export interface ECSstackProps extends StackProps {
@@ -13,7 +12,7 @@ export interface ECSstackProps extends StackProps {
   image: string;
   command?: string[];
   environment?: Record<string, string>;
-  secrets?: Record<string, ISecret>;
+  secrets?: Record<string, string>;
   locations: Location[];
   privatePackage?: PrivatePackage;
   cloudWatchLogs?: boolean;
