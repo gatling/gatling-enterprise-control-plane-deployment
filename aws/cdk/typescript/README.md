@@ -6,7 +6,7 @@ This CDK application sets up Gatling Enterprise Private Locations and Packages i
 
 Before deploying, ensure you have:
 - A [Gatling Enterprise account](https://auth.gatling.io) with Private Locations enabled.
-- A control plane [token](https://docs.gatling.io/reference/install/cloud/private-locations/introduction/#token).
+- A control plane [token](https://docs.gatling.io/reference/install/cloud/private-locations/introduction/#token) stored in AWS Secrets Manager as a plaintext secret.
 - Proper AWS credentials configured.
 
 ## Application Structure
@@ -28,8 +28,7 @@ The Control Plane stack configures networking, security, and storage for Gatling
 ```typescript
 new ControlPlaneStack(app, stackName, {
   // Possible values available on interface ControlPlaneProps in lib/interfaces/control-plane-interface.ts
-  token:
-    "token",
+  tokenSecretARN: "token-secret-ARN",
   name: "gatling-pl",
   description: "My AWS control plane description",
   vpcId: "vpc-id",
@@ -42,12 +41,12 @@ new ControlPlaneStack(app, stackName, {
   //cloudWatchLogs: true,
   //useECR: false,
   //enterpriseCloud: {
-  //  url: "http://private-control-plane-forward-proxy/gatling"
+    //url: "http://private-control-plane-forward-proxy/gatling"
   //}
 });
 ```
 
-- token (required): The control plane token for authentication.
+- tokenSecretARN (required): AWS Secrets Manager Plaintext secret ARN of the stored control plane token.
 - name (required): The name of the control plane.
 - description: Description of the control plane.
 - vpcId (required): VPC ID where the resources will be deployed.
@@ -78,9 +77,9 @@ const location = {
     type: "certified"
   },
   engine: "classic"
-  enterprise-cloud: {
-    url: http://private-location-forward-proxy/gatling
-  }
+  //enterprise-cloud: {
+    //url: http://private-location-forward-proxy/gatling
+  //}
 };
 ```
 
