@@ -30,12 +30,6 @@ export class ControlPlaneStack extends Stack {
       enterpriseCloud = {}
     } = props;
 
-    const ControlPlaneSecret = new SecretsManagerStack(this, "sm", {
-      description: "Token for Gatling Enterprise control plane.",
-      secretName: tokenSecretName,
-      secretValue: token
-    });
-
     const IAM = new IAMstack(this, "iam", {
       name,
       privatePackage,
