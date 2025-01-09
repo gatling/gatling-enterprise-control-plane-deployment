@@ -65,7 +65,7 @@ Resources:
   IAMStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: "${BaseTemplateURL}/control-plane/templates/iam/template.yaml"
+      TemplateURL: !Sub ${BaseTemplateURL}/control-plane/templates/iam/template.yaml
       Parameters:
         Name: !Sub "${Name}-role"
         TokenSecretARN: !Ref TokenSecretARN
@@ -76,7 +76,7 @@ Resources:
   ECSStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: "${BaseTemplateURL}/control-plane/templates/ecs/template.yaml"
+      TemplateURL: !Sub ${BaseTemplateURL}/control-plane/templates/ecs/template.yaml
       Parameters:
         ECSTaskRoleARN: !GetAtt IAMStack.Outputs.ECSTaskRoleARN
         TokenSecretARN: !Ref TokenSecretARN
