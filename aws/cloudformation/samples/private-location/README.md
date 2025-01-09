@@ -71,7 +71,7 @@ ControlPlane:
     Parameters:
       BaseTemplateURL: !Ref BaseTemplateURL
       Name: "name"
-      Token: "token"
+      TokenSecretARN: "token-secret-arn"
       SubnetIDs: "subnet-a,subnet-b"
       SecurityGroupIDs: "sg-id"
       Locations: !Sub "${Location.Outputs.Conf}"
@@ -81,7 +81,7 @@ ControlPlane:
 - `BaseTemplateURL` (required): The root URL for locating the CloudFormation templates. (Use Gatling's official distribution: https://cloudformation-enterprise-templates.s3.eu-west-3.amazonaws.com)
 - `Name` (required): The name of the control plane.
 - `Description`: Description of the control plane.
-- `Token` (required): The control plane token for authentication.
+- `TokenSecretARN` (required): AWS Secrets Manager Plaintext secret ARN of the stored control plane token.
 - `SubnetIDs` (required): List of subnet IDs where the resources will be deployed.
 - `SecurityGroupIDs` (required): List of security group IDs to be used.
 - `Image`: Image of the control plane.

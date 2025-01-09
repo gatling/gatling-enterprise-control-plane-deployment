@@ -29,7 +29,7 @@ Resources:
       Parameters:
         BaseTemplateURL: !Ref BaseTemplateURL
         Name: "gatling-cp"
-        Token: "token"
+        TokenSecretARN: "token-secret-arn"
         SubnetIDs: "subnet-a,subnet-b,subnet-c"
         SecurityGroupIDs: "sg-id"
         Locations: !Sub "${Location.Outputs.Conf}"
