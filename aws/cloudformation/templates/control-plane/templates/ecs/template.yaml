@@ -80,7 +80,7 @@ Resources:
           EntryPoint:
             - /bin/sh
             - -c
-            - echo "$CONFIG_CONTENT" > /app/conf/control-plane.conf; echo "$CONFIG_CONTENT"
+            - echo "$CONFIG_CONTENT" > /app/conf/control-plane.conf"
           Environment:
             - Name: CONFIG_CONTENT
               Value: !Sub |
