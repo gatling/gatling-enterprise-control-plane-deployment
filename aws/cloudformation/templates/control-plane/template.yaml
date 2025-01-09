@@ -7,15 +7,10 @@ Parameters:
     Type: String
     Description: The root URL for CloudFormation templates
 
-  Token:
+  TokenSecretARN:
     Type: String
-    Description: The token value to include in the JSON configuration.
+    Description: AWS Secrets Manager Plaintext secret ARN of the stored control plane token.
     NoEcho: true
-
-  SecretsPrefix:
-    Type: String
-    Description: Token secret name.
-    Default: "GatlingEnterprise"
 
   Name:
     Type: String
@@ -73,7 +68,7 @@ Resources:
       TemplateURL: "${BaseTemplateURL}/control-plane/templates/iam/template.yaml"
       Parameters:
         Name: !Sub "${Name}-role"
-        SecretsPrefix: !Ref SecretsPrefix
+        TokenSecretARN: !Ref TokenSecretARN
         PrivatePackage: !Ref PrivatePackage
         CloudWatchLogs: !Ref CloudWatchLogs
         UseECR: !Ref UseECR
@@ -84,8 +79,7 @@ Resources:
       TemplateURL: "${BaseTemplateURL}/control-plane/templates/ecs/template.yaml"
       Parameters:
         ECSTaskRoleARN: !GetAtt IAMStack.Outputs.ECSTaskRoleARN
-        Token: !Ref Token
-        SecretsPrefix: !Ref SecretsPrefix
+        TokenSecretARN: !Ref TokenSecretARN
         Name: !Ref Name
         Description: !Ref Description
         SubnetIDs: !Ref SubnetIDs

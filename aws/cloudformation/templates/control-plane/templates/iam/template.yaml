@@ -7,9 +7,9 @@ Parameters:
     Type: String
     Description: The name of the IAM role.
   
-  SecretsPrefix:
+  TokenSecretARN:
     Type: String
-    Description: Token secret prefix.
+    Description: AWS Secrets Manager Plaintext secret ARN of the stored control plane token.
 
   UseECR:
     Type: String
@@ -77,7 +77,7 @@ Resources:
             Action:
               - "secretsmanager:GetSecretValue"
               - "secretsmanager:DescribeSecret"
-            Resource: !Sub "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${SecretsPrefix}/*"
+            Resource: !Ref TokenSecretARN
       Roles:
         - !Ref ECSTaskRole
 
