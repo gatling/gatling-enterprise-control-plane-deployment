@@ -16,6 +16,7 @@ resource "local_file" "json_file" {
       token : var.token
       description : var.description
       locations : [for location in var.locations : location.conf]
+      enterprise_cloud : var.enterprise_cloud
       repository : length(var.private_package) > 0 ? var.private_package.conf : {}
     })
   })
