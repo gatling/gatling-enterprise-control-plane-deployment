@@ -69,6 +69,7 @@ module "location" {
 - `system_properties`: System properties to be assigned to the Location.
 - `java_home`: Overwrite JAVA_HOME definition.
 - `jvm_options`: Overwrite JAVA_HOME definition.
+- `enterprise_cloud.url`: Set up a forward proxy for the control plane.
 
 ### Control Plane
 
@@ -98,6 +99,7 @@ module "control-plane" {
 - `image`: Image of the control plane.
 - `description`: Description of the control plane.
 - `conf_share_file_name`: The name of the configuration object in the file share.
+- `enterprise_cloud.url`: Set up a forward proxy for the control plane.
 
 ## Usage
 
