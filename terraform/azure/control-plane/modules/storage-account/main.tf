@@ -4,9 +4,9 @@ data "azurerm_storage_account" "gatling_storage_account" {
 }
 
 resource "azurerm_storage_share" "gatling_storage_share" {
-  name                 = "${var.storage_account_name}-fs"
-  storage_account_name = var.storage_account_name
-  quota                = 50
+  name               = "${var.storage_account_name}-fs"
+  storage_account_id = data.azurerm_storage_account.gatling_storage_account.id
+  quota              = 50
 }
 
 resource "local_file" "json_file" {
@@ -24,7 +24,7 @@ resource "local_file" "json_file" {
 
 resource "azurerm_storage_share_file" "gatling_storage_share_file" {
   name             = var.conf_share_file_name
-  storage_share_id = azurerm_storage_share.gatling_storage_share.id
+  storage_share_id = azurerm_storage_share.gatling_storage_share.url
   source           = local_file.json_file.filename
 
   lifecycle {
