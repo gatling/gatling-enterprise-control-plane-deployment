@@ -29,6 +29,10 @@ variable "locations" {
   type        = list(any)
 }
 
+variable "enterprise_cloud" {
+  type    = map(any)
+}
+
 variable "private_package" {
   description = "JSON configuration for the private packages."
   type        = map(any)

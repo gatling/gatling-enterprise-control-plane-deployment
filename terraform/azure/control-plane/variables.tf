@@ -63,3 +63,8 @@ variable "command" {
   type        = list(string)
   default     = []
 }
+
+variable "enterprise_cloud" {
+  type    = map(any)
+  default = {}
+}

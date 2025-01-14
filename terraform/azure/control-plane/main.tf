@@ -6,6 +6,7 @@ module "storage-account" {
   storage_account_name = var.storage_account_name
   conf_share_file_name = var.conf_share_file_name
   locations            = var.locations
+  enterprise_cloud     = var.enterprise_cloud
   private_package      = var.private_package
   extra_content        = var.extra_content
 }
@@ -21,6 +22,7 @@ module "container-app" {
   storage_share_name                 = module.storage-account.storage_share_name
   private_package                    = var.private_package
   command                            = var.command
+  enterprise_cloud                   = var.enterprise_cloud
 }
 
 module "role-assignment" {
