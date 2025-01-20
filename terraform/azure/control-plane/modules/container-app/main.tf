@@ -1,3 +1,9 @@
+locals {
+  path        = "/app/conf"
+  volume_name = "control-plane-conf"
+  secret_name = "token-secret-id"
+}
+
 resource "azurerm_container_app_environment" "gatling_container_env" {
   name                = "${var.name}-env"
   resource_group_name = var.resource_group_name
@@ -5,16 +11,12 @@ resource "azurerm_container_app_environment" "gatling_container_env" {
 }
 
 resource "azurerm_container_app_environment_storage" "gatling_container_env_storage" {
-  name                         = "control-plane-conf"
+  name                         = local.volume_name
   container_app_environment_id = azurerm_container_app_environment.gatling_container_env.id
   account_name                 = var.storage_account_name
   share_name                   = var.storage_share_name
   access_key                   = var.storage_account_primary_access_key
   access_mode                  = "ReadOnly"
-
-  depends_on = [
-    azurerm_container_app_environment.gatling_container_env
-  ]
 }
 
 resource "azurerm_container_app" "gatling_container" {
@@ -40,7 +42,7 @@ resource "azurerm_container_app" "gatling_container" {
   }
 
   secret {
-    name                = "token-secret-id"
+    name                = local.secret_name
     key_vault_secret_id = var.secret_id
     identity            = "System"
   }
@@ -58,26 +60,25 @@ resource "azurerm_container_app" "gatling_container" {
 
       env {
         name        = "CONTROL_PLANE_TOKEN"
-        secret_name = "token-secret-id"
+        secret_name = local.secret_name
       }
 
       volume_mounts {
-        name = "control-plane-conf"
-        path = "/app/conf"
+        name = local.volume_name
+        path = local.path
       }
 
     }
 
     volume {
-      name         = "control-plane-conf"
-      storage_name = "control-plane-conf"
+      name         = local.volume_name
+      storage_name = local.volume_name
       storage_type = "AzureFile"
     }
 
   }
 
   depends_on = [
-    azurerm_container_app_environment.gatling_container_env,
     azurerm_container_app_environment_storage.gatling_container_env_storage
   ]
 }
