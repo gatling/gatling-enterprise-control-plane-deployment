@@ -36,8 +36,13 @@ module "private-package" {
 ```
 
 - `source` (required): The source of the module, pointing to the GitHub repository.
-- `container_name` (required): The name of the control plane.
-- `storage_account_name` (required): SThe name of the storage account where the private package will be stored.
+- `container_name` (required): The name of the control plane container.
+- `storage_account_name` (required): The name of the storage account where the private package will be stored.
+- `upload.directory`: This directory temporarily stores uploaded JAR files.
+- `server.port`: The port on which the control plane is listening for private package uploads. The default is `8080`.
+- `server.bindAddress`: The network interface to bind to. The default is `0.0.0.0`, which means all available network IPv4 interfaces.
+- `server.certificate.path`: The server P12 certificate for secure connection without SSL reverse proxy.
+- `server.certificate.password`: The server P12 certificate password.
 
 ### Location
 
