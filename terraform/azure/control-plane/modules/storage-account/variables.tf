@@ -1,9 +1,3 @@
-variable "token" {
-  type        = string
-  description = "Token of the control plane"
-  sensitive   = true
-}
-
 variable "description" {
   type        = string
   description = "Description of the control plane."
