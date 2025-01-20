@@ -5,7 +5,7 @@ This Terraform configuration sets up the Azure infrastructure for Gatling Enterp
 ## Prerequisites
 
 - Gatling Enterprise [account](https://auth.gatling.io/auth/realms/gatling/protocol/openid-connect/auth?client_id=gatling-enterprise-cloud-public&response_type=code&scope=openid&redirect_uri=https%3A%2F%2Fcloud.gatling.io%2Fr%2Fgatling) with Private Locations enabled. To access this feature, please contact our [technical support](https://gatlingcorp.atlassian.net/servicedesk/customer/portal/8/group/12/create/59?summary=Private+Locations&description=Contact%20email%3A%20%3Cemail%3E%0A%0AHello%2C%20we%20would%20like%20to%20enable%20the%20private%20locations%20feature%20on%20our%20organization.).
-- A control plane [token](https://docs.gatling.io/reference/install/cloud/private-locations/introduction/#token).
+- A control plane [token](https://docs.gatling.io/reference/install/cloud/private-locations/introduction/#token) stored in Azure Vault as a secret.
 - Terraform installed on your local machine.
 - Azure credentials configured.
 
@@ -63,9 +63,10 @@ Sets up the control plane with configurations for networking, security, and stor
 module "control-plane" {
   source               = "git::git@github.com:gatling/gatling-enterprise-control-plane-deployment//terraform/azure/control-plane"
   name                 = "gatling-cp"
-  token                = "token"
   region               = "westeurope"
   resource_group_name  = "resource-group-name"
+  vault_name           = "vault-name"
+  secret_id            = "token-secret-identifier"
   storage_account_name = "storage-account-name"
   locations            = [module.location]
 }
@@ -73,9 +74,10 @@ module "control-plane" {
 
 - `source` (required): The source of the module, pointing to the GitHub repository.
 - `name` (required): The name of the control plane.
-- `token` (required): The control plane token for authentication.
 - `region` (required): The Azure region to deploy to.
 - `resource_group_name` (required): The name of the resource group where the control plane will be deployed.
+- `vault_name`(required): Vault name where the control plane secret token is stored.
+- `secret_id`(required): Secret identifier for the stored control plane token.
 - `storage_account_name` (required): The storage account name where configurations will be stored.
 - `locations` (required): The list of location module(s).
 - `image`: Image of the control plane.
