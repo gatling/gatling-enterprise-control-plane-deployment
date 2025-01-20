@@ -53,6 +53,9 @@ module "location" {
   subnet_name         = "default"
   size                = "Standard_A4_v2"
   engine              = "classic"
+  //enterprise_cloud    = {
+    //url = ""  // http://private-location-forward-proxy/gatling
+  //}
 }
 ```
 
@@ -85,6 +88,9 @@ module "control-plane" {
   storage_account_name = "storage-account-name"
   locations            = [module.location]
   private_package      = module.private-package
+  //enterprise_cloud    = {
+    //url = ""  // http://private-control-plane-forward-proxy/gatling
+  //}
 }
 ```
 

@@ -6,6 +6,7 @@ This Terraform configuration sets up the Azure infrastructure for Gatling Enterp
 
 - Gatling Enterprise [account](https://auth.gatling.io/auth/realms/gatling/protocol/openid-connect/auth?client_id=gatling-enterprise-cloud-public&response_type=code&scope=openid&redirect_uri=https%3A%2F%2Fcloud.gatling.io%2Fr%2Fgatling) with Private Locations enabled. To access this feature, please contact our [technical support](https://gatlingcorp.atlassian.net/servicedesk/customer/portal/8/group/12/create/59?summary=Private+Locations&description=Contact%20email%3A%20%3Cemail%3E%0A%0AHello%2C%20we%20would%20like%20to%20enable%20the%20private%20locations%20feature%20on%20our%20organization.).
 - A control plane [token](https://docs.gatling.io/reference/install/cloud/private-locations/introduction/#token) stored in Azure Vault as a secret.
+- A storage account to be mounted as a container volume.
 - Terraform installed on your local machine.
 - Azure credentials configured.
 
@@ -37,6 +38,9 @@ module "location" {
   subnet_name         = "default"
   size                = "Standard_A4_v2"
   engine              = "classic"
+  //enterprise_cloud    = {
+    //url = ""  // http://private-location-forward-proxy/gatling
+  //}
 }
 ```
 
@@ -69,6 +73,9 @@ module "control-plane" {
   secret_id            = "token-secret-identifier"
   storage_account_name = "storage-account-name"
   locations            = [module.location]
+  //enterprise_cloud    = {
+    //url = ""  // http://private-control-plane-forward-proxy/gatling
+  //}
 }
 ```
 
