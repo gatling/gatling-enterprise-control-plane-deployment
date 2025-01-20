@@ -33,7 +33,7 @@ resource "azurerm_container_app" "gatling_container" {
     for_each = length(var.private_package) > 0 ? [1] : []
     content {
       external_enabled = true
-      target_port      = 8080
+      target_port      = var.private_package.conf.server.port
       traffic_weight {
         percentage      = 100
         latest_revision = true
