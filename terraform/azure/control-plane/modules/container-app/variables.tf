@@ -48,3 +48,7 @@ variable "command" {
 variable "enterprise_cloud" {
   type    = map(any)
 }
+
+variable "secret_id" {
+  type = string
+}

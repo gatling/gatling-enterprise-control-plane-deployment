@@ -39,6 +39,12 @@ resource "azurerm_container_app" "gatling_container" {
     }
   }
 
+  secret {
+    name                = "token-secret-id"
+    key_vault_secret_id = var.secret_id
+    identity            = "System"
+  }
+
   template {
     min_replicas = 1
     max_replicas = 1
@@ -50,10 +56,16 @@ resource "azurerm_container_app" "gatling_container" {
       memory  = "2Gi"
       command = var.command
 
+      env {
+        name        = "CONTROL_PLANE_TOKEN"
+        secret_name = "token-secret-id"
+      }
+
       volume_mounts {
         name = "control-plane-conf"
         path = "/app/conf"
       }
+
     }
 
     volume {
@@ -61,6 +73,7 @@ resource "azurerm_container_app" "gatling_container" {
       storage_name = "control-plane-conf"
       storage_type = "AzureFile"
     }
+
   }
 
   depends_on = [
