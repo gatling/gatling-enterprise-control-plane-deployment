@@ -6,14 +6,16 @@ locals {
     zone              = var.zone
     instance-template = var.instance_template
     machine = {
-      type          = var.machine_type
-      engine        = var.engine,
-      preemptible   = var.preemptible
+      type        = var.machine_type
+      engine      = var.engine,
+      preemptible = var.preemptible
       image = {
-        type = var.image_type
-        java = var.java_version
+        type   = var.image_type
+        java   = var.java_version
+        id     = var.image_id
+        family = var.image_family
       }
-      disk = var.disk
+      disk              = var.disk
       network-interface = var.network_interface
     }
     project           = var.project

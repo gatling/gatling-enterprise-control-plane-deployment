@@ -56,6 +56,18 @@ variable "java_version" {
   default     = "latest"
 }
 
+variable "image_id" {
+  type        = string
+  description = "Image id of the location."
+  default     = null
+}
+
+variable "image_family" {
+  type        = string
+  description = "Image family of the location."
+  default     = null
+}
+
 variable "network_interface" {
   description = "Network interface properties to be assigned to the Location."
   type        = map(any)
