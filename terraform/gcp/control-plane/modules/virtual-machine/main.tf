@@ -36,8 +36,7 @@ resource "google_compute_instance" "default" {
 
     toolbox gcloud version
     toolbox gcloud secrets versions access latest --secret=${var.secret_name} | sudo tee /etc/control-plane/control-plane.conf
-
-    sudo docker run -d --name control-plane -v /etc/control-plane/control-plane.conf:/app/conf/control-plane.conf -p 8080:8080 ${var.image} ${local.command}
+    sudo docker run -d --name control-plane -v /etc/control-plane/control-plane.conf:/app/conf/control-plane.conf ${length(var.private_package) > 0 ? "-p ${var.private_package.conf.server.port}:${var.private_package.conf.server.port}" : ""} ${var.image} ${local.command}
   EOF
 
   shielded_instance_config {
