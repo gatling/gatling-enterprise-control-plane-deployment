@@ -15,6 +15,11 @@ variable "description" {
   default     = "My GCP control plane description"
 }
 
+variable "enterprise_cloud" {
+  type    = map(any)
+  default = {}
+}
+
 variable "machine_type" {
   description = "The machine type to be used for hosting the control plane container."
   type        = string

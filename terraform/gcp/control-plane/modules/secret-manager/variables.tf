@@ -33,3 +33,8 @@ variable "extra_content" {
   type    = map(any)
   default = {}
 }
+
+variable "enterprise_cloud" {
+  type    = map(any)
+  default = {}
+}

@@ -1,11 +1,12 @@
 module "secret-manager" {
-  source          = "../../gcp/control-plane/modules/secret-manager"
-  name            = var.secret_name
-  token           = var.token
-  description     = var.description
-  locations       = var.locations
-  secret_location = var.secret_location
-  private_package = var.private_package
+  source           = "../../gcp/control-plane/modules/secret-manager"
+  name             = var.secret_name
+  token            = var.token
+  description      = var.description
+  enterprise_cloud = var.enterprise_cloud
+  locations        = var.locations
+  secret_location  = var.secret_location
+  private_package  = var.private_package
 }
 
 module "service-account" {
