@@ -7,7 +7,7 @@ locals {
     instance-template = var.instance_template
     machine = {
       type        = var.machine_type
-      engine      = var.engine,
+      engine      = var.engine
       preemptible = var.preemptible
       image = {
         type   = var.image_type
