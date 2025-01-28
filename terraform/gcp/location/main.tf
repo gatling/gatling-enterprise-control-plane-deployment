@@ -22,5 +22,6 @@ locals {
     system-properties = var.system_properties
     java-home         = var.java_home
     jvm-options       = var.jvm_options
+    enterprise-cloud  = var.enterprise_cloud
   }
 }
