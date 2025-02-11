@@ -1,5 +1,16 @@
 data "azurerm_subscription" "current" {}
 
+data "azurerm_client_config" "current" {}
+
+resource "azurerm_key_vault_access_policy" "container_app_policy" {
+  key_vault_id = "${data.azurerm_subscription.current.id}/resourceGroups/${var.resource_group_name}/providers/Microsoft.KeyVault/vaults/${var.vault_name}"
+
+  tenant_id = data.azurerm_client_config.current.tenant_id
+  object_id = var.container.identity[0].principal_id
+
+  secret_permissions = ["Get"]
+}
+
 resource "azurerm_role_definition" "gatling_custom_role" {
   name        = "Gatling Role"
   scope       = data.azurerm_subscription.current.id

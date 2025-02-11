@@ -44,3 +44,11 @@ variable "command" {
   type        = list(string)
   default     = []
 }
+
+variable "enterprise_cloud" {
+  type    = map(any)
+}
+
+variable "secret_id" {
+  type = string
+}

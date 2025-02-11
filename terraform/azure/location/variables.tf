@@ -77,3 +77,8 @@ variable "jvm_options" {
   type        = list(string)
   default     = []
 }
+
+variable "enterprise_cloud" {
+  type    = map(any)
+  default = {}
+}

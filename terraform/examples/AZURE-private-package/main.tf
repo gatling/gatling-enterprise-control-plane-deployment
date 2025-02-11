@@ -17,15 +17,22 @@ module "location" {
   subnet_name         = "default"
   //size                = "Standard_A4_v2"
   //engine              = "classic"
+  //enterprise_cloud    = {
+    //url = ""  // http://private-location-forward-proxy/gatling
+  //}
 }
 
 module "control-plane" {
   source               = "git::git@github.com:gatling/gatling-enterprise-control-plane-deployment//terraform/azure/control-plane"
   name                 = "gatling-cp"
-  token                = "token"
   region               = "westeurope"
   resource_group_name  = "resource-group-name"
+  vault_name           = "vault-name"
+  secret_id            = "token-secret-identifier"
   storage_account_name = "storage-account-name"
   locations            = [module.location]
   private_package      = module.private-package
+  //enterprise_cloud    = {
+    //url = ""  // http://private-control-plane-forward-proxy/gatling
+  //}
 }

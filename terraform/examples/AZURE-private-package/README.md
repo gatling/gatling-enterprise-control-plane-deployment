@@ -5,7 +5,7 @@ This Terraform configuration sets up the Azure infrastructure for Gatling Enterp
 ## Prerequisites
 
 - Gatling Enterprise [account](https://auth.gatling.io/auth/realms/gatling/protocol/openid-connect/auth?client_id=gatling-enterprise-cloud-public&response_type=code&scope=openid&redirect_uri=https%3A%2F%2Fcloud.gatling.io%2Fr%2Fgatling) with Private Locations enabled. To access this feature, please contact our [technical support](https://gatlingcorp.atlassian.net/servicedesk/customer/portal/8/group/12/create/59?summary=Private+Locations&description=Contact%20email%3A%20%3Cemail%3E%0A%0AHello%2C%20we%20would%20like%20to%20enable%20the%20private%20locations%20feature%20on%20our%20organization.).
-- A control plane [token](https://docs.gatling.io/reference/install/cloud/private-locations/introduction/#token).
+- A control plane [token](https://docs.gatling.io/reference/install/cloud/private-locations/introduction/#token) stored in Azure Vault as a secret.
 - Terraform installed on your local machine.
 - Azure credentials configured.
 
@@ -36,8 +36,13 @@ module "private-package" {
 ```
 
 - `source` (required): The source of the module, pointing to the GitHub repository.
-- `container_name` (required): The name of the control plane.
-- `storage_account_name` (required): SThe name of the storage account where the private package will be stored.
+- `container_name` (required): The name of the control plane container.
+- `storage_account_name` (required): The name of the storage account where the private package will be stored.
+- `upload.directory`: This directory temporarily stores uploaded JAR files.
+- `server.port`: The port on which the control plane is listening for private package uploads. The default is `8080`.
+- `server.bindAddress`: The network interface to bind to. The default is `0.0.0.0`, which means all available network IPv4 interfaces.
+- `server.certificate.path`: The server P12 certificate for secure connection without SSL reverse proxy.
+- `server.certificate.password`: The server P12 certificate password.
 
 ### Location
 
@@ -53,6 +58,9 @@ module "location" {
   subnet_name         = "default"
   size                = "Standard_A4_v2"
   engine              = "classic"
+  //enterprise_cloud    = {
+    //url = ""  // http://private-location-forward-proxy/gatling
+  //}
 }
 ```
 
@@ -69,6 +77,7 @@ module "location" {
 - `system_properties`: System properties to be assigned to the Location.
 - `java_home`: Overwrite JAVA_HOME definition.
 - `jvm_options`: Overwrite JAVA_HOME definition.
+- `enterprise_cloud.url`: Set up a forward proxy for the control plane.
 
 ### Control Plane
 
@@ -84,20 +93,25 @@ module "control-plane" {
   storage_account_name = "storage-account-name"
   locations            = [module.location]
   private_package      = module.private-package
+  //enterprise_cloud    = {
+    //url = ""  // http://private-control-plane-forward-proxy/gatling
+  //}
 }
 ```
 
 - `source` (required): The source of the module, pointing to the GitHub repository.
 - `name` (required): The name of the control plane.
-- `token` (required): The control plane token for authentication.
 - `region` (required): The Azure region to deploy to.
 - `resource_group_name` (required): The name of the resource group where the control plane will be deployed.
+- `vault_name`(required): Vault name where the control plane secret token is stored.
+- `secret_id`(required): Secret identifier for the stored control plane token.
 - `storage_account_name` (required): The storage account name where configurations will be stored.
 - `locations` (required): The list of location module(s).
 - `private_package` (required): The name of the private package module for configuration.
 - `image`: Image of the control plane.
 - `description`: Description of the control plane.
 - `conf_share_file_name`: The name of the configuration object in the file share.
+- `enterprise_cloud.url`: Set up a forward proxy for the control plane.
 
 ## Usage
 

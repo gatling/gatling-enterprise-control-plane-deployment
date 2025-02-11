@@ -1,9 +1,3 @@
-variable "token" {
-  type        = string
-  description = "Token of the control plane"
-  sensitive   = true
-}
-
 variable "description" {
   type        = string
   description = "Description of the control plane."
@@ -27,6 +21,10 @@ variable "conf_share_file_name" {
 variable "locations" {
   description = "JSON configuration for the locations."
   type        = list(any)
+}
+
+variable "enterprise_cloud" {
+  type    = map(any)
 }
 
 variable "private_package" {

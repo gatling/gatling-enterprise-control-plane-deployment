@@ -1,9 +1,3 @@
-variable "token" {
-  type        = string
-  description = "Token of the control plane"
-  sensitive   = true
-}
-
 variable "name" {
   type        = string
   description = "Name of the control plane"
@@ -62,4 +56,18 @@ variable "command" {
   description = "Control plane image command"
   type        = list(string)
   default     = []
+}
+
+variable "enterprise_cloud" {
+  type    = map(any)
+  default = {}
+}
+
+variable "vault_name" {
+  description = "Vault name where the token plane secret is stored."
+  type = string
+}
+
+variable "secret_id" {
+  type = string
 }

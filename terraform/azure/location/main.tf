@@ -15,6 +15,7 @@ locals {
     associate-public-ip : var.associate_public_ip
     system-properties : var.system_properties
     java-home : var.java_home
-    jvm-options : var.jvm_options,
+    jvm-options : var.jvm_options
+    enterprise-cloud : var.enterprise_cloud 
   }
 }
