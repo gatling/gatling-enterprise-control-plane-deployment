@@ -1,0 +1,10 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/aws/cdk/javascript"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "maven"
+    directory: "/aws/cdk/java"
+    schedule:
+      interval: "weekly"
