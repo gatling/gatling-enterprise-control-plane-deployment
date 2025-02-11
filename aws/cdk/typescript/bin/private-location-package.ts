@@ -31,8 +31,7 @@ const location = {
 
 new ControlPlaneStack(app, stackName, {
   // Possible values available on interface ControlPlaneProps in lib/interfaces/control-plane-interface.ts
-  token:
-    "token",
+  tokenSecretARN: "token-secret-ARN",
   name: "gatling-pl",
   description: "My AWS control plane description",
   vpcId: "vpc-id",

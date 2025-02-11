@@ -15,19 +15,18 @@ const location = {
   "security-groups": ["sg-id"],
   "instance-type": "c7i.xlarge",
   ami: {
-    type: "certified"
+    type: "certified",
   },
   engine: "classic",
   //"enterprise-cloud": {
-    //url: "http://private-location-forward-proxy/gatling"
+  //url: "http://private-location-forward-proxy/gatling"
   //}
 };
 
 new ControlPlaneStack(app, stackName, {
   // Possible values available on interface ControlPlaneProps in lib/interfaces/control-plane-interface.ts
-  token:
-    "token",
-  name: "gatling-pl",
+  tokenSecretARN: "token-secret-ARN",
+  name: "control-plane",
   description: "My AWS control plane description",
   vpcId: "vpc-id",
   availabilityZones: ["eu-west-3a", "eu-west-3b", "eu-west-3c"],
@@ -38,6 +37,6 @@ new ControlPlaneStack(app, stackName, {
   //cloudWatchLogs: true,
   //useECR: false,
   //enterpriseCloud: {
-    //url: "http://private-location-forward-proxy/gatling"
+  //url: "http://private-location-forward-proxy/gatling"
   //}
 });

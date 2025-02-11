@@ -7,8 +7,7 @@ export interface ControlPlaneProps extends StackProps {
   availabilityZones: string[];
   subnetIds: string[];
   securityGroupIds: string[];
-  token: string;
-  tokenSecretName?: string;
+  tokenSecretARN: string;
   name: string;
   description: string;
   image: string;
