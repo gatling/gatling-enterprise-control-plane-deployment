@@ -1,0 +1,144 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: CloudFormation template equivalent to the provided Terraform code.
+
+Parameters:
+
+  Name:
+    Type: String
+    Description: The name of the IAM role.
+  
+  TokenSecretARN:
+    Type: String
+    Description: AWS Secrets Manager Plaintext secret ARN of the stored control plane token.
+
+  UseECR:
+    Type: String
+    AllowedValues: ["true", "false"]
+    Description: Indicates if ECR permissions should be created.
+
+  PrivatePackage:
+    Type: String
+    Description: Indicates if there is a private package.
+
+  CloudWatchLogs:
+    Type: String
+    AllowedValues: ["true", "false"]
+    Description: Indicates if CloudWatch Logs are enabled.
+
+Conditions:
+
+  HasECRPolicy: !Equals [ !Ref UseECR, "true"]
+
+  HasPrivatePackage: !Not [ !Equals [ !Ref PrivatePackage, "{}" ] ]
+        
+  UseCloudWatchLogs: !Equals [ !Ref CloudWatchLogs, "true"]
+
+Resources:
+
+  ECSTaskRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Ref Name
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+            Action: sts:AssumeRole
+
+  EC2Policy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: !Sub "${Name}-EC2Policy"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - ec2:Describe*
+              - ec2:CreateTags
+              - ec2:RunInstances
+              - ec2:TerminateInstances
+              - ec2:AssociateAddress
+              - ec2:DisassociateAddress
+            Resource: "*"
+      Roles:
+        - !Ref ECSTaskRole
+    
+  SecretsPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: !Sub "${Name}-SecretsPolicy"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - "secretsmanager:GetSecretValue"
+              - "secretsmanager:DescribeSecret"
+            Resource: !Ref TokenSecretARN
+      Roles:
+        - !Ref ECSTaskRole
+
+  ECRPolicy:
+    Condition: HasECRPolicy
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: !Sub "${Name}-ECRPolicy"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - ecr:GetAuthorizationToken
+              - ecr:BatchCheckLayerAvailability
+              - ecr:GetDownloadUrlForLayer
+              - ecr:BatchGetImage
+            Resource: "*"
+      Roles:
+        - !Ref ECSTaskRole
+
+  CloudWatchLogsPolicy:
+    Condition: UseCloudWatchLogs
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: !Sub "${Name}-CloudWatchLogsPolicy"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - logs:CreateLogGroup
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+            Resource: "*"
+      Roles:
+        - !Ref ECSTaskRole
+
+  PrivatePackagePolicy:
+    Condition: HasPrivatePackage
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: !Sub "${Name}-PackagePolicy"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - s3:GetObject
+              - s3:PutObject
+              - s3:DeleteObject
+            Resource: !Join
+              - ''
+              - - 'arn:aws:s3:::'
+                - !ImportValue GatlingPrivatePackageBucket
+                - '/*'
+      Roles:
+        - !Ref ECSTaskRole
+
+Outputs:
+
+  ECSTaskRoleARN:
+    Description: Control Plane IAM Role ARN.
+    Value: !GetAtt ECSTaskRole.Arn
