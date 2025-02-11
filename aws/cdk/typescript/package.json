@@ -14,7 +14,7 @@
     "aws-cdk": "2.171.1",
     "ts-node": "^10.9.2",
     "typescript": "~5.7.2",
-    "prettier": "3.3.3"
+    "prettier": "3.5.0"
   },
   "scripts": {
     "build": "tsc",
