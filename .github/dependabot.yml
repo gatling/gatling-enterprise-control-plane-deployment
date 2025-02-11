@@ -1,7 +1,7 @@
 version: 2
 updates:
   - package-ecosystem: "npm"
-    directory: "/aws/cdk/javascript"
+    directory: "/aws/cdk/typescript"
     schedule:
       interval: "weekly"
   - package-ecosystem: "maven"
