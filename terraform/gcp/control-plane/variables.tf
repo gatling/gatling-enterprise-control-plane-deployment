@@ -3,16 +3,15 @@ variable "name" {
   description = "Name of the control plane"
 }
 
-variable "token" {
-  type        = string
-  description = "Token of the control plane"
-  sensitive   = true
-}
-
 variable "description" {
   type        = string
   description = "Description of the control plane."
   default     = "My GCP control plane description"
+}
+
+variable "enterprise_cloud" {
+  type    = map(any)
+  default = {}
 }
 
 variable "machine_type" {
@@ -79,16 +78,9 @@ variable "private_package" {
   default     = {}
 }
 
-variable "secret_name" {
+variable "token_secret_name" {
   type        = string
-  description = "Secret name of the control plane configuration"
-  default     = "control-plane-config"
-}
-
-variable "secret_location" {
-  type        = string
-  description = "Secret replication location."
-  default     = ""
+  description = "Control plane secret token stored in GCP Secret Manager."
 }
 
 variable "extra_content" {

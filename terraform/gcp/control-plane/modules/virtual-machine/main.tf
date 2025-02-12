@@ -1,5 +1,21 @@
 locals {
-  command = join(" ", var.command)
+  conf_file_name = "control-plane.conf"
+  host_path      = "/etc/control-plane"
+  mount_path     = "/app/conf"
+  volume         = "-v ${local.host_path}/${local.conf_file_name}:${local.mount_path}/${local.conf_file_name}"
+  env            = "-e CONTROL_PLANE_TOKEN=$CONTROL_PLANE_TOKEN"
+  port           = length(var.private_package) > 0 ? "-p ${var.private_package.conf.server.port}:${var.private_package.conf.server.port}" : ""
+  command        = join(" ", var.command)
+  config_content = <<-EOF
+    control-plane {
+      token = $${?CONTROL_PLANE_TOKEN}
+      description = "${var.description}"
+      enterprise-cloud = { %{for key, value in var.enterprise_cloud} ${key} = "${value}" %{endfor} }
+      locations = [ %{for location in var.locations} ${jsonencode(location.conf)}, %{endfor} ]
+      %{if length(var.private_package) > 0}repository = ${jsonencode(var.private_package.conf)}%{endif}
+      %{for key, value in var.extra_content}${key} = "${value}"%{endfor}
+    }
+  EOF
 }
 
 resource "google_compute_instance" "default" {
@@ -31,13 +47,16 @@ resource "google_compute_instance" "default" {
 
   metadata_startup_script = <<-EOF
     #! /bin/bash
-    sudo mkdir -p /etc/control-plane
-    sudo touch /etc/control-plane/control-plane.conf
 
+    set -e
+    
     toolbox gcloud version
-    toolbox gcloud secrets versions access latest --secret=${var.secret_name} | sudo tee /etc/control-plane/control-plane.conf
+    CONTROL_PLANE_TOKEN=$(toolbox gcloud secrets versions access latest --secret=${var.token_secret_name} || echo "SECRET_FETCH_FAILED")
 
-    sudo docker run -d --name control-plane -v /etc/control-plane/control-plane.conf:/app/conf/control-plane.conf -p 8080:8080 ${var.image} ${local.command}
+    mkdir -p ${local.host_path}
+    echo '${local.config_content}' | sudo tee ${local.host_path}/${local.conf_file_name}
+
+    sudo docker run -d --name ${var.name} ${local.env} ${local.volume} ${var.image} ${local.port} ${local.command}
   EOF
 
   shielded_instance_config {

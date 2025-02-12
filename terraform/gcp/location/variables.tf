@@ -56,6 +56,18 @@ variable "java_version" {
   default     = "latest"
 }
 
+variable "image_id" {
+  type        = string
+  description = "Custom image id of the location."
+  default     = null
+}
+
+variable "image_family" {
+  type        = string
+  description = "Custom image family of the location."
+  default     = null
+}
+
 variable "network_interface" {
   description = "Network interface properties to be assigned to the Location."
   type        = map(any)
@@ -86,4 +98,9 @@ variable "jvm_options" {
   description = "Overwrite JAVA_HOME definition."
   type        = list(string)
   default     = []
+}
+
+variable "enterprise_cloud" {
+  type    = map(any)
+  default = {}
 }
