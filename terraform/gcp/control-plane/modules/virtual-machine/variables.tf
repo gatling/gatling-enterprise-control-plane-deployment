@@ -48,9 +48,9 @@ variable "image" {
   description = "Image of the control plane."
 }
 
-variable "secret_name" {
+variable "token_secret_name" {
   type        = string
-  description = "Control plane secret name."
+  description = "Control plane secret token stored in GCP Secret Manager."
 }
 
 variable "service_email" {
@@ -67,4 +67,22 @@ variable "command" {
   description = "Control plane image command"
   type        = list(string)
   default     = []
+}
+
+variable "description" {
+  type        = string
+  description = "Description of the control plane."
+}
+
+variable "enterprise_cloud" {
+  type = map(any)
+}
+
+variable "extra_content" {
+  type = map(any)
+}
+
+variable "locations" {
+  description = "JSON configuration for the locations."
+  type        = list(any)
 }
