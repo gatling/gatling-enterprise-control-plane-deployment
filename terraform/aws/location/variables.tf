@@ -39,6 +39,12 @@ variable "ami_type" {
   default     = "certified"
 }
 
+variable "ami_id" {
+  type        = string
+  description = "Custom AMI id of the location."
+  default     = ""
+}
+
 variable "java_version" {
   type        = string
   description = "Java version of the location."
@@ -54,6 +60,12 @@ variable "subnet_ids" {
 variable "security_group_ids" {
   type        = list(string)
   description = "Security group ids of the location."
+}
+
+variable "auto_associate_public_ipv4" {
+  type        = bool
+  description = "Automatically associate a public IPv4."
+  default     = true
 }
 
 variable "elastic_ips" {

@@ -35,10 +35,10 @@ module "location" {
   region             = "eu-west-1"
   subnet_ids         = ["subnet-a", "subnet-b"]
   security_group_ids = ["sg-id"]
-  instance_type      = "c7i.xlarge"
-  engine             = "classic"
+  //instance_type      = "c7i.xlarge"
+  //engine             = "classic"
   //enterprise_cloud = {
-    //url = ""  // http://private-control-plane-forward-proxy/gatling
+    //url = "http://private-location-forward-proxy/gatling"
   //}
 }
 ```
@@ -50,9 +50,11 @@ module "location" {
 - `security_group_ids` (required): List of security group IDs to be used.
 - `instance_type`: Instance type of the location.
 - `engine`: Engine of the location determining the compatible package formats (JavaScript or JVM).
+- `auto_associate_public_ipv4`: Automatically associate a public IPv4.
 - `elastic_ips`: Assign elastic IPs to your Locations.
 - `description`: Description of the location.
 - `ami_type`: AMI type of the location.
+- `ami_id`: Custom AMI id of the location.
 - `java_version`: Java version of the location.
 - `spot`: Flag to enable spot instances.
 - `profile_name`: Profile name to be assigned to the Location.
@@ -79,7 +81,7 @@ module "control-plane" {
   //cloudWatch_logs   = true
   //ecr               = false
   //enterprise_cloud  = {
-    //url = ""  // http://private-control-plane-forward-proxy/gatling
+    //url = "http://private-control-plane-forward-proxy/gatling"
   //}
 }
 ```

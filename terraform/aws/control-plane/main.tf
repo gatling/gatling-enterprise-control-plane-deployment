@@ -24,4 +24,6 @@ module "ecs" {
   extra_content          = var.extra_content
   token_secret_arn       = var.token_secret_arn
   cloudWatch_logs        = var.cloudWatch_logs
+  task_cpu               = var.task_cpu
+  task_memory            = var.task_memory
 }

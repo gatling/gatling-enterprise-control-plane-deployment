@@ -32,8 +32,8 @@ resource "aws_ecs_task_definition" "gatling_task" {
   requires_compatibilities = ["FARGATE"]
   task_role_arn            = var.ecs_tasks_iam_role_arn
   execution_role_arn       = var.ecs_tasks_iam_role_arn
-  cpu                      = "1024"
-  memory                   = "3072"
+  cpu                      = var.task_cpu
+  memory                   = var.task_memory
 
   container_definitions = jsonencode([
     {

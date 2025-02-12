@@ -11,7 +11,7 @@ module "location" {
   //instance_type      = "c7i.xlarge"
   //engine             = "classic"
   //enterprise_cloud = {
-    //url = ""  // http://private-control-plane-forward-proxy/gatling
+    //url = "http://private-location-forward-proxy/gatling"
   //}
 }
 
@@ -25,6 +25,6 @@ module "control-plane" {
   //cloudWatch_logs    = true
   //ecr                = false
   //enterprise_cloud = {
-    //url = ""  // http://private-control-plane-forward-proxy/gatling
+    //url = "http://private-control-plane-forward-proxy/gatling"
   //}
 }
