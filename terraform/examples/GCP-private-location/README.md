@@ -5,7 +5,7 @@ This Terraform configuration sets up the GCP infrastructure for Gatling Enterpri
 ## Prerequisites
 
 - Gatling Enterprise [account](https://auth.gatling.io/auth/realms/gatling/protocol/openid-connect/auth?client_id=gatling-enterprise-cloud-public&response_type=code&scope=openid&redirect_uri=https%3A%2F%2Fcloud.gatling.io%2Fr%2Fgatling) with Private Locations enabled. To access this feature, please contact our [technical support](https://gatlingcorp.atlassian.net/servicedesk/customer/portal/8/group/12/create/59?summary=Private+Locations&description=Contact%20email%3A%20%3Cemail%3E%0A%0AHello%2C%20we%20would%20like%20to%20enable%20the%20private%20locations%20feature%20on%20our%20organization.).
-- A control plane [token](https://docs.gatling.io/reference/install/cloud/private-locations/introduction/#token).
+- A control plane [token](https://docs.gatling.io/reference/install/cloud/private-locations/introduction/#token) stored in GCP Secret Manager.
 - Terraform installed on your local machine.
 - GCP credentials configured.
 
@@ -36,6 +36,9 @@ module "location" {
   zone         = "zone-a"
   machine_type = "c3-highcpu-4"
   engine       = "classic"
+  //enterprise_cloud = {
+  //url = ""  // http://private-control-plane-forward-proxy/gatling
+  //}
 }
 ```
 
@@ -54,6 +57,7 @@ module "location" {
 - `system_properties`: System properties to be assigned to the Location.
 - `java_home`: Overwrite JAVA_HOME definition.
 - `jvm_options`: Overwrite JAVA_HOME definition.
+- `enterprise_cloud.url`: Set up a forward proxy for location.
 
 ### Control Plane
 
@@ -61,18 +65,21 @@ Sets up the control plane with configurations for networking, security, and stor
 
 ```sh
 module "control-plane" {
-  source    = "git::git@github.com:gatling/gatling-enterprise-control-plane-deployment//terraform/gcp/control-plane"
-  name      = "name"
-  token     = "token"
-  zone      = "zone-a"
-  network   = "network"
-  locations = [module.location]
+  source            = "git::git@github.com:gatling/gatling-enterprise-control-plane-deployment//terraform/gcp/control-plane"
+  name              = "name"
+  token_secret_name = "token_secret_name"
+  zone              = "zone-a"
+  network           = "network"
+  locations         = [module.location]
+  //enterprise_cloud = {
+  //url = ""  // http://private-control-plane-forward-proxy/gatling
+  //}
 }
 ```
 
 - `source` (required): The source of the module, pointing to the GitHub repository.
 - `name` (required): The name of the control plane.
-- `token` (required): The control plane token for authentication.
+- `token_secret_name` (required): Control plane secret token stored in GCP Secret Manager.
 - `zone` (required): The GCP zone to deploy to.
 - `network` (Either network or subnetwork must be provided): The name or self_link of the network to be used to attach the VM network interface.
 - `subnetwork` (Either network or subnetwork must be provided):  The name or self_link of the subnetwork to be used to attach the VM network interface.
@@ -84,8 +91,7 @@ module "control-plane" {
 - `enable_confidential_compute`: Option to enable confidential compute.
 - `confidential_instance_type`: Set a Confidential Instance Type.
 - `min_cpu_platform`: Specifies a minimum CPU platform for the VM instance.
-- `secret_name`: The name of the configuration secret.
-- `secret_location`: Secret replication location.
+- `enterprise_cloud.url`: Set up a forward proxy for the control plane.
 
 ## Usage
 
