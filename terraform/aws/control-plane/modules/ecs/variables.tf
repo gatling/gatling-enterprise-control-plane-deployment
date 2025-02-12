@@ -70,3 +70,14 @@ variable "token_secret_arn" {
   type        = string
   description = "Secret Token ARN of the control plane"
 }
+
+
+variable "task_cpu" {
+  type        = string
+  description = "ECS task definition CPU."
+}
+
+variable "task_memory" {
+  type        = string
+  description = "ECS task definition Memory."
+}
