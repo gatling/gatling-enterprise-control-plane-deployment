@@ -58,13 +58,13 @@ variable "java_version" {
 
 variable "image_id" {
   type        = string
-  description = "Image id of the location."
+  description = "Custom image id of the location."
   default     = null
 }
 
 variable "image_family" {
   type        = string
-  description = "Image family of the location."
+  description = "Custom image family of the location."
   default     = null
 }
 

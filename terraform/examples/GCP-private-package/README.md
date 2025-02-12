@@ -68,6 +68,8 @@ module "location" {
 - `instance_template`: Instance template defining configuration settings for virtual machine.
 - `preemptible`: Configure load generators instances as preemptible or not.
 - `image_type`: Image type of the location.
+- `image_id`: Custom image id of the location.
+- `image_family`: Custom image family of the location.
 - `java_version`: Java version of the location.
 - `network_interface`: Network interface properties to be assigned to the Location.
 - `system_properties`: System properties to be assigned to the Location.
