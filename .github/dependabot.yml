@@ -1,10 +1,17 @@
 version: 2
 updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "sunday"
   - package-ecosystem: "npm"
     directory: "/aws/cdk/typescript"
     schedule:
       interval: "weekly"
+      day: "sunday"
   - package-ecosystem: "maven"
     directory: "/aws/cdk/java"
     schedule:
       interval: "weekly"
+      day: "sunday"
