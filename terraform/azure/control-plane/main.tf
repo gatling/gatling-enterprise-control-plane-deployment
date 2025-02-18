@@ -22,6 +22,8 @@ module "container-app" {
   storage_share_name                 = module.storage-account.storage_share_name
   private_package                    = var.private_package
   command                            = var.command
+  container_cpu                      = var.container_cpu
+  container_memory                   = var.container_memory
   enterprise_cloud                   = var.enterprise_cloud
 }
 
