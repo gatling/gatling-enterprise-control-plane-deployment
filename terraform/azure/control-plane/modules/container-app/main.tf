@@ -54,8 +54,8 @@ resource "azurerm_container_app" "gatling_container" {
     container {
       name    = "control-plane"
       image   = var.image
-      cpu     = 1.0
-      memory  = "2Gi"
+      cpu     = var.container_cpu
+      memory  = var.container_memory
       command = var.command
 
       env {

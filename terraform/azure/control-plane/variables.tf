@@ -64,10 +64,23 @@ variable "enterprise_cloud" {
 }
 
 variable "vault_name" {
-  description = "Vault name where the token plane secret is stored."
-  type = string
+  description = "Vault name where the control plane token secret is stored."
+  type        = string
 }
 
 variable "secret_id" {
+  description = "Secret identifier where the control token plane is stored."
   type = string
+}
+
+variable "container_cpu" {
+  description = "Control Plane container CPU allocation."
+  type    = number
+  default = 1.0
+}
+
+variable "container_memory" {
+  description = "Control Plane container memory allocation."
+  type    = string
+  default = "2Gi"
 }

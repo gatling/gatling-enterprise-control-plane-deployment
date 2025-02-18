@@ -15,6 +15,6 @@ variable "resource_group_name" {
 }
 
 variable "vault_name" {
-  description = "Vault name where the token plane secret is stored."
+  description = "Vault name where the control plane token secret is stored."
   type = string
 }

@@ -90,6 +90,8 @@ module "control-plane" {
 - `image`: Image of the control plane.
 - `description`: Description of the control plane.
 - `conf_share_file_name`: The name of the configuration object in the file share.
+- `container_cpu`: Control Plane container CPU allocation.
+- `container_memory`: Control Plane container memory allocation.
 - `enterprise_cloud.url`: Set up a forward proxy for the control plane.
 
 ## Usage

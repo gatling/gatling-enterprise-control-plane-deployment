@@ -87,9 +87,10 @@ Sets up the control plane with configurations for networking, security, and stor
 module "control-plane" {
   source               = "git::git@github.com:gatling/gatling-enterprise-control-plane-deployment//terraform/azure/control-plane"
   name                 = "gatling-cp"
-  token                = "token"
   region               = "westeurope"
   resource_group_name  = "resource-group-name"
+  vault_name           = "vault-name"
+  secret_id            = "token-secret-identifier"
   storage_account_name = "storage-account-name"
   locations            = [module.location]
   private_package      = module.private-package
@@ -111,6 +112,8 @@ module "control-plane" {
 - `image`: Image of the control plane.
 - `description`: Description of the control plane.
 - `conf_share_file_name`: The name of the configuration object in the file share.
+- `container_cpu`: Control Plane container CPU allocation.
+- `container_memory`: Control Plane container memory allocation.
 - `enterprise_cloud.url`: Set up a forward proxy for the control plane.
 
 ## Usage

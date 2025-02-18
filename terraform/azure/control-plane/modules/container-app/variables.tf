@@ -46,9 +46,20 @@ variable "command" {
 }
 
 variable "enterprise_cloud" {
-  type    = map(any)
+  type = map(any)
 }
 
 variable "secret_id" {
+  description = "Secret identifier where the control token plane is stored."
   type = string
+}
+
+variable "container_cpu" {
+  description = "Control Plane container CPU allocation."
+  type        = number
+}
+
+variable "container_memory" {
+  description = "Control Plane container memory allocation."
+  type        = string
 }
