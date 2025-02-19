@@ -6,11 +6,13 @@ on:
       - main
     paths:
       - 'helm-chart/**'
+      - '.github/workflows/helm-*.yaml'
   pull_request:
     branches:
       - main
     paths:
       - 'helm-chart/**'
+      - '.github/workflows/helm-*.yaml'
 
 jobs:
   lint-test:
