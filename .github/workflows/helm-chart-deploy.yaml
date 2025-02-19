@@ -17,18 +17,20 @@ on:
 jobs:
   package-and-upload:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Setup Helm
-        uses: azure/setup-helm@v3
+        uses: azure/setup-helm@v4
         with:
           version: 'latest'
 
       - name: Determine S3 Bucket Name
-        id: s3-bucket-name
         run: |
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
             echo "bucket=dev-${{ vars.SE_HELM_AWS_S3_BUCKET }}" >> $GITHUB_ENV
@@ -47,8 +49,7 @@ jobs:
       - name: Set up AWS CLI
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.SE_HELM_AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.SE_HELM_AWS_SECRET_ACCESS_KEY }}
+          role-to-assume: ${{ secrets.SE_HELM_AWS_ROLE }}
           aws-region: ${{ vars.SE_HELM_AWS_REGION }}
 
       - name: Download existing index.yaml
