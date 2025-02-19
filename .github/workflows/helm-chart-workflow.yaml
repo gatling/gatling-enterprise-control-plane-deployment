@@ -6,16 +6,16 @@ on:
       - main
     paths:
       - 'helm-chart/**'
-      - '.github/workflows/helm-chart-deploy.yaml'
+      - '.github/workflows/helm-chart-workflow.yaml'
   pull_request:
     branches:
       - main
     paths:
       - 'helm-chart/**'
-      - '.github/workflows/helm-chart-deploy.yaml'
+      - '.github/workflows/helm-chart-workflow.yaml'
 
 jobs:
-  package-and-upload:
+  test-package-deploy:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -30,13 +30,13 @@ jobs:
         with:
           version: 'latest'
 
-      - name: Determine S3 Bucket Name
-        run: |
-          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-            echo "bucket=dev-${{ vars.SE_HELM_AWS_S3_BUCKET }}" >> $GITHUB_ENV
-          else
-            echo "bucket=${{ vars.SE_HELM_AWS_S3_BUCKET }}" >> $GITHUB_ENV
-          fi
+      - name: Lint Helm Chart
+        working-directory: helm-chart
+        run: helm lint .
+
+      - name: Validate Helm Templates
+        working-directory: helm-chart
+        run: helm template . --debug
 
       - name: Package Helm chart
         working-directory: helm-chart
@@ -51,6 +51,14 @@ jobs:
         with:
           role-to-assume: ${{ secrets.SE_HELM_AWS_ROLE }}
           aws-region: ${{ vars.SE_HELM_AWS_REGION }}
+
+      - name: Determine S3 Bucket Name
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            echo "bucket=dev-${{ vars.SE_HELM_AWS_S3_BUCKET }}" >> $GITHUB_ENV
+          else
+            echo "bucket=${{ vars.SE_HELM_AWS_S3_BUCKET }}" >> $GITHUB_ENV
+          fi
 
       - name: Download existing index.yaml
         env:
@@ -86,7 +94,7 @@ jobs:
             update_helm_index "https://helm.gatling.io/charts/"
           fi
 
-      - name: Upload to S3
+      - name: Deploy to S3
         env:
           AWS_S3_BUCKET: ${{ env.bucket }}
           AWS_REGION: ${{ vars.SE_HELM_AWS_REGION }}
