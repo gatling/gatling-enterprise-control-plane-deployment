@@ -1,0 +1,83 @@
+name: Deploy
+
+on:
+  workflow_run:
+    workflows: ["Package"]
+    types:
+      - completed
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up AWS CLI
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.SE_HELM_AWS_ROLE }}
+          aws-region: ${{ vars.SE_HELM_AWS_REGION }}
+
+      - name: Determine S3 Bucket Name
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            echo "bucket=dev-${{ vars.SE_HELM_AWS_S3_BUCKET }}" >> $GITHUB_ENV
+          else
+            echo "bucket=${{ vars.SE_HELM_AWS_S3_BUCKET }}" >> $GITHUB_ENV
+          fi
+
+      - name: Download existing index.yaml
+        env:
+          AWS_S3_BUCKET: ${{ env.bucket }}
+        run: |
+          if aws s3 ls "s3://${AWS_S3_BUCKET}/index.yaml" >/dev/null 2>&1; then
+            aws s3 cp "s3://${AWS_S3_BUCKET}/index.yaml" index.yaml
+            echo "index.yaml downloaded."
+          else
+            echo "No existing index.yaml found. A new index.yaml will be created."
+          fi
+
+      - name: Merge new chart with existing index.yaml
+        env:
+          AWS_S3_BUCKET: ${{ env.bucket }}
+          AWS_REGION: ${{ vars.SE_HELM_AWS_REGION }}
+        run: |
+          CHART_FILE=${{ github.event.inputs.chart_file }}
+          CHART_DIR=$(dirname "$CHART_FILE")
+
+          update_helm_index() {
+            local url="$1"
+            if [ -f index.yaml ]; then
+              helm repo index "$CHART_DIR" --url "$url" --merge index.yaml
+            else
+              helm repo index "$CHART_DIR" --url "$url"
+            fi
+          }
+
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            update_helm_index "http://${AWS_S3_BUCKET}.s3.${AWS_REGION}.amazonaws.com/charts/"
+          else
+            update_helm_index "https://helm.gatling.io/charts/"
+          fi
+
+      - name: Upload to S3
+        env:
+          AWS_S3_BUCKET: ${{ env.bucket }}
+          AWS_REGION: ${{ vars.SE_HELM_AWS_REGION }}
+        run: |
+          CHART_FILE=${{ github.event.inputs.chart_file }}
+          CHART_DIR=$(dirname "$CHART_FILE")
+
+          aws s3 cp $CHART_FILE "s3://${AWS_S3_BUCKET}/charts/"
+          aws s3 cp index.yaml "s3://${AWS_S3_BUCKET}/index.yaml"
+
+      - name: Create CloudFront invalidation
+        if: ${{ github.event_name != 'pull_request' }}
+        env:
+          CLOUDFRONT_DISTRIBUTION_ID: ${{ vars.SE_HELM_AWS_CLOUDFRONT_DISTRIBUTION_ID }}
+        run: aws cloudfront create-invalidation --distribution-id ${CLOUDFRONT_DISTRIBUTION_ID} --paths "/*"
