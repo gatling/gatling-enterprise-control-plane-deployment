@@ -1,30 +1,37 @@
-name: AWS CloudFormation Deploy
+name: AWS CF Deploy
 
 on:
-    push:
-      branches:
-        - main
-      paths:
-        - 'aws/cloudformation/**'
-    pull_request:
-      branches:
-        - main
-      paths:
-        - 'aws/cloudformation/**'
+  push:
+    branches:
+      - main
+    paths:
+      - 'aws/cloudformation/**'
+      - '.github/workflows/aws-cf-workflow.yaml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'aws/cloudformation/**'
+      - '.github/workflows/aws-cf-workflow.yaml'
 
 jobs:
-  package-and-upload:
+  lint-test-deploy:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Install cfn-lint
+        run: pip install cfn-lint
+
+      - name: Lint CloudFormation Templates
+        run: find aws/cloudformation/templates -type f -name "*.yaml" -exec cfn-lint {} +
+
       - name: Set up AWS CLI
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.SE_CF_AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.SE_CF_AWS_SECRET_ACCESS_KEY }}
+          role-to-assume: ${{ secrets.SE_CF_AWS_ROLE }}
           aws-region: eu-west-3
 
       - name: Deploy to S3
