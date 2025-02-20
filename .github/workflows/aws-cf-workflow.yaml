@@ -1,4 +1,4 @@
-name: AWS CF Deploy
+name: AWS CF CI/CD
 
 on:
   push:
