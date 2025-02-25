@@ -68,7 +68,7 @@ Location:
 - `InstanceType`: Instance type of the location.
 - `Spot`: Flag to enable spot instances.
 - `AMItype`: AMI type of the location.
-- `engine`: Engine of the location determining the compatible package formats (JavaScript or JVM).
+- `Engine`: Engine of the location determining the compatible package formats (JavaScript or JVM).
 - `JavaVersion`: Java version of the location.
 - `ProfileName`: Profile name to be assigned to the location.
 - `IAMInstanceProfile`: IAM instance profile to be assigned to the location.
