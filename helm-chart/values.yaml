@@ -1,140 +1,166 @@
-# Number of replicas (instances) to deploy
 replicaCount: 1
-
-# Kubernetes namespace where resources will be deployed
+# Kubernetes namespace where resources will be created.
 namespace: gatling
 
+# ----------------------------------------------------------------------
+# CONTROL PLANE SETTINGS
+# ----------------------------------------------------------------------
 controlPlane:
-  # Name of the control plane deployment
+  # Name used for the Control Plane Deployment.
   name: gatling-cp
-  # Authentication token for the control plane
-  token: token
-  # Description of the control plane
+  # Human-readable description for the Control Plane.
   description: My K8s control plane description
   image:
-    # Docker image name for the control plane
+    # Docker image for the Control Plane container.
     name: gatlingcorp/control-plane:latest
-    # Image pull policy (Always, IfNotPresent, Never)
-    pullPolicy: IfNotPresent
-    # Image pull secrets for private registry (list of secrets)
+    # How to pull the image (Always, IfNotPresent, Never).
+    pullPolicy: Always
+    # List of existing Kubernetes Secrets to pull images from private registries.
     pullSecrets: []
-  # Additional labels to add to the deployment
+  # Additional labels to be added to the Control Plane Deployment resource.
   deploymentLabels: {}
-  # Additional labels to add to the pods
+  # Additional labels to be added to the Control Plane Pods.
   podLabels: {}
-  # List of init containers to run before the app containers
+  # List of init containers that run before the main Control Plane container starts.
   initContainers: []
-  # Environment variables to set in the container
-  env: []
-  # Command to override default entrypoint of the container
+  # Environment variables injected into the Control Plane container.
+  env:
+    # Referencing a Kubernetes Secret to retrieve the Control Plane token.
+    - name: CONTROL_PLANE_TOKEN # DO NOT CHANGE
+      valueFrom:
+        secretKeyRef:
+          name: gatling-enterprise
+          key: api-token
+  # Override the default container entrypoint command if needed.
   command: []
-  # Volumes to attach to the pod
+  # Defines volumes for the Pod (e.g., configMaps, secrets, persistent volumes).
   volumes: []
-  # Volume mounts for the container
+  # Mount points for the volumes specified above.
   volumeMounts: []
-  # Node selector to constrain pods to nodes with specific labels
+  # Constrains Pods to nodes that match these key-value labels.
   nodeSelector: {}
-  # Affinity rules for pod scheduling
+  # Affinity rules (e.g., nodeAffinity, podAffinity, or podAntiAffinity).
   affinity: {}
-  # Tolerations to allow pods to be scheduled on tainted nodes
+  # Tolerations let Pods be scheduled on nodes with matching taints.
   tolerations: {}
-  resources: # We recommend aligning resource requests with limits to maintain consistent performance
-    # Resource requests for the container
+  # Resource requests and limits for the Control Plane container.
+  # Align requests with limits for consistent performance.
+  resources:
     requests:
       memory: "1Gi"
       cpu: "1"
-    # Resource limits for the container
     limits:
       memory: "1Gi"
       cpu: "1"
-  # Security context for the pod or container
+  # Security context for running the container with specific privileges or user IDs.
   securityContext: {}
+  # Uncomment to specify a forward proxy for the Control Plane (if needed).
   #enterpriseCloud:
-    #url: "http://private-control-plane-forward-proxy/gatling" # Set up a forward proxy for the control plane
+    #url: "http://private-control-plane-forward-proxy/gatling"
 
+# ----------------------------------------------------------------------
+# PRIVATE LOCATIONS
+# ----------------------------------------------------------------------
 privateLocations:
-  - id: "prl_kubernetes"  # Unique identifier for the private location
-    description: "Private Location on Kubernetes"  # Description of the private location
-    type: "kubernetes"  # Type of the private location
-    engine: "classic" # Execution engine type (classic or javascript)
+  - id: "prl_kubernetes"           # Unique identifier for the private location
+    description: "Private Location on Kubernetes"  # Short description
+    type: "kubernetes"             # The type of private location
+    engine: "classic"              # The execution engine type (e.g., "classic", "javascript")
     image:
-      type: "certified" # Image type (certified or custom)
-      #java: "latest"  # Java version to use (optional if engine = java, noop if engine type = javascript)
+      type: "certified"           # Image type (certified or custom)
+      #java: "latest"             # For classic engine; no-op for javascript
       #image: "gatlingcorp/classic-openjdk:latest"  # Custom image name
-    #systemProperties: {}  # System properties for the JVM
+    #systemProperties: {}         # System properties for the JVM
     #javaHome: "/usr/lib/jvm/zulu"  # Java home path
-    #jvmOptions: ["-Xmx4G", "-Xms512M"]  # JVM options
-    #keepLoadGeneratorAlive: false  # Whether to keep the load generator alive (for debugging)
+    #jvmOptions: ["-Xmx4G", "-Xms512M"]
+    #keepLoadGeneratorAlive: false  # Whether to keep the load generator alive (for debugging - Do not forget to delete ghost pods.)
+    # Uncomment to specify a forward proxy for the Location (if needed).
     #enterpriseCloud:
-      #url: "http://location-forward-proxy/gatling"  # Set up a forward proxy for your location configuration
+      #url: "http://location-forward-proxy/gatling"
 
-    # Working at the template spec level, not the job spec level.
-    # For a detailed structure, refer to this example JSON job definition:
-    # https://docs.gatling.io/reference/install/cloud/private-locations/kubernetes/configuration/#example-json-job-definition
+    # Kubernetes Job spec for the load generator
     job:
       spec:
         template:
           metadata:
-            annotations: {}  # Annotations to add to the pod
-            labels: {} # Labels to add to the pod
-            namespace: "{{ .Values.namespace }}"  # Namespace for the pod
+            # Additional annotation to be added to the Location Pods.
+            annotations: {}
+            # Additional labels to be added to the Location Pods.
+            labels: {}
+            # Kubernetes namespace where Locations will be created.
+            namespace: "{{ .Values.namespace }}"
           spec:
             containers:
-              - env: []  # Environment variables for the container
-                name: gatling-container  # Name of the container
-                resources: # We recommend aligning resource requests with limits to maintain consistent performance
-                  # Resource requests for the container
-                  limits": 
-                    memory: "2Gi"
-                    cpu: "2"
-                  # Resource limits for the container
+              - name: gatling-container
+                # Environment variables injected into the Location container(s).
+                env: []
+                # Resource requests and limits for the Location container(s).
+                # Align requests with limits for consistent performance.
+                resources:
                   requests:
                     memory: "2Gi"
                     cpu: "2"
-            # Security context for the pod or container
-            securityContext:
-              sysctls: []  # List of sysctls to set in the pod
-        ttlSecondsAfterFinished: 60  # Time (in seconds) to retain the job after completion
+                  limits:
+                    memory: "2Gi"
+                    cpu: "2"
+            # Security context for running the container with specific privileges or user IDs.
+            securityContext: {}
+        ttlSecondsAfterFinished: 60
 
+# ----------------------------------------------------------------------
+# PRIVATE PACKAGE SETTINGS
+# ----------------------------------------------------------------------
 privatePackage:
-  enabled: false  # Enable or disable the private package feature
+  # Enable or disable the private package repository feature.
+  enabled: false
   repository:
+    # Directory where files will be uploaded temporarily
     upload:
-      directory: "/tmp"  # Directory where files will be uploaded temporarily
+      directory: "/tmp"
     server:
-      port: 8080  # Port on which the repository server listens
-      #bindAddress: "0.0.0.0"  # Bind address for the server
-      #certificate:  # SSL certificate configuration
+      # Port on which the repository server listens
+      port: 8080
+      # Bind address for the server
+      #bindAddress: "0.0.0.0"
+      # SSL certificate configuration
+      #certificate:
         #path: "/path/to/certificate.p12"
         #password: "password"
     service:
-      type: NodePort # Service type on which you expose the control plane pod
+      # Service type on which you expose the control plane pod
+      type: NodePort
       ports:
-      - name: http # Name of the port on which the Service listens
-        protocol: TCP # Protocol of the port
-        port: 80 # Port on which the Service listens
-        targetPort: 8080 # Port on which the repository server listens
-    type: "filesystem"  # Choose the repository type: "filesystem", "aws", "azure", or "gcp"
+        - name: http
+          protocol: TCP
+          # Port on which the Service listens
+          port: 80
+          # Port on which the repository server listens
+          targetPort: 8080
+    # Repository backend: "filesystem", "aws", "azure", or "gcp".
+    type: "filesystem"
     configurations:
       aws:
-        bucket: "bucket-name"  # S3 bucket name
-        path: "folder/to/upload"  # Path within the S3 bucket
+        bucket: "bucket-name"
+        path: "folder/to/upload"
       azure:
-        storage-account: "storage-account-name"  # Azure storage account name
-        container: "container-name"  # Azure Blob Storage container name
-        path: "folder/to/upload"  # Path within the container
+        storage-account: "storage-account-name"
+        container: "container-name"
+        path: "folder/to/upload"
       gcp:
-        bucket: "bucket-name"  # GCS bucket name
-        path: "folder/to/upload"  # Path within the GCS bucket
-        project: "project-name"  # GCP project name
+        bucket: "bucket-name"
+        path: "folder/to/upload"
+        project: "project-name"
       filesystem:
-        directory: "/data/gatling-repository"  # Directory for filesystem storage
+        directory: "/data/gatling-repository"
         location:
-          download-base-url: "http://www.example.com:8080"  # Base URL for downloading packages
-  # PersistentVolumeClaim configuration (only if you're using filesystem repository)
-  persistentVolumeClaim:  # Comment out if you do not intend to use a repository.type = filesystem
-    storageClassName: ""  # Storage class name for the PVC
-    volumeMode: Filesystem  # Volume mode (Filesystem or Block)
-    accessModes: ["ReadWriteOnce"]  # Access modes for the PVC
-    storage: 5Gi  # Requested storage size
-    selector: {}  # Selector to match an existing PV (optional)
+          download-base-url: "http://www.example.com:8080"
+
+  # PersistentVolumeClaim configuration — only required if using 'repository.type = filesystem'.
+  persistentVolumeClaim:
+    # Storage class name for the PVC
+    storageClassName: ""
+    volumeMode: Filesystem
+    accessModes: ["ReadWriteOnce"]
+    storage: 5Gi
+    # Selector to match an existing PV (optional)
+    selector: {}
