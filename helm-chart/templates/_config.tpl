@@ -1,6 +1,6 @@
 {{- define "configFileContent" -}}
 control-plane {
-  token = "{{ .Values.controlPlane.token }}"
+  token = ${?CONTROL_PLANE_TOKEN}
   description = "{{ .Values.controlPlane.description }}"
 {{- if .Values.controlPlane.enterpriseCloud }}
   enterprise-cloud = {
