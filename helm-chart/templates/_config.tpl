@@ -15,10 +15,12 @@ control-plane {
       id = "{{ .id }}"
       description = "{{ .description }}"
       type = "{{ .type }}"
+    {{- if eq .type "kubernetes" }}
       namespace = "{{ $.Values.namespace }}"
       engine = "{{ .engine }}"
       image = {{ toJson .image }}
       system-properties = {{ toJson .systemProperties }}
+    {{- end }}
     {{- if .javaHome }}
       java-home = "{{ .javaHome }}"
     {{- end }}
@@ -30,6 +32,71 @@ control-plane {
       {{- end }}
       }
     {{- end }}
+    {{- if eq .type "aws" }}
+      region = "{{ .region }}"
+      {{- if .ami }}
+      ami {
+        type = "{{ .ami.type }}"
+        {{- if .ami.id }}
+        id = "{{ .ami.id }}"
+        {{- end }}
+      }
+      {{- end }}
+      {{- if .securityGroups }}
+      security-groups = {{ toJson .securityGroups }}
+      {{- end }}
+      {{- if .instanceType }}
+      instance-type = "{{ .instanceType }}"
+      {{- end }}
+      {{- if .subnets }}
+      subnets = {{ toJson .subnets }}
+      {{- end }}
+      {{- if .autoAssociatePublicIPv4 }}
+      auto-associate-public-ipv4 = {{ toJson .autoAssociatePublicIPv4 }}
+      {{- end }}
+      {{- if .elasticIps }}
+      elastic-ips = {{ toJson .elasticIps }}
+      {{- end }}
+      {{- if .profileName }}
+      profile-name = "{{ .profileName }}"
+      {{- end }}
+      {{- if .iamInstanceProfile }}
+      iam-instance-profile = "{{ .iamInstanceProfile }}"
+      {{- end }}
+      {{- if .tags }}
+      tags {
+        {{- range $key, $value := .tags }}
+        {{ $key }} = "{{ $value }}"
+        {{- end }}
+      }
+      {{- end }}
+      {{- if .tagsFor }}
+      tags-for {
+        {{- if .tagsFor.instance }}
+        instance {
+          {{- range $key, $value := .tagsFor.instance }}
+          {{ $key }} = "{{ $value }}"
+          {{- end }}
+        }
+        {{- end }}
+        {{- if .tagsFor.volume }}
+        volume {
+          {{- range $key, $value := .tagsFor.volume }}
+          {{ $key }} = "{{ $value }}"
+          {{- end }}
+        }
+        {{- end }}
+        {{- if .tagsFor.networkInterface }}
+        network-interface {
+          {{- range $key, $value := .tagsFor.networkInterface }}
+          {{ $key }} = "{{ $value }}"
+          {{- end }}
+        }
+        {{- end }}
+      }
+      {{- end }}
+    {{- end }}
+  {{- if eq .type "kubernetes" }}
     {{- with .job }}
       job = {
         "apiVersion": "batch/v1",
@@ -47,6 +114,7 @@ control-plane {
       debug.keep-load-generator-alive = {{ toJson (default false .keepLoadGeneratorAlive) }}
     }
   {{- end }}
+{{- end }}
   ]
   {{- if .Values.privatePackage.enabled }}
   {{- $repoType := .Values.privatePackage.repository.type }}
