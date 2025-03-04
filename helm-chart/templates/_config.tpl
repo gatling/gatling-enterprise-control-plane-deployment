@@ -30,6 +30,71 @@ control-plane {
       {{- end }}
       }
     {{- end }}
+    {{- if eq .type "aws" }}
+    # AWS specific configuration
+    region = "{{ .region }}"
+    {{- if .ami }}
+    ami {
+      type = "{{ .ami.type }}"
+      {{- if .ami.id }}
+      id = "{{ .ami.id }}"
+      {{- end }}
+    }
+    {{- end }}
+    {{- if .securityGroups }}
+    security-groups = {{ toJson .securityGroups }}
+    {{- end }}
+    {{- if .instanceType }}
+    instance-type = "{{ .instanceType }}"
+    {{- end }}
+    {{- if .subnets }}
+    subnets = {{ toJson .subnets }}
+    {{- end }}
+    {{- if .autoAssociatePublicIPv4 }}
+    auto-associate-public-ipv4 = {{ toJson .autoAssociatePublicIPv4 }}
+    {{- end }}
+    {{- if .elasticIps }}
+    elastic-ips = {{ toJson .elasticIps }}
+    {{- end }}
+    {{- if .profileName }}
+    profile-name = "{{ .profileName }}"
+    {{- end }}
+    {{- if .iamInstanceProfile }}
+    iam-instance-profile = "{{ .iamInstanceProfile }}"
+    {{- end }}
+    {{- if .tags }}
+    tags {
+      {{- range $key, $value := .tags }}
+      {{ $key }} = "{{ $value }}"
+      {{- end }}
+    }
+    {{- end }}
+    {{- if .tagsFor }}
+    tags-for {
+      {{- if .tagsFor.instance }}
+      instance {
+        {{- range $key, $value := .tagsFor.instance }}
+        {{ $key }} = "{{ $value }}"
+        {{- end }}
+      }
+      {{- end }}
+      {{- if .tagsFor.volume }}
+      volume {
+        {{- range $key, $value := .tagsFor.volume }}
+        {{ $key }} = "{{ $value }}"
+        {{- end }}
+      }
+      {{- end }}
+      {{- if .tagsFor.networkInterface }}
+      network-interface {
+        {{- range $key, $value := .tagsFor.networkInterface }}
+        {{ $key }} = "{{ $value }}"
+        {{- end }}
+      }
+      {{- end }}
+    }
+    {{- end }}
+    {{- end }}
     {{- with .job }}
       job = {
         "apiVersion": "batch/v1",
