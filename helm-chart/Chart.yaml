@@ -4,6 +4,11 @@ version: 1.0.2
 name: enterprise-locations-packages
 description: Official Gatling Enterprise Helm chart for Private Locations & Packages
 home: https://gatling.io
+maintainers:
+  - name: "Karim Atwa"
+    email: "katwa@gatling.io"
+sources:
+  - "https://github.com/gatling/gatling-enterprise-control-plane-deployment/tree/main/helm-chart"
 keywords:
   - load-testing
   - smoke-testing
