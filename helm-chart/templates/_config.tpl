@@ -59,6 +59,16 @@ control-plane {
       tags = {{ toJson .tags }}
       tags-for = {{ toJson .tagsFor }}
     {{- end }}
+    {{- if eq .type "azure" }}
+      region = "{{ .region }}"
+      size = "{{ .size }}"
+      image = {{ toJson .image }}
+      subscription = "{{ .subscription }}"
+      network-id = "{{ .networkId }}"
+      subnet-name = "{{ .subnetName }}"
+      associate-public-ip = {{ toJson .associatePublicIp }}
+      tags = {{ toJson .tags }}
+    {{- end }}
       debug.keep-load-generator-alive = {{ toJson (default false .keepLoadGeneratorAlive) }}
       system-properties = {{ toJson .systemProperties }}
     {{- if .javaHome }}

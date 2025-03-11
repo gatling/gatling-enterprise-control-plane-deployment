@@ -58,7 +58,8 @@ controlPlane:
   #enterpriseCloud:
     #url: "http://private-control-plane-forward-proxy/gatling"
   #AWSroleARN: "arn:aws:iam::339713180729:role/EKS-EC2-Spawn-Role" # Optional AWS IAM role ARN for the Control Plane, used to create AWS Locations.
-  
+  #AzureClientID: "65c5547a-b6a7-4ad7-abef-166ba4cef160" # Optional Azure Identity client ID for the Control Plane, used to create Azure Locations.
+
 # ----------------------------------------------------------------------
 # PRIVATE LOCATIONS
 # ----------------------------------------------------------------------
@@ -125,8 +126,7 @@ privateLocations:
     #elasticIps: ["0.0.0.0", "0.0.0.0"]  # Optional; only if not using auto-association
     #profileName: "my-aws-profile"      # Optional AWS CLI profile name
     #iamInstanceProfile: "my-iam-instance-profile"  # Optional IAM instance profile
-    #tags:                            # Custom tags for all AWS resources
-      #ExampleKey: "ExampleValue"
+    #tags: {}                           # Custom tags for all AWS resources
     #tagsFor:                         # Custom tags per resource type
       #instance: {}
       #volume: {}
@@ -134,7 +134,25 @@ privateLocations:
     #systemProperties: {}
     #javaHome: "/usr/lib/jvm/zulu"
     #jvmOptions: ["-Xmx4G", "-Xms512M"]
-
+  #- id: "prl_azure"
+    #description: "Private Location on Azure"
+    #type: "azure"
+    #region: "westeurope"             # Azure region (location name)
+    #size: "Standard_A4_v2"           # Virtual machine size (as per Azure CLI)
+    #engine: "classic"
+    #image:
+      #type: "certified"              # Options: certified, custom
+      #java: "latest"                 # For classic engine; ignored for javascript
+      # For custom images, you could alternatively set an image path:
+      #image: "/subscriptions/.../customImages/images/<MyImage>"
+    #subscription: "<SubscriptionId>" # Azure subscription ID
+    #networkId: "/subscriptions/<SubscriptionId>/resourceGroups/<ResouceGroup>/providers/Microsoft.Network/virtualNetworks/<VirtualNetwork>"
+    #subnetName: "subnet-name"        # Subnet name within the specified virtual network
+    #associatePublicIp: true          # Whether to associate a public IP
+    #tags: {}                         # Virtual machine tags
+    #systemProperties: {}
+    #javaHome: "/usr/lib/jvm/zulu"
+    #jvmOptions: ["-Xmx4G", "-Xms512M"]
 # ----------------------------------------------------------------------
 # PRIVATE PACKAGE SETTINGS
 # ----------------------------------------------------------------------
