@@ -12,17 +12,6 @@ control-plane {
   locations = [
   {{- range .Values.privateLocations }}
     {
-      id = "{{ .id }}"
-      description = "{{ .description }}"
-      type = "{{ .type }}"
-      namespace = "{{ $.Values.namespace }}"
-      engine = "{{ .engine }}"
-      image = {{ toJson .image }}
-      system-properties = {{ toJson .systemProperties }}
-    {{- if .javaHome }}
-      java-home = "{{ .javaHome }}"
-    {{- end }}
-      jvm-options = {{ toJson .jvmOptions }}
     {{- if .enterpriseCloud }}
       enterprise-cloud = {
       {{- if .enterpriseCloud.url }}
@@ -30,7 +19,14 @@ control-plane {
       {{- end }}
       }
     {{- end }}
-    {{- with .job }}
+      id = "{{ .id }}"
+      description = "{{ .description }}"
+      type = "{{ .type }}"
+      engine = "{{ .engine }}"
+    {{- if eq .type "kubernetes" }}
+      namespace = "{{ $.Values.namespace }}"
+      image = {{ toJson .image }}
+      {{- with .job }}
       job = {
         "apiVersion": "batch/v1",
         "kind": "Job",
@@ -43,8 +39,32 @@ control-plane {
             "ttlSecondsAfterFinished": {{ .spec.ttlSecondsAfterFinished }}
         }
       }
+      {{- end }}
+    {{ end }}
+    {{- if eq .type "aws" }}
+      region = "{{ .region }}"
+      ami = {{ toJson .ami }}
+      security-groups = {{ toJson .securityGroups }}
+      instance-type = "{{ .instanceType }}"
+      spot = {{ toJson .spot }}
+      subnets = {{ toJson .subnets }}
+      auto-associate-public-ipv4 = {{ toJson .autoAssociatePublicIPv4 }}
+      elastic-ips = {{ toJson .elasticIps }}
+      {{- if .profileName }}
+      profile-name = "{{ .profileName }}"
+      {{- end }}
+      {{- if .iamInstanceProfile }}
+      iam-instance-profile = "{{ .iamInstanceProfile }}"
+      {{- end }}
+      tags = {{ toJson .tags }}
+      tags-for = {{ toJson .tagsFor }}
     {{- end }}
       debug.keep-load-generator-alive = {{ toJson (default false .keepLoadGeneratorAlive) }}
+      system-properties = {{ toJson .systemProperties }}
+    {{- if .javaHome }}
+      java-home = "{{ .javaHome }}"
+    {{- end }}
+      jvm-options = {{ toJson .jvmOptions }}
     }
   {{- end }}
   ]

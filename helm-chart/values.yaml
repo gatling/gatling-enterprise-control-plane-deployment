@@ -57,11 +57,13 @@ controlPlane:
   # Uncomment to specify a forward proxy for the Control Plane (if needed).
   #enterpriseCloud:
     #url: "http://private-control-plane-forward-proxy/gatling"
-
+  #AWSroleARN: "arn:aws:iam::339713180729:role/EKS-EC2-Spawn-Role" # Optional AWS IAM role ARN for the Control Plane, used to create AWS Locations.
+  
 # ----------------------------------------------------------------------
 # PRIVATE LOCATIONS
 # ----------------------------------------------------------------------
 privateLocations:
+  # Kubernetes Location
   - id: "prl_kubernetes"           # Unique identifier for the private location
     description: "Private Location on Kubernetes"  # Short description
     type: "kubernetes"             # The type of private location
@@ -77,7 +79,6 @@ privateLocations:
     # Uncomment to specify a forward proxy for the Location (if needed).
     #enterpriseCloud:
       #url: "http://location-forward-proxy/gatling"
-
     # Kubernetes Job spec for the load generator
     job:
       spec:
@@ -106,6 +107,33 @@ privateLocations:
             # Security context for running the container with specific privileges or user IDs.
             securityContext: {}
         ttlSecondsAfterFinished: 60
+  # AWS Location
+  #- id: "prl_kubernetes_aws"
+    #description: "Private Location on AWS"
+    #type: "aws"
+    #region: "eu-west-3"
+    #engine: "classic"
+    #ami:
+      #type: "certified"              # Options: certified, custom
+      #java = "latest"               # For classic engine; no-op for javascript
+      #id: "ami-id"   # Only needed for a custom AMI configuration
+    #securityGroups: ["sg-id"]
+    #instanceType: "c7i.xlarge"
+    #spot: false                      # Set to true if using spot instances
+    #subnets: ["subnet-a"]
+    #autoAssociatePublicIPv4: true    # Optional; default is true if omitted
+    #elasticIps: ["0.0.0.0", "0.0.0.0"]  # Optional; only if not using auto-association
+    #profileName: "my-aws-profile"      # Optional AWS CLI profile name
+    #iamInstanceProfile: "my-iam-instance-profile"  # Optional IAM instance profile
+    #tags:                            # Custom tags for all AWS resources
+      #ExampleKey: "ExampleValue"
+    #tagsFor:                         # Custom tags per resource type
+      #instance: {}
+      #volume: {}
+      #network-interface: {}
+    #systemProperties: {}
+    #javaHome: "/usr/lib/jvm/zulu"
+    #jvmOptions: ["-Xmx4G", "-Xms512M"]
 
 # ----------------------------------------------------------------------
 # PRIVATE PACKAGE SETTINGS
