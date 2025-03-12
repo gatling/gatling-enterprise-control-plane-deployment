@@ -187,7 +187,7 @@ privateLocations:
 #          #password: "p@ssw0rd" # Optional password required to unlock the keystore.
 #
 # GCP Private Location configuration
-  - id: "prl_kubernetes_gcp"                # Unique identifier for the GCP private location
+#  - id: "prl_kubernetes_gcp"                # Unique identifier for the GCP private location
 #    description: "Private Location on GCP"  # Brief description of the GCP location
 #    type: "gcp"                             # Location type (GCP)
 #    project: "project-id"                   # Your GCP project ID
