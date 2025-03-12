@@ -12,17 +12,6 @@ control-plane {
   locations = [
   {{- range .Values.privateLocations }}
     {
-      id = "{{ .id }}"
-      description = "{{ .description }}"
-      type = "{{ .type }}"
-      namespace = "{{ $.Values.namespace }}"
-      engine = "{{ .engine }}"
-      image = {{ toJson .image }}
-      system-properties = {{ toJson .systemProperties }}
-    {{- if .javaHome }}
-      java-home = "{{ .javaHome }}"
-    {{- end }}
-      jvm-options = {{ toJson .jvmOptions }}
     {{- if .enterpriseCloud }}
       enterprise-cloud = {
       {{- if .enterpriseCloud.url }}
@@ -30,7 +19,14 @@ control-plane {
       {{- end }}
       }
     {{- end }}
-    {{- with .job }}
+      id = "{{ .id }}"
+      description = "{{ .description }}"
+      type = "{{ .type }}"
+    {{- if eq .type "kubernetes" }}
+      namespace = "{{ $.Values.namespace }}"
+      engine = "{{ .engine }}"
+      image = {{ toJson .image }}
+      {{- with .job }}
       job = {
         "apiVersion": "batch/v1",
         "kind": "Job",
@@ -43,8 +39,52 @@ control-plane {
             "ttlSecondsAfterFinished": {{ .spec.ttlSecondsAfterFinished }}
         }
       }
+      {{- end }}
+    {{ end }}
+    {{- if eq .type "aws" }}
+      region = "{{ .region }}"
+      engine = "{{ .engine }}"
+      ami = {{ toJson .ami }}
+      security-groups = {{ toJson .securityGroups }}
+      instance-type = "{{ .instanceType }}"
+      spot = {{ toJson .spot }}
+      subnets = {{ toJson .subnets }}
+      auto-associate-public-ipv4 = {{ toJson .autoAssociatePublicIPv4 }}
+      elastic-ips = {{ toJson .elasticIps }}
+      {{- if .profileName }}
+      profile-name = "{{ .profileName }}"
+      {{- end }}
+      {{- if .iamInstanceProfile }}
+      iam-instance-profile = "{{ .iamInstanceProfile }}"
+      {{- end }}
+      tags = {{ toJson .tags }}
+      tags-for = {{ toJson .tagsFor }}
+    {{- end }}
+    {{- if eq .type "azure" }}
+      region = "{{ .region }}
+      engine = "{{ .engine }}""
+      size = "{{ .size }}"
+      image = {{ toJson .image }}
+      subscription = "{{ .subscription }}"
+      network-id = "{{ .networkId }}"
+      subnet-name = "{{ .subnetName }}"
+      associate-public-ip = {{ toJson .associatePublicIp }}
+      tags = {{ toJson .tags }}
+    {{- end }}
+    {{- if eq .type "gcp" }}
+      zone = "{{ .zone }}"
+      project = "{{ .project }}"
+      {{- if .instanceTemplate }}
+      instance-template = "{{ .instanceTemplate }}"
+      {{- end }}
+      machine = {{ toJson .machine }}
     {{- end }}
       debug.keep-load-generator-alive = {{ toJson (default false .keepLoadGeneratorAlive) }}
+      system-properties = {{ toJson .systemProperties }}
+    {{- if .javaHome }}
+      java-home = "{{ .javaHome }}"
+    {{- end }}
+      jvm-options = {{ toJson .jvmOptions }}
     }
   {{- end }}
   ]

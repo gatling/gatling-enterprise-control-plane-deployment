@@ -57,27 +57,30 @@ controlPlane:
   # Uncomment to specify a forward proxy for the Control Plane (if needed).
   #enterpriseCloud:
     #url: "http://private-control-plane-forward-proxy/gatling"
+  #AWSroleARN: "arn:aws:iam::<AccountId>:role/<Role-Name>" # Optional AWS IAM role ARN for the Control Plane, used to access AWS resources.
+  #AzureClientID: "<ClientId>" # Optional Azure Identity client ID for the Control Plane, used to access Azure resources.
+  #GCPServiceAccount: "<ServiceAccount>" # Optional GCP service account for the Control Plane, used to access GCP resources.
 
 # ----------------------------------------------------------------------
 # PRIVATE LOCATIONS
 # ----------------------------------------------------------------------
 privateLocations:
-  - id: "prl_kubernetes"           # Unique identifier for the private location
+  # Kubernetes Private Location configuration
+  - id: "prl_kubernetes"            # Unique identifier for the private location
     description: "Private Location on Kubernetes"  # Short description
-    type: "kubernetes"             # The type of private location
-    engine: "classic"              # The execution engine type (e.g., "classic", "javascript")
+    type: "kubernetes"              # The type of private location
+    engine: "classic"               # The execution engine type (e.g., "classic", "javascript")
     image:
-      type: "certified"           # Image type (certified or custom)
-      #java: "latest"             # For classic engine; no-op for javascript
+      type: "certified"             # Image type (certified or custom)
+      #java: "latest"               # For classic engine; no-op for javascript
       #image: "gatlingcorp/classic-openjdk:latest"  # Custom image name
-    #systemProperties: {}         # System properties for the JVM
+    #systemProperties: {}           # System properties for the JVM
     #javaHome: "/usr/lib/jvm/zulu"  # Java home path
     #jvmOptions: ["-Xmx4G", "-Xms512M"]
     #keepLoadGeneratorAlive: false  # Whether to keep the load generator alive (for debugging - Do not forget to delete ghost pods.)
     # Uncomment to specify a forward proxy for the Location (if needed).
     #enterpriseCloud:
       #url: "http://location-forward-proxy/gatling"
-
     # Kubernetes Job spec for the load generator
     job:
       spec:
@@ -106,7 +109,80 @@ privateLocations:
             # Security context for running the container with specific privileges or user IDs.
             securityContext: {}
         ttlSecondsAfterFinished: 60
-
+  # AWS Private Location configuration
+  #- id: "prl_kubernetes_aws"                # Unique identifier for the AWS private location
+  #  description: "Private Location on AWS"  # Brief description of the AWS location
+  #  type: "aws"                             # Location type (AWS)
+  #  region: "eu-west-3"                     # AWS region where the instance will run
+  #  engine: "classic"                       # Execution engine type (e.g., "classic" or "javascript")
+  #  ami:
+  #    type: "certified"                     # AMI image type: "certified" for default or "custom" for user-provided images
+  #     #java: "latest"                      # (Optional) Java version for the classic engine; no effect for javascript engine
+  #     #id: "ami-id"                        # (Required if using custom AMI) Custom AMI identifier
+  #  securityGroups: ["sg-id"]               # List of AWS security group IDs to attach to the instance
+  #  instanceType: "c7i.xlarge"              # AWS instance type specification
+  #  #spot: false                            # (Optional) Set to true to use spot instances instead of on-demand
+  #  subnets: ["subnet-a"]                   # List of subnet IDs for network placement
+  #  #autoAssociatePublicIPv4: true          # (Optional) Whether to automatically assign a public IPv4; defaults to true if omitted
+  #  #elasticIps: ["0.0.0.0", "0.0.0.0"]     # (Optional) Specify static elastic IPs if public IP auto-association is disabled
+  #  #profileName: "my-aws-profile"          # (Optional) AWS CLI profile to use for the API calls
+  #  #iamInstanceProfile: "my-iam-instance-profile"  # (Optional) IAM instance profile name for the instance
+  #  #tags: {}                               # (Optional) Global tags applied to all AWS resources created
+  #  #tagsFor:                               # (Optional) Specific tags for different AWS resource types
+  #    #instance: {}
+  #    #volume: {}
+  #    #network-interface: {}
+  #  #systemProperties: {}                   # (Optional) Additional system properties for the AWS location
+  #  #javaHome: "/usr/lib/jvm/zulu"          # (Optional) Custom JAVA_HOME path
+  #  #jvmOptions: ["-Xmx4G", "-Xms512M"]     # (Optional) JVM options for tuning performance
+  #
+  # Azure Private Location configuration
+  #- id: "prl_kubernetes_azure"              # Unique identifier for the Azure private location
+  #  description: "Private Location on Azure"# Brief description of the Azure location
+  #  type: "azure"                           # Location type (Azure)
+  #  region: "westeurope"                    # Azure region (location name)
+  #  size: "Standard_A4_v2"                  # Virtual machine size according to Azure specifications
+  #  engine: "classic"                       # Execution engine type
+  #  image:
+  #    type: "certified"                     # Image type: "certified" for default, "custom" for user-provided
+  #    #java: "latest"                       # (Optional) Java version setting for the classic engine; ignored for javascript engine
+  #    #image: "/subscriptions/.../customImages/images/<MyImage>"  # (Optional) Custom image path for user-provided images
+  #  subscription: "<SubscriptionId>"        # Azure subscription ID for resource management
+  #  networkId: "/subscriptions/<SubscriptionId>/resourceGroups/<ResourceGroup>/providers/Microsoft.Network/virtualNetworks/<VirtualNetwork>"
+  #                                          # Full resource ID of the virtual network to be used
+  #  subnetName: "subnet-name"               # Name of the subnet within the specified virtual network
+  #  #associatePublicIp: true                # (Optional) Whether to assign a public IP to the VM
+  #  #tags: {}                               # (Optional) Custom tags for the Azure VM
+  #  #systemProperties: {}                   # (Optional) Additional system properties for the Azure location
+  #  #javaHome: "/usr/lib/jvm/zulu"          # (Optional) Custom JAVA_HOME path
+  #  #jvmOptions: ["-Xmx4G", "-Xms512M"]     # (Optional) Custom JVM options for performance tuning
+  #
+  # GCP Private Location configuration
+  #- id: "prl_kubernetes_gcp"                # Unique identifier for the GCP private location
+  #  description: "Private Location on GCP"  # Brief description of the GCP location
+  #  type: "gcp"                             # Location type (GCP)
+  #  project: "project-id"                   # Your GCP project ID
+  #  zone: "europe-west3-a"                  # GCP zone where the instance will be deployed
+  #  #instanceTemplate: "example-template"   # (Optional) Pre-defined instance template to use instead of manual configuration
+  #  machine:
+  #    type: "c3-highcpu-4"                  # GCP machine type; refer to gcloud for available options
+  #    engine: "classic"                     # Execution engine type (e.g., "classic" or "javascript")
+  #    #preemptible: false                   # (Optional) Set to true for using preemptible instances to reduce costs
+  #    image:
+  #      type: "certified"                   # Image type: "certified" for default or "custom" for user-provided images
+  #      #java: "latest"                     # (Optional) Java version for the image if required by your workload
+  #      #project: "project-id"              # (Optional) Specify project if using a custom image from a different project
+  #      #family: "image-family"             # (Optional) Image family to select the appropriate image version
+  #    disk:
+  #      sizeGb: 20                          # Disk size in GB; ensure it meets your storage needs
+  #    #network-interface:                   # (Optional) Network interface configuration for advanced networking setups
+  #      #network: "gatling-network"         # (Optional) Name of the GCP network to use
+  #      #subnetwork: "gatling-subnetwork-europe-west3"  # (Optional) Specific subnetwork within the network
+  #      #with-external-ip: true             # (Optional) Set to true to assign an external IP address
+  #  #systemProperties: {}                   # (Optional) Additional system properties for the GCP location
+  #  #javaHome: "/usr/lib/jvm/zulu"          # (Optional) Custom JAVA_HOME path
+  #  #jvmOptions: ["-Xmx4G", "-Xms512M"]     # (Optional) JVM options for performance tuning
+    
 # ----------------------------------------------------------------------
 # PRIVATE PACKAGE SETTINGS
 # ----------------------------------------------------------------------

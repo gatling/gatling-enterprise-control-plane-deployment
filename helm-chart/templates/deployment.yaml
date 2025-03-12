@@ -19,6 +19,9 @@ spec:
   template:
     metadata:
       labels:
+      {{- if .Values.controlPlane.AzureClientID }}
+        azure.workload.identity/use: "true"
+      {{ end }}
         app.kubernetes.io/name: {{ .Values.controlPlane.name }}
       {{- with .Values.controlPlane.podLabels }}
         {{ toYaml . | nindent 8 }}
