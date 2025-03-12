@@ -2,23 +2,11 @@
 control-plane {
   token = ${?CONTROL_PLANE_TOKEN}
   description = "{{ .Values.controlPlane.description }}"
-{{- if .Values.controlPlane.enterpriseCloud }}
-  enterprise-cloud = {
-  {{- if .Values.controlPlane.enterpriseCloud.url }}
-    url = "{{ .Values.controlPlane.enterpriseCloud.url }}"
-  {{- end }}
-  }
-{{- end }}
+  enterprise-cloud = {{ toJson .Values.controlPlane.enterpriseCloud }}
   locations = [
   {{- range .Values.privateLocations }}
     {
-    {{- if .enterpriseCloud }}
-      enterprise-cloud = {
-      {{- if .enterpriseCloud.url }}
-        url = "{{ .enterpriseCloud.url }}"
-      {{- end }}
-      }
-    {{- end }}
+      enterprise-cloud = {{ toJson .enterpriseCloud }}
       id = "{{ .id }}"
       description = "{{ .description }}"
       type = "{{ .type }}"
