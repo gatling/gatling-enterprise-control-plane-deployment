@@ -28,6 +28,11 @@ variable "service_account_display_name" {
   default     = "Gatling Control Plane Service Account"
 }
 
+variable "locations" {
+  description = "JSON configuration for the locations."
+  type        = list(any)
+}
+
 variable "private_package" {
   description = "JSON configuration for the Private Package."
   type        = map(any)

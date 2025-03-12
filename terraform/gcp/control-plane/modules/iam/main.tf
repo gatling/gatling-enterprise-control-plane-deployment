@@ -17,13 +17,37 @@ locals {
     "iam.serviceAccounts.signBlob"
   ]
 
-  permissions = length(var.private_package) > 0 ? concat(local.private_location_permissions, local.private_package_permissions) : local.private_location_permissions
+  custom_image_permissions = [
+    "compute.images.useReadOnly"
+  ]
+
+  instance_template_permissions = [
+    "compute.instanceTemplates.useReadOnly"
+  ]
+
+  has_custom_image = anytrue([
+    for location in var.locations : location.conf.machine.image.type == "custom"
+  ])
+
+  has_instance_template = anytrue([
+    for location in var.locations : lookup(location.conf, "instance-template", null) != null
+  ])
+
+  has_private_package = length(var.private_package) > 0 ? true : false
+
+  extra_permissions = concat(
+    local.has_custom_image ? local.custom_image_permissions : [],
+    local.has_instance_template ? local.instance_template_permissions : [],
+    local.has_private_package ? local.private_package_permissions : []
+  )
+
+  permissions = concat(local.private_location_permissions, local.extra_permissions)
 }
 
 data "google_client_config" "current" {}
 
 resource "random_string" "role_suffix" {
-  length  = 1
+  length  = 2
   special = false
   upper   = false
 }
