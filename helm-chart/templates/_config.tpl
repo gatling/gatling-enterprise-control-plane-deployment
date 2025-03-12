@@ -22,9 +22,9 @@ control-plane {
       id = "{{ .id }}"
       description = "{{ .description }}"
       type = "{{ .type }}"
-      engine = "{{ .engine }}"
     {{- if eq .type "kubernetes" }}
       namespace = "{{ $.Values.namespace }}"
+      engine = "{{ .engine }}"
       image = {{ toJson .image }}
       {{- with .job }}
       job = {
@@ -43,6 +43,7 @@ control-plane {
     {{ end }}
     {{- if eq .type "aws" }}
       region = "{{ .region }}"
+      engine = "{{ .engine }}"
       ami = {{ toJson .ami }}
       security-groups = {{ toJson .securityGroups }}
       instance-type = "{{ .instanceType }}"
@@ -60,7 +61,8 @@ control-plane {
       tags-for = {{ toJson .tagsFor }}
     {{- end }}
     {{- if eq .type "azure" }}
-      region = "{{ .region }}"
+      region = "{{ .region }}
+      engine = "{{ .engine }}""
       size = "{{ .size }}"
       image = {{ toJson .image }}
       subscription = "{{ .subscription }}"
@@ -68,6 +70,14 @@ control-plane {
       subnet-name = "{{ .subnetName }}"
       associate-public-ip = {{ toJson .associatePublicIp }}
       tags = {{ toJson .tags }}
+    {{- end }}
+    {{- if eq .type "gcp" }}
+      zone = "{{ .zone }}"
+      project = "{{ .project }}"
+      {{- if .instanceTemplate }}
+      instance-template = "{{ .instanceTemplate }}"
+      {{- end }}
+      machine = {{ toJson .machine }}
     {{- end }}
       debug.keep-load-generator-alive = {{ toJson (default false .keepLoadGeneratorAlive) }}
       system-properties = {{ toJson .systemProperties }}
