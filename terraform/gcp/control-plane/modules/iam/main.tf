@@ -33,12 +33,15 @@ locals {
     for location in var.locations : lookup(location.conf, "instance-template", null) != null
   ])
 
+  has_private_package = length(var.private_package) > 0 ? true : false
+
   extra_permissions = concat(
     local.has_custom_image ? local.custom_image_permissions : [],
-    local.has_instance_template ? local.instance_template_permissions : []
+    local.has_instance_template ? local.instance_template_permissions : [],
+    local.has_private_package ? local.private_package_permissions : []
   )
 
-  permissions = length(var.private_package) > 0 ? concat(local.private_location_permissions, local.private_package_permissions, local.extra_permissions) : concat(local.private_location_permissions, local.extra_permissions)
+  permissions = concat(local.private_location_permissions, local.extra_permissions)
 }
 
 data "google_client_config" "current" {}
