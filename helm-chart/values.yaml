@@ -98,6 +98,8 @@ privateLocations:
               - name: gatling-container
                 # Environment variables injected into the Location container(s).
                 env: []
+                # Volumes mounted into the Location container(s).
+                volumeMounts: []
                 # Resource requests and limits for the Location container(s).
                 # Align requests with limits for consistent performance. QoS class: Guaranteed.
                 resources:
