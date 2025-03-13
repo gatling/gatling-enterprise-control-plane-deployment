@@ -1,5 +1,5 @@
 provider "google" {
-  project = "gatling-sandbox"
+  project = "project-id"
   region  = "europe-west3"
 }
 
