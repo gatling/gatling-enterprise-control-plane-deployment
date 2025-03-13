@@ -29,7 +29,7 @@ variable "service_account_display_name" {
 }
 
 variable "locations" {
-  description = "JSON configuration for the locations."
+  description = "JSON configuration for the private locations."
   type        = list(any)
 }
 

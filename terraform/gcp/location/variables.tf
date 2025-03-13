@@ -1,91 +1,97 @@
 variable "id" {
-  type        = string
   description = "ID of the location."
+  type        = string
   default     = "prl_private_location_example"
 }
 
 variable "project" {
-  type        = string
   description = "Project id on GCP."
+  type        = string
+
+  validation {
+    condition     = length(var.project) > 0
+    error_message = "Project must not be empty."
+  }
 }
 
 variable "zone" {
-  type        = string
   description = "Zone of the location."
-}
-
-variable "engine" {
   type        = string
-  description = "Engine of the location determining the compatible package formats (JavaScript or JVM)."
-  default     = "classic"
+
+  validation {
+    condition     = length(var.zone) > 0
+    error_message = "Zone must not be empty."
+  }
 }
 
 variable "description" {
-  type        = string
   description = "Description of the location."
+  type        = string
   default     = "Private Location on GCP"
 }
 
 variable "instance_template" {
-  type        = string
   description = "Instance template defining configuration settings for virtual machine."
+  type        = string
   default     = null
 }
 
-variable "machine_type" {
-  type        = string
-  description = "Machine type of the location."
-  default     = "c3-highcpu-4"
-}
+variable "machine" {
+  description = "Machine configuration for load testing infrastructure"
+  type = object({
+    type        = string
+    preemptible = optional(bool)
+    engine      = string
+    image = object({
+      type    = string
+      java    = optional(string)
+      project = optional(string)
+      family  = optional(string)
+      id      = optional(string)
+    })
+    disk = object({
+      sizeGb = number
+    })
+    network-interface = optional(object({
+      network          = optional(string)
+      subnetwork       = optional(string)
+      with-external-ip = optional(bool)
+    }))
+  })
 
-variable "preemptible" {
-  type        = bool
-  description = "Configure load generators instances as preemptible or not."
-  default     = false
-}
+  validation {
+    condition     = contains(["classic", "javascript"], var.machine.engine)
+    error_message = "The engine must be either 'classic' or 'javascript'."
+  }
 
-variable "image_type" {
-  type        = string
-  description = "Image type of the location."
-  default     = "certified"
-}
+  validation {
+    condition     = contains(["certified", "custom"], var.machine.image.type)
+    error_message = "The image type must be either 'certified' or 'custom'."
+  }
 
-variable "java_version" {
-  type        = string
-  description = "Java version of the location."
-  default     = "latest"
-}
+  validation {
+    condition = var.machine.image.type != "custom" || (
+      var.machine.image.project != null &&
+      (var.machine.image.id != null || var.machine.image.family != null)
+    )
+    error_message = "If image.type is 'custom', then project must be defined and either id or family must be specified."
+  }
 
-variable "image_id" {
-  type        = string
-  description = "Custom image id of the location."
-  default     = null
-}
+  validation {
+    condition     = var.machine.disk.sizeGb >= 20
+    error_message = "Disk sizeGb must be greater than or equal to 20."
+  }
 
-variable "image_family" {
-  type        = string
-  description = "Custom image family of the location."
-  default     = null
-}
-
-variable "network_interface" {
-  description = "Network interface properties to be assigned to the Location."
-  type        = map(any)
-  default = {}
-}
-
-variable "disk" {
-  description = "Disk size in GB of the control plane."
-  type        = map(any)
-  default     = {
-    sizeGb = 20
+  validation {
+    condition     = can(regex("^[a-z][a-z0-9-]+$", var.machine.type))
+    error_message = "Machine type must start with a letter and contain only lower-case letters, digits, or hyphens."
   }
 }
 
 variable "system_properties" {
   description = "System properties to be assigned to the Location."
   type        = map(string)
-  default = {}
+  default     = {}
 }
 
 variable "java_home" {

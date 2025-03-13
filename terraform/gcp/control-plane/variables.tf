@@ -1,12 +1,115 @@
 variable "name" {
-  type        = string
   description = "Name of the control plane"
+  type        = string
+
+  validation {
+    condition     = length(var.name) > 0
+    error_message = "The name of the control plane must not be empty."
+  }
 }
 
 variable "description" {
-  type        = string
   description = "Description of the control plane."
+  type        = string
   default     = "My GCP control plane description"
+}
+
+variable "token_secret_name" {
+  description = "Control plane secret token stored in GCP Secret Manager."
+  type        = string
+
+  validation {
+    condition     = length(var.token_secret_name) > 0
+    error_message = "The token secret name must not be empty."
+  }
+}
+
+variable "network" {
+  description = "Network configuration for the VM"
+  type = object({
+    zone               = string
+    network            = optional(string)
+    subnetwork         = optional(string)
+    enable_external_ip = bool
+  })
+
+  validation {
+    condition     = var.network.zone != null
+    error_message = "Zone must be provided."
+  }
+  validation {
+    condition = (
+      (var.network.network != null ? length(var.network.network) : 0) > 0 ||
+      (var.network.subnetwork != null ? length(var.network.subnetwork) : 0) > 0
+    )
+    error_message = "Either network or subnetwork must be specified in the network configuration."
+  }
+  validation {
+    condition     = var.network.enable_external_ip != null
+    error_message = "Zone must not be empty."
+  }
+}
+
+variable "compute" {
+  description = "Compute configuration for the VM"
+  type = object({
+    boot_disk_image            = string
+    machine_type               = string
+    min_cpu_platform           = optional(string)
+    confidential_instance_type = optional(string)
+    shielded = object({
+      enable_secure_boot          = bool
+      enable_vtpm                 = bool
+      enable_integrity_monitoring = bool
+    })
+    confidential = object({
+      enable        = bool
+      instance_type = string
+    })
+  })
+  default = {
+    machine_type    = "e2-standard-2"
+    boot_disk_image = "projects/cos-cloud/global/images/cos-stable-113-18244-85-49"
+    shielded = {
+      enable_secure_boot          = true
+      enable_vtpm                 = true
+      enable_integrity_monitoring = true
+    }
+    confidential = {
+      enable        = false
+      instance_type = "e2-standard-2"
+    }
+  }
+}
+
+variable "container" {
+  description = "Container configuration for the control plane"
+  type = object({
+    image   = string
+    command = optional(list(string))
+    env     = optional(list(string))
+  })
+  default = {
+    image   = "gatlingcorp/control-plane:latest"
+    command = []
+    env     = []
+  }
+}
+
+variable "locations" {
+  description = "JSON configuration for the private locations."
+  type        = list(any)
+
+  validation {
+    condition     = length(var.locations) > 0
+    error_message = "At least one private location must be specified."
+  }
+}
+
+variable "private_package" {
+  description = "JSON configuration for the Private Package."
+  type        = map(any)
+  default     = {}
 }
 
 variable "enterprise_cloud" {
@@ -14,82 +117,7 @@ variable "enterprise_cloud" {
   default = {}
 }
 
-variable "machine_type" {
-  description = "The machine type to be used for hosting the control plane container."
-  type        = string
-  default     = "e2-standard-2"
-}
-
-variable "network" {
-  description = "The name or self_link of the network to be used to attach the VM network interface"
-  type        = string
-  default     = ""
-}
-
-variable "subnetwork" {
-  description = "The name or self_link of the subnetwork to be used to attach the VM network interface"
-  type        = string
-  default     = ""
-}
-
-variable "enable_confidential_compute" {
-  description = "Option to enable confidential compute."
-  type        = bool
-  default     = false
-}
-
-variable "confidential_instance_type" {
-  description = "Set a Confidential Instance Type."
-  type        = string
-  default     = ""
-}
-
-variable "min_cpu_platform" {
-  description = "Specifies a minimum CPU platform for the VM instance."
-  type        = string
-  default     = ""
-}
-
-variable "enable_external_ip" {
-  description = "Whether to enable external IP for the instance"
-  type        = bool
-  default     = true
-}
-
-variable "image" {
-  type        = string
-  description = "Image of the control plane."
-  default     = "gatlingcorp/control-plane:latest"
-}
-
-variable "zone" {
-  description = "The zone for the control plane deployment."
-  type        = string
-}
-
-variable "locations" {
-  description = "JSON configuration for the locations."
-  type        = list(any)
-}
-
-variable "private_package" {
-  description = "JSON configuration for the private packages."
-  type        = map(any)
-  default     = {}
-}
-
-variable "token_secret_name" {
-  type        = string
-  description = "Control plane secret token stored in GCP Secret Manager."
-}
-
 variable "extra_content" {
   type    = map(any)
   default = {}
-}
-
-variable "command" {
-  description = "Control plane image command"
-  type        = list(string)
-  default     = []
 }
