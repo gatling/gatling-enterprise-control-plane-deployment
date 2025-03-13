@@ -29,6 +29,9 @@ provider "google" {
 This module specifies the private package parameters for the control plane. It includes the container name and storage account name.
 
 ```sh
+# Configure a private package (control plane repository & server)
+# Reference: https://docs.gatling.io/reference/install/cloud/private-locations/private-packages/#gcp-cloud-storage
+# Reference: https://docs.gatling.io/reference/install/cloud/private-locations/private-packages/#control-plane-server
 module "private-package" {
   source  = "git::git@github.com:gatling/gatling-enterprise-control-plane-deployment//terraform/gcp/private-package"
   bucket  = "bucket-name"
@@ -36,82 +39,70 @@ module "private-package" {
 }
 ```
 
-- `source` (required): The source of the module, pointing to the GitHub repository.
-- `bucket` (required): Storage bucket of the private package
-- `project` (required): Project id of the private package storage bucket.
-
 ### Location
 
 This module specifies the location parameters for the control plane, including project id and zone.
 
 ```sh
+# Configure a GCP private location
+# Reference: https://docs.gatling.io/reference/install/cloud/private-locations/gcp/configuration/#control-plane-configuration-file
 module "location" {
-  source       = "git::git@github.com:gatling/gatling-enterprise-control-plane-deployment//terraform/gcp/location"
-  id           = "prl_gcp"
-  project      = "project-id"
-  zone         = "zone-a"
-  machine_type = "c3-highcpu-4"
-  engine       = "classic"
-  //enterprise_cloud = {
-  //url = ""  // http://private-location-forward-proxy/gatling
-  //}
+  source  = "git::git@github.com:gatling/gatling-enterprise-control-plane-deployment//terraform/gcp/location"
+  id      = "prl_gcp"
+  project = "project-id"
+  zone    = "europe-west3-a"
+  machine = {
+    type = "c3-highcpu-4"
+    # preemptible = false
+    engine = "classic"
+    image = {
+      type = "certified"
+      # java    = "latest"
+      # project = "gatling-enterprise"
+      # family  = "gatling-enterprise"
+      # id      = "gatling-enterprise"
+    }
+    disk = {
+      sizeGb = 20
+    }
+  }
+  # enterprise_cloud = {
+  #   Setup the proxy configuration for the private location
+  #   Reference: https://docs.gatling.io/reference/install/cloud/private-locations/network/#configuring-a-proxy
+  # }
 }
 ```
-
-- `source` (required): The source of the module, pointing to the GitHub repository.
-- `id` (required): ID of the location.
-- `project` (required): Project id where the on-demand load generators will be spawned.
-- `zone` (required): The GCP zone to deploy to.
-- `machine_type`: VM size for the location.
-- `engine`: Engine of the location determining the compatible package formats (JavaScript or JVM).
-- `description`: Description of the location.
-- `instance_template`: Instance template defining configuration settings for virtual machine.
-- `preemptible`: Configure load generators instances as preemptible or not.
-- `image_type`: Image type of the location.
-- `image_id`: Custom image id of the location.
-- `image_family`: Custom image family of the location.
-- `java_version`: Java version of the location.
-- `network_interface`: Network interface properties to be assigned to the Location.
-- `system_properties`: System properties to be assigned to the Location.
-- `java_home`: Overwrite JAVA_HOME definition.
-- `jvm_options`: Overwrite JAVA_HOME definition.
-- `enterprise_cloud.url`: Set up a forward proxy for location.
 
 ### Control Plane
 
 Sets up the control plane with configurations for networking, security, and storage.
 
 ```sh
+# Create a control plane based on GCP VM
+# Reference: https://docs.gatling.io/reference/install/cloud/private-locations/gcp/installation/
 module "control-plane" {
   source            = "git::git@github.com:gatling/gatling-enterprise-control-plane-deployment//terraform/gcp/control-plane"
   name              = "name"
   token_secret_name = "token_secret_name"
-  zone              = "zone-a"
-  network           = "network"
-  locations         = [module.location]
-  private_package   = module.private-package
-  //enterprise_cloud = {
-  //url = ""  // http://private-control-plane-forward-proxy/gatling
-  //}
+  network = {
+    zone    = "europe-west3-a"
+    network = "network"
+    # subnetwork         = "subnetwork"
+    enable_external_ip = true
+  }
+  locations       = [module.location]
+  private_package = module.private-package
+  # container = {
+  #   image   = "gatlingcorp/control-plane:latest"
+  #   command = []
+  #   env     = []
+  # }
+  # enterprise_cloud = {
+  #   Setup the proxy configuration for the private location
+  #   Reference: https://docs.gatling.io/reference/install/cloud/private-locations/network/#configuring-a-proxy
+  # }
 }
 ```
-
-- `source` (required): The source of the module, pointing to the GitHub repository.
-- `name` (required): The name of the control plane.
-- `token_secret_name` (required): Control plane secret token stored in GCP Secret Manager.
-- `zone` (required): The GCP zone to deploy to.
-- `network` (Either network or subnetwork must be provided): The name or self_link of the network to be used to attach the VM network interface.
-- `subnetwork` (Either network or subnetwork must be provided):  The name or self_link of the subnetwork to be used to attach the VM network interface.
-- `locations` (required): The list of location module(s).
-- `private_package` (required): The name of the private package module for configuration.
-- `enable_external_ip`: Whether to enable external IP for the instance.
-- `machine_type`: The machine type to be used for hosting the control plane container.
-- `image`: Image of the control plane.
-- `description`: Description of the control plane.
-- `enable_confidential_compute`: Option to enable confidential compute.
-- `confidential_instance_type`: Set a Confidential Instance Type.
-- `min_cpu_platform`: Specifies a minimum CPU platform for the VM instance.
-- `enterprise_cloud.url`: Set up a forward proxy for the control plane.
 
 ## Usage
 

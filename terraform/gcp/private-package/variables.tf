@@ -1,45 +1,61 @@
 variable "bucket" {
-  type        = string
   description = "Storage bucket of the private package."
-}
-
-variable "path" {
   type        = string
-  description = "Storage bucket path for private package."
-  default     = ""
+
+  validation {
+    condition     = length(var.bucket) > 0
+    error_message = "Bucket must not be empty."
+  }
 }
 
 variable "project" {
-  type        = string
   description = "Project id of the private package storage bucket."
+  type        = string
+
+  validation {
+    condition     = length(var.project) > 0
+    error_message = "Project must not be empty."
+  }
 }
 
-variable "uploadDir" {
+variable "path" {
+  description = "Storage bucket path for private package."
   type        = string
+  default     = ""
+}
+
+variable "upload" {
   description = "Control Plane Repository Server Temporary Upload Directory."
-  default     = "/tmp"
+  type = object({
+    directory = string
+  })
+  default = {
+    directory = "/tmp"
+  }
 }
 
-variable "port" {
-  type        = number
-  description = "Control Plane Repository Server Port."
-  default     = 8080
-}
+variable "server" {
+  description = "Control Plane Repository Server configuration."
+  type = object({
+    port        = number
+    bindAddress = string
+    certificate = optional(object({
+      path     = string
+      password = optional(string)
+    }))
+  })
+  default = {
+    port        = 8080,
+    bindAddress = "0.0.0.0",
+    certificate = null
+  }
 
-variable "bindAddress" {
-  type        = string
-  description = "Control Plane Repository Server Bind Address."
-  default     = "0.0.0.0"
-}
-
-variable "certPath" {
-  type        = string
-  description = "Control Plane Repository Server Certificate Path."
-  default     = ""
-}
-
-variable "certPassword" {
-  type        = string
-  description = "Control Plane Repository Server Certificate Password."
-  default     = ""
+  validation {
+    condition     = var.server.port > 0 && var.server.port <= 65535
+    error_message = "Server port must be between 1 and 65535."
+  }
+  validation {
+    condition     = length(var.server.bindAddress) > 0
+    error_message = "Server bindAddress must not be empty."
+  }
 }

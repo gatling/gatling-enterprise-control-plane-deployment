@@ -3,33 +3,64 @@ provider "google" {
   region  = "europe-west3"
 }
 
+# Configure a private package (control plane repository & server)
+# Reference: https://docs.gatling.io/reference/install/cloud/private-locations/private-packages/#gcp-cloud-storage
+# Reference: https://docs.gatling.io/reference/install/cloud/private-locations/private-packages/#control-plane-server
 module "private-package" {
   source  = "git::git@github.com:gatling/gatling-enterprise-control-plane-deployment//terraform/gcp/private-package"
   bucket  = "bucket-name"
   project = "project-id"
 }
 
+# Configure a GCP private location
+# Reference: https://docs.gatling.io/reference/install/cloud/private-locations/gcp/configuration/#control-plane-configuration-file
 module "location" {
   source  = "git::git@github.com:gatling/gatling-enterprise-control-plane-deployment//terraform/gcp/location"
   id      = "prl_gcp"
   project = "project-id"
-  zone    = "zone-a"
-  //machine_type = "c3-highcpu-4"
-  //engine       = "classic"
-  //enterprise_cloud = {
-  //url = ""  // http://private-location-forward-proxy/gatling
-  //}
+  zone    = "europe-west3-a"
+  machine = {
+    type = "c3-highcpu-4"
+    # preemptible = false
+    engine = "classic"
+    image = {
+      type = "certified"
+      # java    = "latest"
+      # project = "gatling-enterprise"
+      # family  = "gatling-enterprise"
+      # id      = "gatling-enterprise"
+    }
+    disk = {
+      sizeGb = 20
+    }
+  }
+  # enterprise_cloud = {
+  #   Setup the proxy configuration for the private location
+  #   Reference: https://docs.gatling.io/reference/install/cloud/private-locations/network/#configuring-a-proxy
+  # }
 }
 
+# Create a control plane based on GCP VM
+# Reference: https://docs.gatling.io/reference/install/cloud/private-locations/gcp/installation/
 module "control-plane" {
   source            = "git::git@github.com:gatling/gatling-enterprise-control-plane-deployment//terraform/gcp/control-plane"
   name              = "name"
   token_secret_name = "token_secret_name"
-  zone              = "zone-a"
-  network           = "network"
-  locations         = [module.location]
-  private_package   = module.private-package
-  //enterprise_cloud = {
-  //url = ""  // http://private-control-plane-forward-proxy/gatling
-  //}
+  network = {
+    zone    = "europe-west3-a"
+    network = "network"
+    # subnetwork         = "subnetwork"
+    enable_external_ip = true
+  }
+  locations       = [module.location]
+  private_package = module.private-package
+  # container = {
+  #   image   = "gatlingcorp/control-plane:latest"
+  #   command = []
+  #   env     = []
+  # }
+  # enterprise_cloud = {
+  #   Setup the proxy configuration for the private location
+  #   Reference: https://docs.gatling.io/reference/install/cloud/private-locations/network/#configuring-a-proxy
+  # }
 }
