@@ -1,6 +1,6 @@
 variable "bucket" {
-  type        = string
   description = "Storage bucket of the private package."
+  type        = string
 
   validation {
     condition     = length(var.bucket) > 0
@@ -8,15 +8,9 @@ variable "bucket" {
   }
 }
 
-variable "path" {
-  type        = string
-  description = "Storage bucket path for private package."
-  default     = ""
-}
-
 variable "project" {
-  type        = string
   description = "Project id of the private package storage bucket."
+  type        = string
 
   validation {
     condition     = length(var.project) > 0
@@ -24,17 +18,24 @@ variable "project" {
   }
 }
 
+variable "path" {
+  description = "Storage bucket path for private package."
+  type        = string
+  default     = ""
+}
+
 variable "upload" {
+  description = "Control Plane Repository Server Temporary Upload Directory."
   type = object({
     directory = string
   })
-  description = "Control Plane Repository Server Temporary Upload Directory."
   default = {
     directory = "/tmp"
   }
 }
 
 variable "server" {
+  description = "Control Plane Repository Server configuration."
   type = object({
     port        = number
     bindAddress = string
@@ -43,7 +44,6 @@ variable "server" {
       password = optional(string)
     }))
   })
-  description = "Control Plane Repository Server configuration."
   default = {
     port        = 8080,
     bindAddress = "0.0.0.0",
@@ -54,7 +54,6 @@ variable "server" {
     condition     = var.server.port > 0 && var.server.port <= 65535
     error_message = "Server port must be between 1 and 65535."
   }
-
   validation {
     condition     = length(var.server.bindAddress) > 0
     error_message = "Server bindAddress must not be empty."
