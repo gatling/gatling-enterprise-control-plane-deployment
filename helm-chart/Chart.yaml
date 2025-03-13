@@ -4,6 +4,7 @@ version: 1.0.2
 name: enterprise-locations-packages
 description: Official Gatling Enterprise Helm chart for Private Locations & Packages
 home: https://gatling.io
+icon: https://helm.gatling.io/gatling.png
 maintainers:
   - name: "Karim Atwa"
     email: "katwa@gatling.io"
