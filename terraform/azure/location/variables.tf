@@ -1,63 +1,99 @@
 variable "id" {
-  type        = string
   description = "ID of the location."
-  default     = "prl_private_location_example"
+  type        = string
+
+  validation {
+    condition     = can(regex("^prl_[0-9a-z_]{1,26}$", var.id))
+    error_message = "Private location ID must be prefixed by 'prl_', contain only numbers, lowercase letters, and underscores, and be at most 30 characters long."
+  }
 }
 
 variable "description" {
-  type        = string
   description = "Description of the location."
+  type        = string
   default     = "Private Location on Azure"
 }
 
 variable "region" {
-  type        = string
   description = "Region of the location."
+  type        = string
+
+  validation {
+    condition     = length(var.region) > 0
+    error_message = "Region must not be empty."
+  }
 }
 
 variable "engine" {
-  type        = string
   description = "Engine of the location determining the compatible package formats (JavaScript or JVM)."
+  type        = string
   default     = "classic"
 }
 
-variable "image_type" {
+variable "image" {
+  description = "Image of the location."
+  type = object({
+    type  = string
+    java  = optional(string)
+    image = optional(string)
+  })
+  default = {
+    type        = "certified"
+  }
+}
+
+variable "subscription" {
+  description = "Subscription of the location."
   type        = string
-  description = "Image type of the location."
-  default     = "certified"
+
+  validation {
+    condition     = length(var.subscription) > 0
+    error_message = "Subscription must not be empty."
+  }
+}
+
+variable "network_id" {
+  description = "Network id with the following format /subscriptions/<SubscriptionUUID>/resourceGroups/<ResourceGroup>/providers/Microsoft.Network/virtualNetworks/<VNet>."
+  type        = string
+
+  validation {
+    condition     = length(var.network_id) > 0
+    error_message = "Virtual network name must not be empty."
+  }
+}
+
+variable "subnet_name" {
+  description = "Subnet name of the location."
+  type        = string
+
+  validation {
+    condition     = length(var.subnet_name) > 0
+    error_message = "Subnet name must not be empty."
+  }
 }
 
 variable "java_version" {
-  type        = string
   description = "Java version of the location."
+  type        = string
   default     = "latest"
 }
 
 variable "size" {
-  type        = string
   description = "Virtual machine size of the location."
+  type        = string
   default     = "Standard_A4_v2"
 }
 
-variable "resource_group_name" {
-  type        = string
-  description = "Resource group name."
-}
-
-variable "virtual_network" {
-  type        = string
-  description = "Virtual network name."
-}
-
-variable "subnet_name" {
-  type        = string
-  description = "Subnet name of the location."
-}
-
 variable "associate_public_ip" {
-  type        = bool
   description = "Flag to enable public IP association."
+  type        = bool
   default     = false
+}
+
+variable "tags" {
+  description = "Tags to be assigned to the Location."
+  type        = map(string)
+  default     = {}
 }
 
 variable "system_properties" {

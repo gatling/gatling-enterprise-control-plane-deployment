@@ -28,93 +28,79 @@ provider "azurerm" {
 This module specifies the private package parameters for the control plane. It includes the container name and storage account name.
 
 ```sh
+# Configure a private package (control plane repository & server)
+# Reference: https://docs.gatling.io/reference/install/cloud/private-locations/private-packages/#gcp-cloud-storage
+# Reference: https://docs.gatling.io/reference/install/cloud/private-locations/private-packages/#control-plane-server
 module "private-package" {
-  source               = "git::git@github.com:gatling/gatling-enterprise-control-plane-deployment//terraform/azure/private-package"
-  container_name       = "gatling-cp"
-  storage_account_name = "storage-account-name"
+  source               = "git::https://github.com/gatling/gatling-enterprise-control-plane-deployment//terraform/azure/private-package"
+  control_plane_name   = "<Name>"
+  storage_account_name = "<StorageAccountName>"
 }
 ```
-
-- `source` (required): The source of the module, pointing to the GitHub repository.
-- `container_name` (required): The name of the control plane container.
-- `storage_account_name` (required): The name of the storage account where the private package will be stored.
-- `upload.directory`: This directory temporarily stores uploaded JAR files.
-- `server.port`: The port on which the control plane is listening for private package uploads. The default is `8080`.
-- `server.bindAddress`: The network interface to bind to. The default is `0.0.0.0`, which means all available network IPv4 interfaces.
-- `server.certificate.path`: The server P12 certificate for secure connection without SSL reverse proxy.
-- `server.certificate.password`: The server P12 certificate password.
 
 ### Location
 
 This module specifies the location parameters for the control plane, including resource group, virtual network, and subnet.
 
 ```sh
+# Configure a Azure private location
+# Reference: https://docs.gatling.io/reference/install/cloud/private-locations/azure/configuration/#control-plane-configuration-file
 module "location" {
-  source              = "git::git@github.com:gatling/gatling-enterprise-control-plane-deployment//terraform/azure/location"
-  id                  = "prl_azure"
-  region              = "westeurope"
-  resource_group_name = "resource-group-name"
-  virtual_network     = "vnet-name"
-  subnet_name         = "default"
-  size                = "Standard_A4_v2"
-  engine              = "classic"
-  //enterprise_cloud    = {
-    //url = ""  // http://private-location-forward-proxy/gatling
-  //}
+  source       = "git::https://github.com/gatling/gatling-enterprise-control-plane-deployment//terraform/azure/location"
+  id           = "prl_<PrivateLocationID>"
+  region       = "<Region>"
+  subscription = "<SubscriptionUUID>"
+  network_id   = "/subscriptions/<SubscriptionUUID>/resourceGroups/<ResourceGroup>/providers/Microsoft.Network/virtualNetworks/<VNet>"
+  subnet_name  = "<Subnet>"
+  image = {
+    type = "certified"
+    # java  = "latest"
+    # image = "/subscriptions/<SubscriptionUUID>/resourceGroups/<ResourceGroup>/providers/Microsoft.Compute/galleries/customImages/images/<Image>"
+  }
+  # size                = "Standard_A4_v2"
+  # engine              = "classic"
+  # associate_public_ip = false
+  # tags                = {}
+  # system_properties   = {}
+  # java_home           = ""
+  # jvm_options         = []
+  # enterprise_cloud = {
+  #   #  Setup the proxy configuration for the private location
+  #   #  Reference: https://docs.gatling.io/reference/install/cloud/private-locations/network/#configuring-a-proxy
+  # }
 }
 ```
-
-- `source` (required): The source of the module, pointing to the GitHub repository.
-- `id` (required): ID of the location.
-- `region` (required): The Azure region to deploy to.
-- `resource_group_name` (required): The name of the resource group.
-- `virtual_network` (required): The name of the virtual network to deploy resources into.
-- `subnet_name` (required): The name of the subnet within the virtual network.
-- `size`: VM size for the location.
-- `engine`: Engine of the location determining the compatible package formats (JavaScript or JVM).
-- `associate_public_ip`: Boolean to associate a public IP to your load generator.
-- `description`: Description of the location.
-- `system_properties`: System properties to be assigned to the Location.
-- `java_home`: Overwrite JAVA_HOME definition.
-- `jvm_options`: Overwrite JAVA_HOME definition.
-- `enterprise_cloud.url`: Set up a forward proxy for the control plane.
 
 ### Control Plane
 
 Sets up the control plane with configurations for networking, security, and storage.
 
 ```sh
+# Create a control plane based on Azure Container App
+# Reference: https://docs.gatling.io/reference/install/cloud/private-locations/azure/installation/
 module "control-plane" {
-  source               = "git::git@github.com:gatling/gatling-enterprise-control-plane-deployment//terraform/azure/control-plane"
-  name                 = "gatling-cp"
-  region               = "westeurope"
-  resource_group_name  = "resource-group-name"
-  vault_name           = "vault-name"
-  secret_id            = "token-secret-identifier"
-  storage_account_name = "storage-account-name"
-  locations            = [module.location]
-  private_package      = module.private-package
-  //enterprise_cloud    = {
-    //url = ""  // http://private-control-plane-forward-proxy/gatling
-  //}
+  source               = "git::https://github.com/gatling/gatling-enterprise-control-plane-deployment//terraform/azure/control-plane"
+  name                 = "<Name>"
+  region               = "<Region>"
+  resource_group_name  = "<ResourceGroup>"
+  vault_name           = "<Vault>"
+  secret_id            = "<SecretIdentifier>"
+  storage_account_name = "<StorageAccount>"
+  # container = {
+  #   image   = "gatlingcorp/control-plane:latest"
+  #   cpu     = 1.0
+  #   memory  = "2Gi"
+  #   command = []
+  #   env     = []
+  # }
+  locations       = [module.location]
+  private_package = module.private-package
+  # enterprise_cloud = {
+  #   Setup the proxy configuration for the private location
+  #   Reference: https://docs.gatling.io/reference/install/cloud/private-locations/network/#configuring-a-proxy
+  # }
 }
 ```
-
-- `source` (required): The source of the module, pointing to the GitHub repository.
-- `name` (required): The name of the control plane.
-- `region` (required): The Azure region to deploy to.
-- `resource_group_name` (required): The name of the resource group where the control plane will be deployed.
-- `vault_name`(required): Vault name where the control plane secret token is stored.
-- `secret_id`(required): Secret identifier for the stored control plane token.
-- `storage_account_name` (required): The storage account name where configurations will be stored.
-- `locations` (required): The list of location module(s).
-- `private_package` (required): The name of the private package module for configuration.
-- `image`: Image of the control plane.
-- `description`: Description of the control plane.
-- `conf_share_file_name`: The name of the configuration object in the file share.
-- `container_cpu`: Control Plane container CPU allocation.
-- `container_memory`: Control Plane container memory allocation.
-- `enterprise_cloud.url`: Set up a forward proxy for the control plane.
 
 ## Usage
 

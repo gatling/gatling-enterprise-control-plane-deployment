@@ -1,45 +1,61 @@
 variable "storage_account_name" {
-  type        = string
   description = "Storage account name to be used with the control plane."
+  type        = string
+
+  validation {
+    condition     = length(var.storage_account_name) > 0
+    error_message = "Storage account name must not be empty."
+  }
 }
 
-variable "container_name" {
+variable "control_plane_name" {
+  description = "Control plane name."
   type        = string
-  description = "Container name of the control plane."
+
+  validation {
+    condition     = length(var.control_plane_name) > 0
+    error_message = "Control plane name."
+  }
 }
 
 variable "path" {
+  description = "Storage path for private package."
   type        = string
-  description = "Storage path on the S3 private package."
   default     = ""
 }
 
-variable "uploadDir" {
-  type        = string
+variable "upload" {
   description = "Control Plane Repository Server Temporary Upload Directory."
-  default     = "/tmp"
+  type = object({
+    directory = string
+  })
+  default = {
+    directory = "/tmp"
+  }
 }
 
-variable "port" {
-  type        = number
-  description = "Control Plane Repository Server Port."
-  default     = 8080
-}
+variable "server" {
+  description = "Control Plane Repository Server configuration."
+  type = object({
+    port        = number
+    bindAddress = string
+    certificate = optional(object({
+      path     = string
+      password = optional(string)
+    }))
+  })
+  default = {
+    port        = 8080,
+    bindAddress = "0.0.0.0",
+    certificate = null
+  }
 
-variable "bindAddress" {
-  type        = string
-  description = "Control Plane Repository Server Bind Address."
-  default     = "0.0.0.0"
-}
-
-variable "certPath" {
-  type        = string
-  description = "Control Plane Repository Server Certificate Path."
-  default     = ""
-}
-
-variable "certPassword" {
-  type        = string
-  description = "Control Plane Repository Server Certificate Password."
-  default     = ""
+  validation {
+    condition     = var.server.port > 0 && var.server.port <= 65535
+    error_message = "Server port must be between 1 and 65535."
+  }
+  validation {
+    condition     = length(var.server.bindAddress) > 0
+    error_message = "Server bindAddress must not be empty."
+  }
 }

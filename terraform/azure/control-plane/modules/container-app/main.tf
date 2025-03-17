@@ -2,6 +2,15 @@ locals {
   path        = "/app/conf"
   volume_name = "control-plane-conf"
   secret_name = "token-secret-id"
+  env = concat(
+    [
+      {
+        name        = "CONTROL_PLANE_TOKEN"
+        secret_name = local.secret_name
+      }
+    ],
+    var.container.env
+  )
 }
 
 resource "azurerm_container_app_environment" "gatling_container_env" {
@@ -13,9 +22,9 @@ resource "azurerm_container_app_environment" "gatling_container_env" {
 resource "azurerm_container_app_environment_storage" "gatling_container_env_storage" {
   name                         = local.volume_name
   container_app_environment_id = azurerm_container_app_environment.gatling_container_env.id
-  account_name                 = var.storage_account_name
-  share_name                   = var.storage_share_name
-  access_key                   = var.storage_account_primary_access_key
+  account_name                 = var.storage.account_name
+  share_name                   = var.storage.share_name
+  access_key                   = var.storage.account_primary_access_key
   access_mode                  = "ReadOnly"
 }
 
@@ -30,7 +39,7 @@ resource "azurerm_container_app" "gatling_container" {
   }
 
   dynamic "ingress" {
-    for_each = length(var.private_package) > 0 ? [1] : []
+    for_each = var.private_package == {} ? [] : [1]
     content {
       external_enabled = true
       target_port      = var.private_package.conf.server.port
@@ -53,21 +62,24 @@ resource "azurerm_container_app" "gatling_container" {
 
     container {
       name    = "control-plane"
-      image   = var.image
-      cpu     = var.container_cpu
-      memory  = var.container_memory
-      command = var.command
+      image   = var.container.image
+      cpu     = var.container.cpu
+      memory  = var.container.memory
+      command = var.container.command
 
-      env {
-        name        = "CONTROL_PLANE_TOKEN"
-        secret_name = local.secret_name
+      dynamic "env" {
+        for_each = local.env
+        content {
+          name        = env.value.name
+          value       = lookup(env.value, "value", null)
+          secret_name = lookup(env.value, "secret_name", null)
+        }
       }
 
       volume_mounts {
         name = local.volume_name
         path = local.path
       }
-
     }
 
     volume {
@@ -75,7 +87,6 @@ resource "azurerm_container_app" "gatling_container" {
       storage_name = local.volume_name
       storage_type = "AzureFile"
     }
-
   }
 
   depends_on = [

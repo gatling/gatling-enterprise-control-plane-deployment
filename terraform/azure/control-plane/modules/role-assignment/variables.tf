@@ -3,12 +3,6 @@ variable "container" {
   type        = any
 }
 
-variable "private_package" {
-  description = "JSON configuration for the private packages."
-  type        = map(any)
-  default     = {}
-}
-
 variable "resource_group_name" {
   description = "Resource group name."
   type        = string
@@ -17,4 +11,10 @@ variable "resource_group_name" {
 variable "vault_name" {
   description = "Vault name where the control plane token secret is stored."
   type = string
+}
+
+variable "private_package" {
+  description = "JSON configuration for the private packages."
+  type        = map(any)
+  default     = {}
 }
