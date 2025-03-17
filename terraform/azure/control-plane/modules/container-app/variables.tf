@@ -3,7 +3,7 @@ variable "name" {
   type        = string
 }
 
-variable "secret_id" {
+variable "secret-id" {
   description = "Secret identifier where the control token plane is stored."
   type        = string
 }
@@ -13,7 +13,7 @@ variable "region" {
   type        = string
 }
 
-variable "resource_group_name" {
+variable "resource-group-name" {
   description = "Resource group name."
   type        = string
 }
@@ -32,13 +32,13 @@ variable "container" {
 variable "storage" {
   description = "Storage options."
   type = object({
-    account_name               = string
-    account_primary_access_key = string
-    share_name                 = string
+    account-name               = string
+    account-primary-access-key = string
+    share-name                 = string
   })
 }
 
-variable "private_package" {
+variable "private-package" {
   description = "JSON configuration for the private packages."
   type        = map(any)
   default     = {}
