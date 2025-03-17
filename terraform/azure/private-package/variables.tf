@@ -1,6 +1,6 @@
 variable "storage_account_name" {
-  type        = string
   description = "Storage account name to be used with the control plane."
+  type        = string
 
   validation {
     condition     = length(var.storage_account_name) > 0
@@ -9,8 +9,8 @@ variable "storage_account_name" {
 }
 
 variable "container_name" {
-  type        = string
   description = "Container name of the control plane."
+  type        = string
 
   validation {
     condition     = length(var.container_name) > 0
@@ -19,8 +19,8 @@ variable "container_name" {
 }
 
 variable "path" {
-  type        = string
   description = "Storage path for private package."
+  type        = string
   default     = ""
 }
 
