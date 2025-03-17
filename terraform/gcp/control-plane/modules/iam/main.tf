@@ -33,7 +33,7 @@ locals {
     for location in var.locations : lookup(location.conf, "instance-template", null) != null
   ])
 
-  has_private_package = var.private_package != {} ? true : false
+  has_private_package = var.private_package == {} ? false : true
 
   extra_permissions = concat(
     local.has_custom_image ? local.custom_image_permissions : [],

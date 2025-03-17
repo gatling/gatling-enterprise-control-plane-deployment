@@ -5,7 +5,7 @@ locals {
   volume         = "-v ${local.host_path}/${local.conf_file_name}:${local.mount_path}/${local.conf_file_name}"
   env_list       = concat(["-e CONTROL_PLANE_TOKEN=$CONTROL_PLANE_TOKEN"], lookup(var.container, "env", []))
   env            = join(" ", local.env_list)
-  port           = var.private_package != {} ? "-p ${var.private_package.conf.server.port}:${var.private_package.conf.server.port}" : ""
+  port           = var.private_package == {} ? "" : "-p ${var.private_package.conf.server.port}:${var.private_package.conf.server.port}" 
   command        = join(" ", var.container.command)
   config_content = <<-EOF
     control-plane {
