@@ -14,14 +14,10 @@ on:
 
 jobs:
   detect:
-    name: Detect Changes
+    name: Validate Changes
     runs-on: ubuntu-latest
-    outputs:
-      aws_changed: ${{ steps.filter.outputs.aws }}
-      azure_changed: ${{ steps.filter.outputs.azure }}
-      gcp_changed: ${{ steps.filter.outputs.gcp }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Detect Changed Paths
         id: filter
         uses: dorny/paths-filter@v3
@@ -39,48 +35,28 @@ jobs:
               - 'terraform/gcp/**'
               - 'terraform/examples/GCP-private-location/**'
               - 'terraform/examples/GCP-private-package/**'
-
-  test-aws:
-    if: ${{ needs.filter.outputs.aws_changed == 'true' }}
-    name: Test Terraform AWS
-    runs-on: ubuntu-latest
-    needs: detect
-    steps:
-      - uses: actions/checkout@v3
       - uses: hashicorp/setup-terraform@v3
-      - run: |
+      - name: Test Terraform AWS
+        if: steps.filter.outputs.aws == 'true'
+        run: |
           cd terraform/examples/AWS-private-location
           terraform init -backend=false
           terraform validate
           cd ../AWS-private-package
           terraform init -backend=false
           terraform validate
-
-  test-azure:
-    if: ${{ needs.filter.outputs.azure_changed == 'true' }}
-    name: Test Terraform Azure
-    runs-on: ubuntu-latest
-    needs: detect
-    steps:
-      - uses: actions/checkout@v3
-      - uses: hashicorp/setup-terraform@v3
-      - run: |
+      - name: Test Terraform Azure
+        if: steps.filter.outputs.azure == 'true'
+        run: |
           cd terraform/examples/AZURE-private-location
           terraform init -backend=false
           terraform validate
           cd ../AZURE-private-package
           terraform init -backend=false
           terraform validate
-
-  test-gcp:
-    if: ${{ needs.filter.outputs.gcp_changed == 'true' }}
-    name: Test Terraform GCP
-    runs-on: ubuntu-latest
-    needs: detect
-    steps:
-      - uses: actions/checkout@v3
-      - uses: hashicorp/setup-terraform@v3
-      - run: |
+      - name: Test Terraform GCP
+        if: steps.filter.outputs.gcp == 'true'
+        run: |
           cd terraform/examples/GCP-private-location
           terraform init -backend=false
           terraform validate
