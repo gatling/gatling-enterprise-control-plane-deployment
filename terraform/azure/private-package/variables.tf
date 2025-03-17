@@ -8,13 +8,13 @@ variable "storage_account_name" {
   }
 }
 
-variable "container_name" {
-  description = "Container name of the control plane."
+variable "control_plane_name" {
+  description = "Control plane name."
   type        = string
 
   validation {
-    condition     = length(var.container_name) > 0
-    error_message = "Container name must not be empty."
+    condition     = length(var.control_plane_name) > 0
+    error_message = "Control plane name."
   }
 }
 
