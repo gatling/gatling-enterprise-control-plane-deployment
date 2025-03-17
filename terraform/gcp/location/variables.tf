@@ -1,7 +1,11 @@
 variable "id" {
   description = "ID of the location."
   type        = string
-  default     = "prl_private_location_example"
+
+  validation {
+    condition     = can(regex("^prl_[0-9a-z_]{1,26}$", var.id))
+    error_message = "Private location ID must be prefixed by 'prl_', contain only numbers, lowercase letters, and underscores, and be at most 30 characters long."
+  }
 }
 
 variable "project" {
@@ -30,7 +34,7 @@ variable "description" {
   default     = "Private Location on GCP"
 }
 
-variable "instance_template" {
+variable "instance-template" {
   description = "Instance template defining configuration settings for virtual machine."
   type        = string
   default     = null
@@ -88,25 +92,25 @@ variable "machine" {
   }
 }
 
-variable "system_properties" {
+variable "system-properties" {
   description = "System properties to be assigned to the Location."
   type        = map(string)
   default     = {}
 }
 
-variable "java_home" {
+variable "java-home" {
   description = "Overwrite JAVA_HOME definition."
   type        = string
   default     = null
 }
 
-variable "jvm_options" {
-  description = "Overwrite JAVA_HOME definition."
+variable "jvm-options" {
+  description = "Define JVM options."
   type        = list(string)
   default     = []
 }
 
-variable "enterprise_cloud" {
+variable "enterprise-cloud" {
   type    = map(any)
   default = {}
 }

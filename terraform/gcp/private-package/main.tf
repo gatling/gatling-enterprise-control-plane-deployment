@@ -1,5 +1,5 @@
 locals {
-  private_package = {
+  private-package = {
     type    = "gcp"
     bucket  = var.bucket
     path    = var.path

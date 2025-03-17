@@ -14,12 +14,12 @@ variable "description" {
   default     = "My GCP control plane description"
 }
 
-variable "token_secret_name" {
+variable "token-secret-name" {
   description = "Control plane secret token stored in GCP Secret Manager."
   type        = string
 
   validation {
-    condition     = length(var.token_secret_name) > 0
+    condition     = length(var.token-secret-name) > 0
     error_message = "The token secret name must not be empty."
   }
 }
@@ -45,7 +45,7 @@ variable "network" {
     error_message = "Either network or subnetwork must be specified in the network configuration."
   }
   validation {
-    condition     = var.network.enable_external_ip != null
+    condition     = var.network.enable-external-ip != null
     error_message = "Zone must not be empty."
   }
 }
@@ -53,31 +53,31 @@ variable "network" {
 variable "compute" {
   description = "Compute configuration for the VM"
   type = object({
-    boot_disk_image            = string
-    machine_type               = string
-    min_cpu_platform           = optional(string)
-    confidential_instance_type = optional(string)
+    boot-disk-image            = string
+    machine-type               = string
+    min-cpu-platform           = optional(string)
+    confidential-instance-type = optional(string)
     shielded = object({
-      enable_secure_boot          = bool
-      enable_vtpm                 = bool
-      enable_integrity_monitoring = bool
+      enable-secure-boot          = bool
+      enable-vtpm                 = bool
+      enable-integrity-monitoring = bool
     })
     confidential = object({
       enable        = bool
-      instance_type = string
+      instance-type = string
     })
   })
   default = {
-    machine_type    = "e2-standard-2"
-    boot_disk_image = "projects/cos-cloud/global/images/cos-stable-113-18244-85-49"
+    machine-type    = "e2-standard-2"
+    boot-disk-image = "projects/cos-cloud/global/images/cos-stable-113-18244-85-49"
     shielded = {
-      enable_secure_boot          = true
-      enable_vtpm                 = true
-      enable_integrity_monitoring = true
+      enable-secure-boot          = true
+      enable-vtpm                 = true
+      enable-integrity-monitoring = true
     }
     confidential = {
       enable        = false
-      instance_type = "e2-standard-2"
+      instance-type = "e2-standard-2"
     }
   }
 }
@@ -106,18 +106,18 @@ variable "locations" {
   }
 }
 
-variable "private_package" {
+variable "private-package" {
   description = "JSON configuration for the Private Package."
   type        = map(any)
   default     = {}
 }
 
-variable "enterprise_cloud" {
+variable "enterprise-cloud" {
   type    = map(any)
   default = {}
 }
 
-variable "extra_content" {
+variable "extra-content" {
   type    = map(any)
   default = {}
 }

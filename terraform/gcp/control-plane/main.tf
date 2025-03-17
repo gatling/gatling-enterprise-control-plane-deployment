@@ -1,20 +1,20 @@
 module "iam" {
   source          = "../../gcp/control-plane/modules/iam"
   locations       = var.locations
-  private_package = var.private_package
+  private-package = var.private-package
 }
 
 module "virtual-machine" {
   source            = "../../gcp/control-plane/modules/virtual-machine"
   name              = var.name
   description       = var.description
-  token_secret_name = var.token_secret_name
-  service_email     = module.iam.email
+  token-secret-name = var.token-secret-name
+  service-email     = module.iam.email
   network           = var.network
   compute           = var.compute
   container         = var.container
   locations         = var.locations
-  private_package   = var.private_package
-  enterprise_cloud  = var.enterprise_cloud
-  extra_content     = var.extra_content
+  private-package   = var.private-package
+  enterprise-cloud  = var.enterprise-cloud
+  extra-content     = var.extra-content
 }

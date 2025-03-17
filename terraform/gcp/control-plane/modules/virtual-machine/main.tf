@@ -5,16 +5,16 @@ locals {
   volume         = "-v ${local.host_path}/${local.conf_file_name}:${local.mount_path}/${local.conf_file_name}"
   env_list       = concat(["-e CONTROL_PLANE_TOKEN=$CONTROL_PLANE_TOKEN"], lookup(var.container, "env", []))
   env            = join(" ", local.env_list)
-  port           = var.private_package == {} ? "" : "-p ${var.private_package.conf.server.port}:${var.private_package.conf.server.port}" 
+  port           = var.private-package == {} ? "" : "-p ${var.private_package.conf.server.port}:${var.private_package.conf.server.port}" 
   command        = join(" ", var.container.command)
   config_content = <<-EOF
     control-plane {
       token = $${?CONTROL_PLANE_TOKEN}
       description = "${var.description}"
-      enterprise-cloud = ${jsonencode(var.enterprise_cloud)}
+      enterprise-cloud = ${jsonencode(var.enterprise-cloud)}
       locations = [ %{for location in var.locations} ${jsonencode(location.conf)}, %{endfor} ]
-      %{if var.private_package != {}}repository = ${jsonencode(var.private_package.conf)}%{endif}
-      %{for key, value in var.extra_content}${key} = "${value}"%{endfor}
+      %{if var.private-package != {}}repository = ${jsonencode(var.private_package.conf)}%{endif}
+      %{for key, value in var.extra-content}${key} = "${value}"%{endfor}
     }
   EOF
 }
@@ -41,7 +41,7 @@ resource "google_compute_instance" "control_plane" {
   }
 
   service_account {
-    email  = var.service_email
+    email  = var.service-email
     scopes = ["https://www.googleapis.com/auth/cloud-platform"]
   }
 
@@ -51,7 +51,7 @@ resource "google_compute_instance" "control_plane" {
     set -e
     
     toolbox gcloud version
-    CONTROL_PLANE_TOKEN=$(toolbox gcloud secrets versions access latest --secret=${var.token_secret_name} || echo "SECRET_FETCH_FAILED")
+    CONTROL_PLANE_TOKEN=$(toolbox gcloud secrets versions access latest --secret=${var.token-secret-name} || echo "SECRET_FETCH_FAILED")
 
     mkdir -p ${local.host_path}
     echo '${local.config_content}' | sudo tee ${local.host_path}/${local.conf_file_name}

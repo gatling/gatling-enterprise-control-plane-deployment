@@ -1,4 +1,4 @@
 output "conf" {
-  value       = local.private_package
+  value       = local.private-package
   description = "Location JSON configuration"
 }
