@@ -30,7 +30,7 @@ variable "network" {
     zone               = string
     network            = optional(string)
     subnetwork         = optional(string)
-    enable_external_ip = bool
+    enable-external-ip = bool
   })
 
   validation {
