@@ -1,0 +1,86 @@
+name: Terraform CI/CD
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/terraform-workflow.yaml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/terraform-workflow.yaml'
+
+jobs:
+  detect:
+    name: Detect Changes
+    runs-on: ubuntu-latest
+    outputs:
+      aws_changed: ${{ steps.filter.outputs.aws }}
+      azure_changed: ${{ steps.filter.outputs.azure }}
+      gcp_changed: ${{ steps.filter.outputs.gcp }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Detect Changed Paths
+        id: filter
+        uses: dorny/paths-filter@v2
+        with:
+          filters: |
+            aws:
+              - 'terraform/aws/**'
+              - 'terraform/examples/AWS*'
+            azure:
+              - 'terraform/azure/**'
+              - 'terraform/examples/AZURE*'
+            gcp:
+              - 'terraform/gcp/**'
+              - 'terraform/examples/GCP*'
+
+  test-aws:
+    if: ${{ needs.filter.outputs.aws_changed == 'true' }}
+    name: Test Terraform AWS
+    runs-on: ubuntu-latest
+    needs: detect
+    steps:
+      - uses: actions/checkout@v3
+      - uses: hashicorp/setup-terraform@v3
+      - run: |
+          cd terraform/examples/AWS-private-location
+          terraform init -backend=false
+          terraform validate
+          cd ../AWS-private-package
+          terraform init -backend=false
+          terraform validate
+
+  test-azure:
+    if: ${{ needs.filter.outputs.azure_changed == 'true' }}
+    name: Test Terraform Azure
+    runs-on: ubuntu-latest
+    needs: detect
+    steps:
+      - uses: actions/checkout@v3
+      - uses: hashicorp/setup-terraform@v3
+      - run: |
+          cd terraform/examples/AZURE-private-location
+          terraform init -backend=false
+          terraform validate
+          cd ../AZURE-private-package
+          terraform init -backend=false
+          terraform validate
+
+  test-gcp:
+    if: ${{ needs.filter.outputs.gcp_changed == 'true' }}
+    name: Test Terraform GCP
+    runs-on: ubuntu-latest
+    needs: detect
+    steps:
+      - uses: actions/checkout@v3
+      - uses: hashicorp/setup-terraform@v3
+      - run: |
+          cd terraform/examples/GCP-private-location
+          terraform init -backend=false
+          terraform validate
+          cd ../GCP-private-package
+          terraform init -backend=false
+          terraform validate

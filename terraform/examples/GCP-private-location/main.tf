@@ -7,7 +7,7 @@ provider "google" {
 # Reference: https://docs.gatling.io/reference/install/cloud/private-locations/gcp/configuration/#control-plane-configuration-file
 module "location" {
   source            = "git::https://github.com/gatling/gatling-enterprise-control-plane-deployment//terraform/gcp/location"
-  id                = "prl_<PrivateLocationID>"
+  id                = "prl_gcp"
   project           = "<ProjectId>"
   zone              = "<Zone>"
   instance-template = "<InstanceTemplate>"

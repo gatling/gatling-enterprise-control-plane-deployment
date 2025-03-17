@@ -33,7 +33,7 @@ This module specifies the location parameters for the control plane, including r
 # Reference: https://docs.gatling.io/reference/install/cloud/private-locations/azure/configuration/#control-plane-configuration-file
 module "location" {
   source       = "git::https://github.com/gatling/gatling-enterprise-control-plane-deployment//terraform/azure/location"
-  id           = "prl_<PrivateLocationID>"
+  id           = "prl_azure"
   region       = "<Region>"
   subscription = "<SubscriptionUUID>"
   network_id   = "/subscriptions/<SubscriptionUUID>/resourceGroups/<ResourceGroup>/providers/Microsoft.Network/virtualNetworks/<VNet>"
