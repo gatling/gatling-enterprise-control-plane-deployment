@@ -17,6 +17,8 @@ module "location" {
     engine = "classic"
     image = {
       type = "certified"
+
+      
       # java    = "latest"
       # project = "<ProjectName>"
       # family  = "<ImageFamily>"

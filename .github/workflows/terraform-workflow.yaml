@@ -24,18 +24,21 @@ jobs:
       - uses: actions/checkout@v3
       - name: Detect Changed Paths
         id: filter
-        uses: dorny/paths-filter@v2
+        uses: dorny/paths-filter@v3
         with:
           filters: |
             aws:
               - 'terraform/aws/**'
-              - 'terraform/examples/AWS*'
+              - 'terraform/examples/AWS-private-location/**'
+              - 'terraform/examples/AWS-private-package/**'
             azure:
               - 'terraform/azure/**'
-              - 'terraform/examples/AZURE*'
+              - 'terraform/examples/AZURE-private-location/**'
+              - 'terraform/examples/AZURE-private-package/**'
             gcp:
               - 'terraform/gcp/**'
-              - 'terraform/examples/GCP*'
+              - 'terraform/examples/GCP-private-location/**'
+              - 'terraform/examples/GCP-private-package/**'
 
   test-aws:
     if: ${{ needs.filter.outputs.aws_changed == 'true' }}
