@@ -36,8 +36,8 @@ module "location" {
   id           = "prl_azure"
   region       = "<Region>"
   subscription = "<SubscriptionUUID>"
-  network_id   = "/subscriptions/<SubscriptionUUID>/resourceGroups/<ResourceGroup>/providers/Microsoft.Network/virtualNetworks/<VNet>"
-  subnet_name  = "<Subnet>"
+  network-id   = "/subscriptions/<SubscriptionUUID>/resourceGroups/<ResourceGroup>/providers/Microsoft.Network/virtualNetworks/<VNet>"
+  subnet-name  = "<Subnet>"
   image = {
     type = "certified"
     # java  = "latest"
@@ -45,12 +45,12 @@ module "location" {
   }
   # size                = "Standard_A4_v2"
   # engine              = "classic"
-  # associate_public_ip = false
+  # associate-public-ip = false
   # tags                = {}
   # system_properties   = {}
-  # java_home           = ""
-  # jvm_options         = []
-  # enterprise_cloud = {
+  # java-home           = "/usr/lib/jvm/zulu"
+  # jvm-options         = []
+  # enterprise-cloud = {
   #   #  Setup the proxy configuration for the private location
   #   #  Reference: https://docs.gatling.io/reference/install/cloud/private-locations/network/#configuring-a-proxy
   # }
@@ -68,10 +68,10 @@ module "control-plane" {
   source               = "git::https://github.com/gatling/gatling-enterprise-control-plane-deployment//terraform/azure/control-plane"
   name                 = "<Name>"
   region               = "<Region>"
-  resource_group_name  = "<ResourceGroup>"
-  vault_name           = "<Vault>"
-  secret_id            = "<SecretIdentifier>"
-  storage_account_name = "<StorageAccount>"
+  resource-group-name  = "<ResourceGroup>"
+  vault-name           = "<Vault>"
+  secret-id            = "<SecretIdentifier>"
+  storage-account-name = "<StorageAccount>"
   # container = {
   #   image   = "gatlingcorp/control-plane:latest"
   #   cpu     = 1.0
@@ -80,6 +80,7 @@ module "control-plane" {
   #   env     = []
   # }
   locations       = [module.location]
+  private-package = module.private-package
   # enterprise_cloud = {
   #   Setup the proxy configuration for the private location
   #   Reference: https://docs.gatling.io/reference/install/cloud/private-locations/network/#configuring-a-proxy

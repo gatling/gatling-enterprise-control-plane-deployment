@@ -3,17 +3,17 @@ variable "container" {
   type        = any
 }
 
-variable "resource_group_name" {
+variable "resource-group-name" {
   description = "Resource group name."
   type        = string
 }
 
-variable "vault_name" {
+variable "vault-name" {
   description = "Vault name where the control plane token secret is stored."
   type = string
 }
 
-variable "private_package" {
+variable "private-package" {
   description = "JSON configuration for the private packages."
   type        = map(any)
   default     = {}

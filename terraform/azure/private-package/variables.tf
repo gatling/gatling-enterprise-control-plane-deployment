@@ -1,19 +1,19 @@
-variable "storage_account_name" {
+variable "storage-account-name" {
   description = "Storage account name to be used with the control plane."
   type        = string
 
   validation {
-    condition     = length(var.storage_account_name) > 0
+    condition     = length(var.storage-account-name) > 0
     error_message = "Storage account name must not be empty."
   }
 }
 
-variable "control_plane_name" {
+variable "control-plane-name" {
   description = "Control plane name."
   type        = string
 
   validation {
-    condition     = length(var.control_plane_name) > 0
+    condition     = length(var.control-plane-name) > 0
     error_message = "Control plane name."
   }
 }

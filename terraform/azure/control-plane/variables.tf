@@ -14,22 +14,22 @@ variable "description" {
   default     = "My Azure control plane description"
 }
 
-variable "vault_name" {
+variable "vault-name" {
   description = "Vault name where the control plane token secret is stored."
   type        = string
 
   validation {
-    condition     = length(var.vault_name) > 0
+    condition     = length(var.vault-name) > 0
     error_message = "Vault name must not be empty."
   }
 }
 
-variable "secret_id" {
+variable "secret-id" {
   description = "Secret identifier where the control token plane is stored."
   type        = string
 
   validation {
-    condition     = length(var.secret_id) > 0
+    condition     = length(var.secret-id) > 0
     error_message = "Secret identifier must not be empty."
   }
 }
@@ -44,12 +44,12 @@ variable "region" {
   }
 }
 
-variable "resource_group_name" {
+variable "resource-group-name" {
   description = "Resource group name."
   type        = string
 
   validation {
-    condition     = length(var.resource_group_name) > 0
+    condition     = length(var.resource-group-name) > 0
     error_message = "Resource group must not be empty."
   }
 }
@@ -62,7 +62,7 @@ variable "container" {
     env = optional(list(object({
       name        = string
       value       = optional(string)
-      secret_name = optional(string)
+      secret-name = optional(string)
     })))
     cpu    = number
     memory = string
@@ -76,12 +76,12 @@ variable "container" {
   }
 }
 
-variable "storage_account_name" {
+variable "storage-account-name" {
   description = "Storage account name to be used with the control plane."
   type        = string
 
   validation {
-    condition     = length(var.storage_account_name) > 0
+    condition     = length(var.storage-account-name) > 0
     error_message = "Storage account name must not be empty."
   }
 }
@@ -96,18 +96,18 @@ variable "locations" {
   }
 }
 
-variable "private_package" {
+variable "private-package" {
   description = "JSON configuration for the private packages."
   type        = map(any)
   default     = {}
 }
 
-variable "enterprise_cloud" {
+variable "enterprise-cloud" {
   type    = map(any)
   default = {}
 }
 
-variable "extra_content" {
+variable "extra-content" {
   type    = map(any)
   default = {}
 }

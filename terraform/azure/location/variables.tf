@@ -52,27 +52,27 @@ variable "subscription" {
   }
 }
 
-variable "network_id" {
+variable "network-id" {
   description = "Network id with the following format /subscriptions/<SubscriptionUUID>/resourceGroups/<ResourceGroup>/providers/Microsoft.Network/virtualNetworks/<VNet>."
   type        = string
 
   validation {
-    condition     = length(var.network_id) > 0
+    condition     = length(var.network-id) > 0
     error_message = "Virtual network name must not be empty."
   }
 }
 
-variable "subnet_name" {
+variable "subnet-name" {
   description = "Subnet name of the location."
   type        = string
 
   validation {
-    condition     = length(var.subnet_name) > 0
+    condition     = length(var.subnet-name) > 0
     error_message = "Subnet name must not be empty."
   }
 }
 
-variable "java_version" {
+variable "java-version" {
   description = "Java version of the location."
   type        = string
   default     = "latest"
@@ -84,7 +84,7 @@ variable "size" {
   default     = "Standard_A4_v2"
 }
 
-variable "associate_public_ip" {
+variable "associate-public-ip" {
   description = "Flag to enable public IP association."
   type        = bool
   default     = false
@@ -96,25 +96,25 @@ variable "tags" {
   default     = {}
 }
 
-variable "system_properties" {
+variable "system-properties" {
   description = "System properties to be assigned to the Location."
   type        = map(string)
   default     = {}
 }
 
-variable "java_home" {
+variable "java-home" {
   description = "Overwrite JAVA_HOME definition."
   type        = string
   default     = null
 }
 
-variable "jvm_options" {
+variable "jvm-options" {
   description = "Overwrite JAVA_HOME definition."
   type        = list(string)
   default     = []
 }
 
-variable "enterprise_cloud" {
+variable "enterprise-cloud" {
   type    = map(any)
   default = {}
 }

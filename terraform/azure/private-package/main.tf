@@ -1,8 +1,8 @@
 locals {
   private_package = {
     type : "azure",
-    storage-account : var.storage_account_name
-    container : var.control_plane_name
+    storage-account : var.storage-account-name
+    container : var.control-plane-name
     path : var.path
     upload  = var.upload
     server  = var.server

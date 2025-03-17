@@ -9,7 +9,7 @@ on:
 
 jobs:
   detect:
-    name: Validate Changes
+    name: Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -30,6 +30,9 @@ jobs:
               - 'terraform/gcp/**'
               - 'terraform/examples/GCP-private-location/**'
               - 'terraform/examples/GCP-private-package/**'
+      - name: Override module sources for current branch
+        run: |
+          find . -type f -name '*.tf' -exec sed -Ei 's#(git::https://github\.com/gatling/gatling-enterprise-control-plane-deployment//[^?"]*)(["]|$)#\1?ref=azure-refactor\2#g' {} +
       - uses: hashicorp/setup-terraform@v3
       - name: Test Terraform AWS
         if: steps.filter.outputs.aws == 'true'
