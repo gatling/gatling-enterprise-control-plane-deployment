@@ -32,7 +32,7 @@ jobs:
               - 'terraform/examples/GCP-private-package/**'
       - name: Override module sources for current branch
         run: |
-          find . -type f -name '*.tf' -exec sed -Ei 's|(git::https://github\.com/gatling/gatling-enterprise-control-plane-deployment//[^?]*$)|\1?ref=${{ github.head_ref }}|g' {} +
+          find . -type f -name '*.tf' -exec sed -Ei 's|(git::https://github\.com/gatling/gatling-enterprise-control-plane-deployment//[^?"]*)(["]|$)|\1?ref=${{ github.head_ref }}\2|g' {} +
       - uses: hashicorp/setup-terraform@v3
       - name: Test Terraform AWS
         if: steps.filter.outputs.aws == 'true'
