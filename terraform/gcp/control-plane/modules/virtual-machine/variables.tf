@@ -8,12 +8,12 @@ variable "description" {
   type        = string
 }
 
-variable "token_secret_name" {
+variable "token-secret-name" {
   description = "Control plane secret token stored in GCP Secret Manager."
   type        = string
 }
 
-variable "service_email" {
+variable "service-email" {
   description = "Control plane service email."
   type        = string
 }
@@ -24,25 +24,25 @@ variable "network" {
     zone               = string
     network            = optional(string)
     subnetwork         = optional(string)
-    enable_external_ip = bool
+    enable-external-ip = bool
   })
 }
 
 variable "compute" {
   description = "Compute configuration for the VM"
   type = object({
-    boot_disk_image            = string
-    machine_type               = string
-    min_cpu_platform           = optional(string)
-    confidential_instance_type = optional(string)
+    boot-disk-image            = string
+    machine-type               = string
+    min-cpu-platform           = optional(string)
+    confidential-instance-type = optional(string)
     shielded = optional(object({
-      enable_secure_boot          = bool
-      enable_vtpm                 = bool
-      enable_integrity_monitoring = bool
+      enable-secure-boot          = bool
+      enable-vtpm                 = bool
+      enable-integrity-monitoring = bool
     }))
     confidential = optional(object({
       enable        = bool
-      instance_type = string
+      instance-type = string
     }))
   })
 }
@@ -61,15 +61,15 @@ variable "locations" {
   type        = list(any)
 }
 
-variable "private_package" {
+variable "private-package" {
   description = "JSON configuration for the Private Package."
   type        = map(any)
 }
 
-variable "enterprise_cloud" {
+variable "enterprise-cloud" {
   type = map(any)
 }
 
-variable "extra_content" {
+variable "extra-content" {
   type = map(any)
 }
