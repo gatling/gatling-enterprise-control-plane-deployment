@@ -1,0 +1,65 @@
+name: Terraform CI/CD
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/terraform-workflow.yaml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/terraform-workflow.yaml'
+
+jobs:
+  detect:
+    name: Validate Changes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Detect Changed Paths
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            aws:
+              - 'terraform/aws/**'
+              - 'terraform/examples/AWS-private-location/**'
+              - 'terraform/examples/AWS-private-package/**'
+            azure:
+              - 'terraform/azure/**'
+              - 'terraform/examples/AZURE-private-location/**'
+              - 'terraform/examples/AZURE-private-package/**'
+            gcp:
+              - 'terraform/gcp/**'
+              - 'terraform/examples/GCP-private-location/**'
+              - 'terraform/examples/GCP-private-package/**'
+      - uses: hashicorp/setup-terraform@v3
+      - name: Test Terraform AWS
+        if: steps.filter.outputs.aws == 'true'
+        run: |
+          cd terraform/examples/AWS-private-location
+          terraform init -backend=false
+          terraform validate
+          cd ../AWS-private-package
+          terraform init -backend=false
+          terraform validate
+      - name: Test Terraform Azure
+        if: steps.filter.outputs.azure == 'true'
+        run: |
+          cd terraform/examples/AZURE-private-location
+          terraform init -backend=false
+          terraform validate
+          cd ../AZURE-private-package
+          terraform init -backend=false
+          terraform validate
+      - name: Test Terraform GCP
+        if: steps.filter.outputs.gcp == 'true'
+        run: |
+          cd terraform/examples/GCP-private-location
+          terraform init -backend=false
+          terraform validate
+          cd ../GCP-private-package
+          terraform init -backend=false
+          terraform validate
