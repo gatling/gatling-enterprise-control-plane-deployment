@@ -1,7 +1,11 @@
 variable "id" {
   description = "ID of the location."
   type        = string
-  default     = "prl_private_location_example"
+
+  validation {
+    condition     = can(regex("^prl_[0-9a-z_]{1,26}$", var.id))
+    error_message = "Private location ID must be prefixed by 'prl_', contain only numbers, lowercase letters, and underscores, and be at most 30 characters long."
+  }
 }
 
 variable "description" {
@@ -48,21 +52,8 @@ variable "subscription" {
   }
 }
 
-variable "java_version" {
-  description = "Java version of the location."
-  type        = string
-  default     = "latest"
-}
-
-variable "size" {
-  description = "Virtual machine size of the location."
-  type        = string
-  default     = "Standard_A4_v2"
-}
-
-
 variable "network_id" {
-  description = "Network id with the following format /subscriptions/<MySubscription UUID>/resourceGroups/<MyResourceGroup>/providers/Microsoft.Network/virtualNetworks/<MyVNet>."
+  description = "Network id with the following format /subscriptions/<SubscriptionUUID>/resourceGroups/<ResourceGroup>/providers/Microsoft.Network/virtualNetworks/<VNet>."
   type        = string
 
   validation {
@@ -79,6 +70,18 @@ variable "subnet_name" {
     condition     = length(var.subnet_name) > 0
     error_message = "Subnet name must not be empty."
   }
+}
+
+variable "java_version" {
+  description = "Java version of the location."
+  type        = string
+  default     = "latest"
+}
+
+variable "size" {
+  description = "Virtual machine size of the location."
+  type        = string
+  default     = "Standard_A4_v2"
 }
 
 variable "associate_public_ip" {
