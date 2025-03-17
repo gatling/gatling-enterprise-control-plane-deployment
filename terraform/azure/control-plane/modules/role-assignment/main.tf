@@ -14,7 +14,7 @@ resource "azurerm_key_vault_access_policy" "container_app_policy" {
 resource "azurerm_role_definition" "gatling_custom_role" {
   name        = "Gatling Role"
   scope       = data.azurerm_subscription.current.id
-  description = "role for Gatling Control plane permissions"
+  description = "Role for Gatling Control plane permissions."
 
   permissions {
     actions = [
@@ -46,7 +46,7 @@ resource "azurerm_role_assignment" "gatling_custom_role_assignment" {
 }
 
 resource "azurerm_role_assignment" "gatling_storage_contributor" {
-  count                = length(var.private_package) > 0 ? 1 : 0
+  count                = var.private_package == {} ? 0 : 1
   scope                = data.azurerm_subscription.current.id
   role_definition_name = "Storage Blob Data Contributor"
   principal_id         = var.container.identity[0].principal_id
