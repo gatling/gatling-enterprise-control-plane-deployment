@@ -1,7 +1,6 @@
 variable "id" {
   type        = string
   description = "ID of the location."
-  default     = "prl_private_location_example"
 }
 
 variable "description" {
@@ -21,7 +20,7 @@ variable "engine" {
   default     = "classic"
 }
 
-variable "instance_type" {
+variable "instance-type" {
   type        = string
   description = "Instance type of the location."
   default     = "c7i.xlarge"
@@ -33,54 +32,41 @@ variable "spot" {
   default     = false
 }
 
-variable "ami_type" {
+variable "ami" {
   type        = string
   description = "AMI type of the location."
   default     = "certified"
 }
 
-variable "ami_id" {
-  type        = string
-  description = "Custom AMI id of the location."
-  default     = ""
-}
-
-variable "java_version" {
-  type        = string
-  description = "Java version of the location."
-  default     = "latest"
-}
-
-variable "subnet_ids" {
+variable "subnets" {
   type        = list(string)
   description = "Subnet ids of the location."
 }
 
-
-variable "security_group_ids" {
+variable "security-groups" {
   type        = list(string)
   description = "Security group ids of the location."
 }
 
-variable "auto_associate_public_ipv4" {
+variable "auto-associate-public-ipv4" {
   type        = bool
   description = "Automatically associate a public IPv4."
   default     = true
 }
 
-variable "elastic_ips" {
+variable "elastic-ips" {
   type        = list(string)
   description = "Assign elastic IPs to your Locations. You will only be able to deploy a number of load generators up to the number of Elastic IP addresses you have configured."
   default     = []
 }
 
-variable "profile_name" {
+variable "profile-name" {
   type        = string
   description = "Profile name to be assigned to the Location."
   default     = ""
 }
 
-variable "iam_instance_profile" {
+variable "iam-instance-profile" {
   type        = string
   description = "IAM instance profile to be assigned to the Location."
   default     = ""
@@ -92,7 +78,7 @@ variable "tags" {
   default     = {}
 }
 
-variable "tags_for" {
+variable "tags-for" {
   description = "Tags to be assigned to the resources of the Location."
   type        = map(map(string))
   default = {
@@ -102,24 +88,24 @@ variable "tags_for" {
   }
 }
 
-variable "system_properties" {
+variable "system-properties" {
   description = "System properties to be assigned to the Location."
   type        = map(string)
   default     = {}
 }
 
-variable "java_home" {
+variable "java-home" {
   description = "Overwrite JAVA_HOME definition."
   type        = string
   default     = null
 }
 
-variable "jvm_options" {
+variable "jvm-options" {
   description = "Pass JVM Options."
   type        = list(string)
   default     = []
 }
-variable "enterprise_cloud" {
+variable "enterprise-cloud" {
   type    = map(any)
   default = {}
 }
