@@ -1,6 +1,11 @@
 variable "id" {
   type        = string
   description = "ID of the location."
+
+  validation {
+    condition     = can(regex("^prl_[0-9a-z_]{1,26}$", var.id))
+    error_message = "Private location ID must be prefixed by 'prl_', contain only numbers, lowercase letters, and underscores, and be at most 30 characters long."
+  }
 }
 
 variable "description" {
@@ -12,6 +17,11 @@ variable "description" {
 variable "region" {
   type        = string
   description = "Region of the location."
+
+  validation {
+    condition     = length(var.region) > 0
+    error_message = "Region must not be empty."
+  }
 }
 
 variable "engine" {
@@ -33,19 +43,35 @@ variable "spot" {
 }
 
 variable "ami" {
-  type        = string
-  description = "AMI type of the location."
-  default     = "certified"
+  description = "Image of the location."
+  type = object({
+    type = string
+    java = optional(string)
+    id   = optional(string)
+  })
+  default = {
+    type = "certified"
+  }
 }
 
 variable "subnets" {
   type        = list(string)
   description = "Subnet ids of the location."
+
+  validation {
+    condition     = length(var.subnets) > 0
+    error_message = "Subnets must not be empty."
+  }
 }
 
 variable "security-groups" {
   type        = list(string)
   description = "Security group ids of the location."
+
+  validation {
+    condition     = length(var.security-groups) > 0
+    error_message = "Security groups must not be empty."
+  }
 }
 
 variable "auto-associate-public-ipv4" {
@@ -80,7 +106,11 @@ variable "tags" {
 
 variable "tags-for" {
   description = "Tags to be assigned to the resources of the Location."
-  type        = map(map(string))
+  type = object({
+    instance          = map(string)
+    volume            = map(string)
+    network-interface = map(string)
+  })
   default = {
     instance : {}
     volume : {}
@@ -106,6 +136,7 @@ variable "jvm-options" {
   default     = []
 }
 variable "enterprise-cloud" {
+  description = "Enterprise Cloud network settings: http proxy, fwd proxy, etc."
   type    = map(any)
   default = {}
 }
