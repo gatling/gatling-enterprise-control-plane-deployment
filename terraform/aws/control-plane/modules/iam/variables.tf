@@ -3,12 +3,12 @@ variable "name" {
   description = "Control Plane role name."
 }
 
-variable "private_package" {
+variable "private-package" {
   description = "JSON configuration for the private packages."
   type        = map(any)
 }
 
-variable "cloudWatch_logs" {
+variable "cloudwatch-logs" {
   description = "Control Plane CloudWatch Logs."
   type        = bool
 }
@@ -18,7 +18,7 @@ variable "ecr" {
   type        = bool
 }
 
-variable "token_secret_arn" {
+variable "token-secret-arn" {
   type        = string
   description = "Control plane secret token ARN."
 }

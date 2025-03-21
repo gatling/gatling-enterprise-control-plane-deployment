@@ -1,28 +1,53 @@
 variable "name" {
-  type        = string
   description = "Name of the control plane"
+  type        = string
 }
 
 variable "description" {
-  type        = string
   description = "Description of the control plane."
+  type        = string
   default     = "My AWS control plane description"
 }
 
-variable "image" {
+variable "token-secret-arn" {
+  description = "Control plane secret token ARN."
   type        = string
-  description = "Image of the control plane."
-  default     = "gatlingcorp/control-plane:latest"
 }
 
-variable "subnet_ids" {
-  type        = list(string)
+variable "subnets" {
   description = "The subnet IDs for the control plane."
+  type        = list(string)
 }
 
-variable "security_group_ids" {
-  type        = list(string)
+variable "security-groups" {
   description = "Security group IDs to be used with the control plane."
+  type        = list(string)
+}
+
+variable "task" {
+  description = "Conrol plane task definition."
+  type = object({
+    iam-role-arn    = optional(string)
+    image           = string
+    command         = optional(list(string))
+    secrets         = optional(list(map(string)))
+    environment     = optional(list(map(string)))
+    cpu             = optional(string)
+    memory          = optional(string)
+    cloudwatch-logs = optional(bool)
+    ecr             = optional(bool)
+  })
+  default = {
+    iam-role-arn    = ""
+    image           = "gatlingcorp/control-plane:latest"
+    command         = []
+    secrets         = []
+    environment     = []
+    cpu             = "1024"
+    memory          = "3072"
+    cloudwatch-logs = true
+    ecr             = false
+  }
 }
 
 variable "locations" {
@@ -30,64 +55,18 @@ variable "locations" {
   type        = list(map(any))
 }
 
-variable "private_package" {
+variable "private-package" {
   description = "JSON configuration for the private packages."
   type        = map(any)
   default     = {}
 }
 
-variable "extra_content" {
+variable "enterprise-cloud" {
   type    = map(any)
   default = {}
 }
 
-variable "enterprise_cloud" {
+variable "extra-content" {
   type    = map(any)
   default = {}
-}
-
-variable "command" {
-  description = "Control plane image command"
-  type        = list(string)
-  default     = []
-}
-
-variable "secrets" {
-  type    = list(map(string))
-  default = []
-}
-
-variable "environment" {
-  description = "Control plane image environment variables."
-  type        = list(map(string))
-  default     = []
-}
-
-variable "cloudWatch_logs" {
-  description = "Control Plane Service CloudWatch logs."
-  type        = bool
-  default     = true
-}
-
-variable "ecr" {
-  description = "Enable ECR IAM Permissions."
-  type        = bool
-  default     = false
-}
-
-variable "token_secret_arn" {
-  type        = string
-  description = "Control plane secret token ARN."
-}
-
-variable "task_cpu" {
-  type        = string
-  description = "ECS task definition CPU."
-  default     = "1024"
-}
-
-variable "task_memory" {
-  type        = string
-  description = "ECS task definition Memory."
-  default     = "3072"
 }

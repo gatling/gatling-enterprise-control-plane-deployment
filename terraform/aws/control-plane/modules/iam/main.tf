@@ -36,7 +36,7 @@ resource "aws_iam_policy" "ec2_policy" {
 }
 
 resource "aws_iam_policy" "package_s3_policy" {
-  count = length(var.private_package) > 0 ? 1 : 0
+  count = var.private-package == {} ? 0 : 1
   name  = "${var.name}-package-s3-policy"
   policy = jsonencode({
     Version = "2012-10-17",
@@ -48,7 +48,7 @@ resource "aws_iam_policy" "package_s3_policy" {
           "s3:DeleteObject",
         ],
         Effect   = "Allow",
-        Resource = "arn:aws:s3:::${var.private_package.conf.bucket}/*"
+        Resource = "arn:aws:s3:::${var.private-package.conf.bucket}/*"
       }
     ]
   })
@@ -64,7 +64,7 @@ resource "aws_iam_policy" "asm_policy" {
         Action = [
           "secretsmanager:GetSecretValue"
         ],
-        Resource = var.token_secret_arn
+        Resource = var.token-secret-arn
       }
     ]
   })
@@ -91,7 +91,7 @@ resource "aws_iam_policy" "ecr_policy" {
 }
 
 resource "aws_iam_policy" "cloudwatch_logs_policy" {
-  count = var.cloudWatch_logs ? 1 : 0
+  count = var.cloudwatch-logs ? 1 : 0
   name  = "${var.name}-cloudwatch-logs-policy"
   policy = jsonencode({
     Version = "2012-10-17",
@@ -115,13 +115,13 @@ resource "aws_iam_role_policy_attachment" "ec2_policy_attachment" {
 }
 
 resource "aws_iam_role_policy_attachment" "package_s3_policy_attachment" {
-  count      = length(var.private_package) > 0 ? 1 : 0
+  count      = var.private-package == {} ? 0 : 1
   role       = aws_iam_role.gatling_role.name
   policy_arn = aws_iam_policy.package_s3_policy[0].arn
 }
 
 resource "aws_iam_role_policy_attachment" "cloudwatch_logs_policy_attachment" {
-  count      = var.cloudWatch_logs ? 1 : 0
+  count      = var.cloudwatch-logs ? 1 : 0
   role       = aws_iam_role.gatling_role.name
   policy_arn = aws_iam_policy.cloudwatch_logs_policy[0].arn
 }
