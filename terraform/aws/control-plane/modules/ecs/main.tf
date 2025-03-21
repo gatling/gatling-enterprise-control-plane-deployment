@@ -2,8 +2,6 @@ resource "aws_ecs_cluster" "gatling_cluster" {
   name = "${var.name}-cluster"
 }
 
-data "aws_region" "current" {}
-
 locals {
   path           = "/app/conf"
   volume_name    = "control-plane-conf"
@@ -19,7 +17,7 @@ locals {
   EOF
   log_group = {
     "awslogs-group" : "/ecs/${var.name}-service"
-    "awslogs-region" : data.aws_region.current.name
+    "awslogs-region" : var.aws_region
     "awslogs-create-group" : "true"
   }
   token_secret = { name = "CONTROL_PLANE_TOKEN", valueFrom = var.token-secret-arn }
@@ -34,7 +32,6 @@ resource "aws_ecs_task_definition" "gatling_task" {
   execution_role_arn       = var.task.iam-role-arn
   cpu                      = var.task.cpu
   memory                   = var.task.memory
-
   container_definitions = jsonencode([
     {
       name : "conf-loader-init-container"
@@ -99,7 +96,7 @@ resource "aws_ecs_task_definition" "gatling_task" {
       ]
     }
   ])
-
+  
   volume {
     name = local.volume_name
   }

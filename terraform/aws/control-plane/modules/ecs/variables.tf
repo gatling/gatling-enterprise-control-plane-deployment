@@ -1,3 +1,7 @@
+variable "aws_region" {
+  type        = string
+}
+
 variable "name" {
   type        = string
   description = "Name of the control plane."
