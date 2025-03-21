@@ -1,3 +1,109 @@
+data "aws_caller_identity" "current" {}
+
+data "aws_eip" "by_ip" {
+  for_each = toset(flatten([
+    for location in var.locations : location.conf.elastic-ips
+  ]))
+  public_ip = each.key
+}
+
+locals {
+  static_ec2_statements = [
+    {
+      Sid    = "AllowEC2CreateRunTags"
+      Effect = "Allow"
+      Action = ["ec2:CreateTags", "ec2:RunInstances"]
+      Resource = [
+        "arn:aws:ec2:*:*:instance/*",
+        "arn:aws:ec2:*:*:network-interface/*",
+        "arn:aws:ec2:*:*:security-group/*",
+        "arn:aws:ec2:*:*:subnet/*",
+        "arn:aws:ec2:*:*:volume/*",
+        "arn:aws:ec2:*:*:image/*"
+      ]
+    },
+    {
+      Sid      = "EnforceGatlingTag"
+      Effect   = "Deny"
+      Action   = "ec2:RunInstances"
+      Resource = "arn:aws:ec2:*:*:instance/*"
+      Condition = {
+        StringNotLike = { "aws:RequestTag/Name" = "GATLING_LG_*" }
+      }
+    },
+    {
+      Sid      = "AllowTerminateTaggedInstances"
+      Effect   = "Allow"
+      Action   = "ec2:TerminateInstances"
+      Resource = "arn:aws:ec2:*:*:instance/*"
+      Condition = {
+        StringLike = { "aws:ResourceTag/Name" = "GATLING_LG_*" }
+      }
+    },
+    {
+      Sid      = "AllowEC2Describe"
+      Effect   = "Allow"
+      Action   = ["ec2:DescribeImages", "ec2:DescribeInstances"]
+      Resource = "*"
+    }
+  ]
+
+  elastic_ip_statements_extra = distinct(flatten([
+    for location in var.locations : [
+      for elastic_ip in location.conf.elastic-ips : {
+        Sid    = "AllowElasticIP_${data.aws_eip.by_ip[elastic_ip].id}"
+        Effect = "Allow"
+        Action = [
+          "ec2:AssociateAddress",
+          "ec2:DisassociateAddress",
+        ]
+        Resource = "arn:aws:ec2:${var.aws_region}:${data.aws_caller_identity.current.account_id}:address/${data.aws_eip.by_ip[elastic_ip].id}"
+      }
+    ]
+  ]))
+
+  elastic_ip_statements_base = [
+    {
+      Sid      = "AllowElasticIPAssociateTaggedInstances"
+      Effect   = "Allow"
+      Action   = ["ec2:AssociateAddress", "ec2:DisassociateAddress"]
+      Resource = "arn:aws:ec2:*:*:instance/*"
+      Condition = {
+        StringLike = { "ec2:ResourceTag/Name" = "GATLING_LG_*" }
+      }
+    },
+    {
+      Sid      = "AllowElasticIPDescribe"
+      Effect   = "Allow"
+      Action   = "ec2:DescribeAddresses"
+      Resource = "*"
+    }
+  ]
+
+  iam_profile_name_statements = distinct([
+    for location in var.locations : {
+      Sid    = "AllowPassRole_${location.conf.iam-instance-profile}"
+      Effect = "Allow"
+      Action = "iam:PassRole"
+      Resource = "arn:aws:iam:${data.aws_caller_identity.current.account_id}:role/${location.conf.iam-instance-profile}"
+    }
+    if location.conf.iam-instance-profile != ""
+  ])
+
+  elastic_ip_statements = flatten([
+    length(local.elastic_ip_statements_extra) > 0
+    ? [local.elastic_ip_statements_base]
+    : [],
+    [local.elastic_ip_statements_extra],
+  ])
+
+  iam_ec2_policy_statements = concat(
+    local.static_ec2_statements,
+    local.elastic_ip_statements,
+    local.iam_profile_name_statements
+  )
+}
+
 resource "aws_iam_role" "gatling_role" {
   name = "${var.name}-role"
   assume_role_policy = jsonencode({
@@ -17,21 +123,8 @@ resource "aws_iam_role" "gatling_role" {
 resource "aws_iam_policy" "ec2_policy" {
   name = "${var.name}-ec2-policy"
   policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [
-      {
-        Action = [
-          "ec2:Describe*",
-          "ec2:CreateTags",
-          "ec2:RunInstances",
-          "ec2:TerminateInstances",
-          "ec2:AssociateAddress",
-          "ec2:DisassociateAddress"
-        ],
-        Effect   = "Allow",
-        Resource = "*"
-      }
-    ]
+    Version   = "2012-10-17",
+    Statement = local.iam_ec2_policy_statements
   })
 }
 
