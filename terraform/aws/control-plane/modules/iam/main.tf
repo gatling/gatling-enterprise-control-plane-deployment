@@ -57,7 +57,7 @@ locals {
           "ec2:AssociateAddress",
           "ec2:DisassociateAddress",
         ]
-        Resource = "arn:aws:ec2:${var.aws_region}:${data.aws_caller_identity.current.account_id}:address/${data.aws_eip.by_ip[elastic_ip].id}"
+        Resource = "arn:aws:ec2:${var.aws_region}:${data.aws_caller_identity.current.account_id}:elastic-ip/${data.aws_eip.by_ip[elastic_ip].id}"
       }
     ]
   ]))
