@@ -1,6 +1,6 @@
 variable "bucket" {
-  type        = string
   description = "Bucket name of the S3 private package."
+  type        = string
 
   validation {
     condition     = length(var.bucket) > 0
@@ -9,8 +9,8 @@ variable "bucket" {
 }
 
 variable "path" {
-  type        = string
   description = "Storage path on the S3 private package."
+  type        = string
   default     = ""
 }
 

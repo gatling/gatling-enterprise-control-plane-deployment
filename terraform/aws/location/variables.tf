@@ -1,6 +1,6 @@
 variable "id" {
-  type        = string
   description = "ID of the location."
+  type        = string
 
   validation {
     condition     = can(regex("^prl_[0-9a-z_]{1,26}$", var.id))
@@ -9,14 +9,14 @@ variable "id" {
 }
 
 variable "description" {
-  type        = string
   description = "Description of the location."
+  type        = string
   default     = "Private Location on AWS"
 }
 
 variable "region" {
-  type        = string
   description = "Region of the location."
+  type        = string
 
   validation {
     condition     = length(var.region) > 0
@@ -25,20 +25,20 @@ variable "region" {
 }
 
 variable "engine" {
-  type        = string
   description = "Engine of the location determining the compatible package formats (JavaScript or JVM)."
+  type        = string
   default     = "classic"
 }
 
 variable "instance-type" {
-  type        = string
   description = "Instance type of the location."
+  type        = string
   default     = "c7i.xlarge"
 }
 
 variable "spot" {
-  type        = bool
   description = "Flag to enable spot instances."
+  type        = bool
   default     = false
 }
 
@@ -55,8 +55,8 @@ variable "ami" {
 }
 
 variable "subnets" {
-  type        = list(string)
   description = "Subnet ids of the location."
+  type        = list(string)
 
   validation {
     condition     = length(var.subnets) > 0
@@ -65,8 +65,8 @@ variable "subnets" {
 }
 
 variable "security-groups" {
-  type        = list(string)
   description = "Security group ids of the location."
+  type        = list(string)
 
   validation {
     condition     = length(var.security-groups) > 0
@@ -81,20 +81,20 @@ variable "auto-associate-public-ipv4" {
 }
 
 variable "elastic-ips" {
-  type        = list(string)
   description = "Assign elastic IPs to your Locations. You will only be able to deploy a number of load generators up to the number of Elastic IP addresses you have configured."
+  type        = list(string)
   default     = []
 }
 
 variable "profile-name" {
-  type        = string
   description = "Profile name to be assigned to the Location."
+  type        = string
   default     = ""
 }
 
 variable "iam-instance-profile" {
-  type        = string
   description = "IAM instance profile to be assigned to the Location."
+  type        = string
   default     = ""
 }
 
