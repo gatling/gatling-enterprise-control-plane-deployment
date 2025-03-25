@@ -51,8 +51,6 @@ variable "ami" {
   })
   default = {
     type = "certified"
-    java = "latest"
-    id   = null
   }
 }
 
