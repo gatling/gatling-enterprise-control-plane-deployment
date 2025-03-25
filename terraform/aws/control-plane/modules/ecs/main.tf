@@ -11,7 +11,7 @@ locals {
       description = "${var.description}"
       enterprise-cloud = ${jsonencode(var.enterprise-cloud)}
       locations = [ %{for location in var.locations} ${jsonencode(location.conf)}, %{endfor} ]
-      %{if var.private-package != {} }repository = ${jsonencode(var.private-package.conf)}%{endif}
+      %{if length(var.private-package) > 0}repository = ${jsonencode(var.private-package.conf)}%{endif}
       %{for key, value in var.extra-content}${key} = "${value}"%{endfor}
     }
   EOF
@@ -67,13 +67,13 @@ resource "aws_ecs_task_definition" "gatling_task" {
       command : var.task.command
       cpu : 0
       essential : true
-      portMappings : var.private-package == {} ? [] : [
+      portMappings : length(var.private-package) > 0  ? [
         {
           containerPort : var.private-package.conf.server.port,
           hostPort : var.private-package.conf.server.port,
           protocol : "tcp"
         }
-      ]
+      ] : []
       workingDirectory : local.path
       secrets : local.ecs_secrets
       environment : var.task.environment
@@ -96,7 +96,7 @@ resource "aws_ecs_task_definition" "gatling_task" {
       ]
     }
   ])
-  
+
   volume {
     name = local.volume_name
   }

@@ -82,9 +82,9 @@ locals {
 
   iam_profile_name_statements = distinct([
     for location in var.locations : {
-      Sid    = "AllowPassRole_${location.conf.iam-instance-profile}"
-      Effect = "Allow"
-      Action = "iam:PassRole"
+      Sid      = "AllowPassRole_${location.conf.iam-instance-profile}"
+      Effect   = "Allow"
+      Action   = "iam:PassRole"
       Resource = "arn:aws:iam:${data.aws_caller_identity.current.account_id}:role/${location.conf.iam-instance-profile}"
     }
     if location.conf.iam-instance-profile != ""
@@ -129,7 +129,7 @@ resource "aws_iam_policy" "ec2_policy" {
 }
 
 resource "aws_iam_policy" "package_s3_policy" {
-  count = var.private-package == {} ? 0 : 1
+  count = length(var.private-package) > 0 ? 1 : 0
   name  = "${var.name}-package-s3-policy"
   policy = jsonencode({
     Version = "2012-10-17",
@@ -208,7 +208,7 @@ resource "aws_iam_role_policy_attachment" "ec2_policy_attachment" {
 }
 
 resource "aws_iam_role_policy_attachment" "package_s3_policy_attachment" {
-  count      = var.private-package == {} ? 0 : 1
+  count      = length(var.private-package) > 0 ? 1 : 0
   role       = aws_iam_role.gatling_role.name
   policy_arn = aws_iam_policy.package_s3_policy[0].arn
 }
