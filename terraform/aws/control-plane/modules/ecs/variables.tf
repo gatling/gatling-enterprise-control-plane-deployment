@@ -1,30 +1,35 @@
 variable "aws_region" {
-  type        = string
+  type = string
 }
 
 variable "name" {
-  type        = string
   description = "Name of the control plane."
+  type        = string
 }
 
 variable "description" {
-  type        = string
   description = "Description of the control plane."
+  type        = string
 }
 
 variable "token-secret-arn" {
-  type        = string
   description = "Secret Token ARN of the control plane"
+  type        = string
 }
 
 variable "subnets" {
-  type        = list(string)
   description = "The subnet IDs for the control plane."
+  type        = list(string)
 }
 
 variable "security-groups" {
-  type        = list(string)
   description = "Security group IDs to be used with the control plane."
+  type        = list(string)
+}
+
+variable "assign-public-ip" {
+  description = "Assign public IP o th control plane service."
+  type        = bool
 }
 
 variable "task" {

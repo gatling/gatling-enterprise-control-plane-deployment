@@ -24,6 +24,12 @@ variable "security-groups" {
   type        = list(string)
 }
 
+variable "assign-public-ip" {
+  description = "Assign public IP o th control plane service."
+  type        = bool
+  default     = true
+}
+
 variable "task" {
   description = "Conrol plane task definition."
   type = object({

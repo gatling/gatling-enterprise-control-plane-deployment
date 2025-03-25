@@ -112,7 +112,7 @@ resource "aws_ecs_service" "gatling_service" {
   network_configuration {
     subnets          = var.subnets
     security_groups  = var.security-groups
-    assign_public_ip = true
+    assign_public_ip = var.assign-public-ip
   }
 
   depends_on = [aws_ecs_cluster.gatling_cluster, aws_ecs_task_definition.gatling_task]

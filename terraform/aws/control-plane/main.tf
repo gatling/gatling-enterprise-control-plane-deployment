@@ -18,6 +18,7 @@ module "ecs" {
   description      = var.description
   subnets          = var.subnets
   security-groups  = var.security-groups
+  assign-public-ip = var.assign-public-ip
   token-secret-arn = var.token-secret-arn
   task = merge(
     var.task,
