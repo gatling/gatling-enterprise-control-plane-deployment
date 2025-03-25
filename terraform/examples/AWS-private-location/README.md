@@ -29,74 +29,72 @@ This module specifies the location parameters for the control plane, including t
 Ensure that your network permits outbound access to the domains listed in this documentation [link](https://docs.gatling.io/reference/install/cloud/private-locations/introduction/#network).
 
 ```sh
+# Configure a AWS private location
+# Reference: https://docs.gatling.io/reference/install/cloud/private-locations/gcp/configuration/#control-plane-configuration-file
 module "location" {
-  source             = "git::git@github.com:gatling/gatling-enterprise-control-plane-deployment//terraform/aws/location"
-  id                 = "prl_aws"
-  region             = "eu-west-1"
-  subnet_ids         = ["subnet-a", "subnet-b"]
-  security_group_ids = ["sg-id"]
-  //instance_type      = "c7i.xlarge"
-  //engine             = "classic"
-  //enterprise_cloud = {
-    //url = "http://private-location-forward-proxy/gatling"
-  //}
+  source          = "git::https://github.com/gatling/gatling-enterprise-control-plane-deployment//terraform/aws/location"
+  id              = "prl_aws"
+  region          = "<Region>"
+  subnets         = ["<SubnetId>"]
+  security-groups = ["<SecurityGroupId>"]
+  # instance-type   = "c7i.xlarge"
+  # engine          = "classic"
+  # ami = {
+  #   type = "certified"
+  #   java = "latest"
+  #   id   = "ami-00000000000000000"
+  # }
+  # spot                       = false
+  # auto-associate-public-ipv4 = true
+  # elastic-ips                = ["203.0.113.3", "203.0.113.4"]
+  # profile-name               = "profile-name"
+  # iam-instance-profile = "iam-instance-profile"
+  # tags                       = {}
+  # tags-for = {
+  #   instance          = {}
+  #   volume            = {}
+  #   network-interface = {}
+  # }
+  # system-properties   = {}
+  # java-home           = "/usr/lib/jvm/zulu"
+  # jvm-options         = []
+  # enterprise-cloud = {
+  #   Setup the proxy configuration for the private location
+  #   Reference: https://docs.gatling.io/reference/install/cloud/private-locations/network/#configuring-a-proxy
+  # }
 }
 ```
-
-- `source` (required): The source of the module, pointing to the GitHub repository.
-- `id` (required): ID of the location.
-- `region` (required): The AWS region to deploy to.
-- `subnet_ids` (required): List of subnet IDs where the resources will be deployed.
-- `security_group_ids` (required): List of security group IDs to be used.
-- `instance_type`: Instance type of the location.
-- `engine`: Engine of the location determining the compatible package formats (JavaScript or JVM).
-- `auto_associate_public_ipv4`: Automatically associate a public IPv4.
-- `elastic_ips`: Assign elastic IPs to your Locations.
-- `description`: Description of the location.
-- `ami_type`: AMI type of the location.
-- `ami_id`: Custom AMI id of the location.
-- `java_version`: Java version of the location.
-- `spot`: Flag to enable spot instances.
-- `profile_name`: Profile name to be assigned to the Location.
-- `iam_instance_profile`: IAM instance profile to be assigned to the Location.
-- `tags`: Tags to be assigned to the Location.
-- `tags_for`: Tags to be assigned to the resources of the Location.
-- `system_properties`: System properties to be assigned to the Location.
-- `java_home`: Overwrite JAVA_HOME definition.
-- `jvm_options`: Overwrite JAVA_HOME definition.
-- `enterprise_cloud.url`: Set up a forward proxy for the control plane.
 
 ### Control Plane
 
 Sets up the control plane with configurations for networking, security, and S3 storage.
 
 ```sh
+# Create a control plane based on AWS ECS
+# Reference: https://docs.gatling.io/reference/install/cloud/private-locations/gcp/installation/
 module "control-plane" {
-  source              = "git::git@github.com:gatling/gatling-enterprise-control-plane-deployment//terraform/aws/control-plane"
-  name                = "name"
-  token_secret_arn    = "aws-secrets-manager-secret-arn"
-  subnet_ids          = ["subnet-a", "subnet-b"]
-  security_group_ids  = ["sg-id"]
-  locations           = [module.location]
-  //cloudWatch_logs   = true
-  //ecr               = false
-  //enterprise_cloud  = {
-    //url = "http://private-control-plane-forward-proxy/gatling"
-  //}
+  source           = "git::https://github.com/gatling/gatling-enterprise-control-plane-deployment//terraform/aws/control-plane"
+  name             = "<Name>"
+  token-secret-arn = "<TokenSecretARN>"
+  subnets          = ["<SubnetId>"]
+  security-groups  = ["<SecurityGroupId>"]
+  locations        = [module.location]
+  # task = {
+  #   image           = "gatlingcorp/control-plane:latest"
+  #   command         = []
+  #   secrets         = []
+  #   environment     = []
+  #   cpu             = "1024"
+  #   memory          = "3072"
+  #   cloudwatch-logs = true
+  #   ecr             = false
+  # }
+  # enterprise-cloud = {
+  #   Setup the proxy configuration for the control plane
+  #   Reference: https://docs.gatling.io/reference/install/cloud/private-locations/network/#configuring-a-proxy
+  # }
 }
 ```
-
-- `source` (required): The source of the module, pointing to the GitHub repository.
-- `name` (required): The name of the control plane.
-- `token_secret_arn` (required): AWS Secrets Manager Plaintext secret ARN of the stored control plane token.
-- `subnet_ids` (required): List of subnet IDs where the resources will be deployed.
-- `security_group_ids` (required): List of security group IDs to be used.
-- `locations` (required): The list of location module(s).
-- `image`: Image of the control plane.
-- `description`: Description of the control plane.
-- `cloudWatch_logs`: Indicates if CloudWatch Logs are enabled.
-- `ecr`: Indicates if ECR IAM permissions should be created.
-- `enterprise_cloud.url`: Set up a forward proxy for the control plane.
 
 ## Usage
 

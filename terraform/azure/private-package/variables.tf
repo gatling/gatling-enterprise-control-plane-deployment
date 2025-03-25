@@ -14,7 +14,7 @@ variable "control-plane-name" {
 
   validation {
     condition     = length(var.control-plane-name) > 0
-    error_message = "Control plane name."
+    error_message = "Control plane name must not be empty."
   }
 }
 

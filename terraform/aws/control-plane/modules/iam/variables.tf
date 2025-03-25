@@ -1,14 +1,28 @@
-variable "name" {
+variable "token-secret-arn" {
+  description = "Control plane secret token ARN."
   type        = string
-  description = "Control Plane role name."
 }
 
-variable "private_package" {
+variable "aws_region" {
+  type        = string
+}
+
+variable "name" {
+  description = "Control Plane role name."
+  type        = string
+}
+
+variable "locations" {
+  description = "JSON configuration for the locations."
+  type        = list(any)
+}
+
+variable "private-package" {
   description = "JSON configuration for the private packages."
   type        = map(any)
 }
 
-variable "cloudWatch_logs" {
+variable "cloudwatch-logs" {
   description = "Control Plane CloudWatch Logs."
   type        = bool
 }
@@ -16,9 +30,4 @@ variable "cloudWatch_logs" {
 variable "ecr" {
   description = "Enable ECR IAM Permissions."
   type        = bool
-}
-
-variable "token_secret_arn" {
-  type        = string
-  description = "Control plane secret token ARN."
 }

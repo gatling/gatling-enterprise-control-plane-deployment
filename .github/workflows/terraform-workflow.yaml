@@ -5,6 +5,8 @@ on:
     branches:
       - main
     paths:
+      - '**.tf'
+      - 'terraform/**'
       - '.github/workflows/terraform-workflow.yaml'
 
 jobs:
@@ -32,7 +34,8 @@ jobs:
               - 'terraform/examples/GCP-private-package/**'
       - name: Override module sources for current branch
         run: |
-          find . -type f -name '*.tf' -exec sed -Ei 's#(git::https://github\.com/gatling/gatling-enterprise-control-plane-deployment//[^?"]*)(["]|$)#\1?ref=azure-refactor\2#g' {} +
+          BRANCH_NAME=${{ github.head_ref }} 
+          find . -type f -name '*.tf' -exec sed -Ei 's#(git::https://github\.com/gatling/gatling-enterprise-control-plane-deployment//[^?"]*)(["]|$)#\1?ref='"$BRANCH_NAME"'\2#g' {} +
       - uses: hashicorp/setup-terraform@v3
       - name: Test Terraform AWS
         if: steps.filter.outputs.aws == 'true'

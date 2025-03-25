@@ -1,29 +1,31 @@
+data "aws_region" "current" {}
+
 module "iam" {
   source           = "./modules/iam"
+  aws_region       = data.aws_region.current.name
   name             = var.name
-  token_secret_arn = var.token_secret_arn
-  private_package  = var.private_package
-  cloudWatch_logs  = var.cloudWatch_logs
-  ecr              = var.ecr
+  token-secret-arn = var.token-secret-arn
+  locations        = var.locations
+  private-package  = var.private-package
+  cloudwatch-logs  = var.task.cloudwatch-logs
+  ecr              = var.task.ecr
 }
 
 module "ecs" {
-  source                 = "./modules/ecs"
-  ecs_tasks_iam_role_arn = module.iam.ecs_tasks_iam_role_arn
-  name                   = var.name
-  description            = var.description
-  subnet_ids             = var.subnet_ids
-  security_group_ids     = var.security_group_ids
-  image                  = var.image
-  command                = var.command
-  secrets                = var.secrets
-  environment            = var.environment
-  locations              = var.locations
-  private_package        = var.private_package
-  enterprise_cloud       = var.enterprise_cloud
-  extra_content          = var.extra_content
-  token_secret_arn       = var.token_secret_arn
-  cloudWatch_logs        = var.cloudWatch_logs
-  task_cpu               = var.task_cpu
-  task_memory            = var.task_memory
+  source           = "./modules/ecs"
+  aws_region       = data.aws_region.current.name
+  name             = var.name
+  description      = var.description
+  subnets          = var.subnets
+  security-groups  = var.security-groups
+  assign-public-ip = var.assign-public-ip
+  token-secret-arn = var.token-secret-arn
+  task = merge(
+    var.task,
+    { iam-role-arn = module.iam.task-role-arn }
+  )
+  locations        = var.locations
+  private-package  = var.private-package
+  enterprise-cloud = var.enterprise-cloud
+  extra-content    = var.extra-content
 }

@@ -1,46 +1,50 @@
-variable "ecs_tasks_iam_role_arn" {
-  type        = string
-  description = "Control Plane IAM Role ARN."
+variable "aws_region" {
+  type = string
 }
 
 variable "name" {
-  type        = string
   description = "Name of the control plane."
+  type        = string
 }
 
 variable "description" {
-  type        = string
   description = "Description of the control plane."
-}
-
-variable "subnet_ids" {
-  type        = list(string)
-  description = "The subnet IDs for the control plane."
-}
-
-variable "security_group_ids" {
-  type        = list(string)
-  description = "Security group IDs to be used with the control plane."
-}
-
-variable "image" {
   type        = string
-  description = "Image of the control plane."
 }
 
-variable "command" {
-  description = "Control plane image command"
+variable "token-secret-arn" {
+  description = "Secret Token ARN of the control plane"
+  type        = string
+}
+
+variable "subnets" {
+  description = "The subnet IDs for the control plane."
   type        = list(string)
-  default     = []
 }
 
-variable "secrets" {
-  type = list(map(string))
+variable "security-groups" {
+  description = "Security group IDs to be used with the control plane."
+  type        = list(string)
 }
 
-variable "environment" {
-  description = "Control plane environment variables."
-  type        = list(map(string))
+variable "assign-public-ip" {
+  description = "Assign public IP o th control plane service."
+  type        = bool
+}
+
+variable "task" {
+  description = "Conrol plane task definition."
+  type = object({
+    iam-role-arn    = string
+    image           = string
+    command         = optional(list(string))
+    secrets         = optional(list(map(string)))
+    environment     = optional(list(map(string)))
+    cpu             = optional(string)
+    memory          = optional(string)
+    cloudwatch-logs = bool
+    ecr             = bool
+  })
 }
 
 variable "locations" {
@@ -48,36 +52,15 @@ variable "locations" {
   type        = list(any)
 }
 
-variable "private_package" {
+variable "private-package" {
   description = "JSON configuration for the Private Package."
   type        = map(any)
 }
 
-variable "enterprise_cloud" {
+variable "enterprise-cloud" {
   type = map(any)
 }
 
-variable "extra_content" {
+variable "extra-content" {
   type = map(any)
-}
-
-variable "cloudWatch_logs" {
-  description = "Control Plane CloudWatch Logs."
-  type        = bool
-}
-
-variable "token_secret_arn" {
-  type        = string
-  description = "Secret Token ARN of the control plane"
-}
-
-
-variable "task_cpu" {
-  type        = string
-  description = "ECS task definition CPU."
-}
-
-variable "task_memory" {
-  type        = string
-  description = "ECS task definition Memory."
 }
