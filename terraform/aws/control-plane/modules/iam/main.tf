@@ -51,7 +51,7 @@ locals {
   elastic_ip_statements_extra = distinct(flatten([
     for location in var.locations : [
       for elastic_ip in location.conf.elastic-ips : {
-        Sid    = "AllowElasticIP_${data.aws_eip.by_ip[elastic_ip].id}"
+        Sid    = "AllowElasticIP${replace(data.aws_eip.by_ip[elastic_ip].id, "-", "")}"
         Effect = "Allow"
         Action = [
           "ec2:AssociateAddress",
