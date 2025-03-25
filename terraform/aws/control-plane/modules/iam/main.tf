@@ -87,7 +87,7 @@ locals {
       Action   = "iam:PassRole"
       Resource = "arn:aws:iam:${data.aws_caller_identity.current.account_id}:role/${location.conf.iam-instance-profile}"
     }
-    if location.conf.iam-instance-profile != ""
+    if location.conf.iam-instance-profile != null
   ])
 
   elastic_ip_statements = flatten([
