@@ -3,11 +3,9 @@ data "azurerm_subscription" "current" {}
 data "azurerm_client_config" "current" {}
 
 resource "azurerm_key_vault_access_policy" "container_app_policy" {
-  key_vault_id = "${data.azurerm_subscription.current.id}/resourceGroups/${var.resource-group-name}/providers/Microsoft.KeyVault/vaults/${var.vault-name}"
-
-  tenant_id = data.azurerm_client_config.current.tenant_id
-  object_id = var.container.identity[0].principal_id
-
+  key_vault_id       = "${data.azurerm_subscription.current.id}/resourceGroups/${var.resource-group-name}/providers/Microsoft.KeyVault/vaults/${var.vault-name}"
+  tenant_id          = data.azurerm_client_config.current.tenant_id
+  object_id          = var.container.identity[0].principal_id
   secret_permissions = ["Get"]
 }
 
@@ -46,7 +44,7 @@ resource "azurerm_role_assignment" "gatling_custom_role_assignment" {
 }
 
 resource "azurerm_role_assignment" "gatling_storage_contributor" {
-  count                = var.private-package == {} ? 0 : 1
+  count                = length(var.private-package) > 0 ? 1 : 0
   scope                = data.azurerm_subscription.current.id
   role_definition_name = "Storage Blob Data Contributor"
   principal_id         = var.container.identity[0].principal_id

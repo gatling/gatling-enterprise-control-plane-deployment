@@ -28,17 +28,25 @@ variable "engine" {
   description = "Engine of the location determining the compatible package formats (JavaScript or JVM)."
   type        = string
   default     = "classic"
+
+  validation {
+    condition     = contains(["classic", "javascript"], var.engine)
+    error_message = "The engine must be either 'classic' or 'javascript'."
+  }
 }
 
 variable "image" {
   description = "Image of the location."
   type = object({
-    type  = string
-    java  = optional(string)
+    type  = optional(string, "certified")
+    java  = optional(string, "latest")
     image = optional(string)
   })
-  default = {
-    type        = "certified"
+  default = {}
+
+  validation {
+    condition     = var.image.type != "custom" || var.image.image != null
+    error_message = "If image.type is 'custom', then image.image must be specified."
   }
 }
 
@@ -72,12 +80,6 @@ variable "subnet-name" {
   }
 }
 
-variable "java-version" {
-  description = "Java version of the location."
-  type        = string
-  default     = "latest"
-}
-
 variable "size" {
   description = "Virtual machine size of the location."
   type        = string
@@ -87,7 +89,7 @@ variable "size" {
 variable "associate-public-ip" {
   description = "Flag to enable public IP association."
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "tags" {

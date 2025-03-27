@@ -57,23 +57,17 @@ variable "resource-group-name" {
 variable "container" {
   description = "Container settings."
   type = object({
-    image   = string
-    command = optional(list(string))
-    env = optional(list(object({
-      name        = string
+    cpu     = optional(number, 1.0)
+    memory  = optional(string, "2Gi")
+    image   = optional(string, "gatlingcorp/control-plane:latest")
+    command = optional(list(string), [])
+    environment = optional(list(object({
+      name        = optional(string)
       value       = optional(string)
       secret-name = optional(string)
-    })))
-    cpu    = number
-    memory = string
+    })), [])
   })
-  default = {
-    image  = "gatlingcorp/control-plane:latest"
-    cpu    = 1.0
-    memory = "2Gi"
-    command = []
-    env     = []
-  }
+  default = {}
 }
 
 variable "storage-account-name" {

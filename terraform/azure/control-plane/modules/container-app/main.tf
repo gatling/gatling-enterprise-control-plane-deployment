@@ -2,14 +2,14 @@ locals {
   path        = "/app/conf"
   volume-name = "control-plane-conf"
   secret-name = "token-secret-id"
-  env = concat(
+  environment = concat(
     [
       {
         name        = "CONTROL_PLANE_TOKEN"
         secret-name = local.secret-name
       }
     ],
-    var.container.env
+    var.container.environment
   )
 }
 
@@ -39,7 +39,7 @@ resource "azurerm_container_app" "gatling_container" {
   }
 
   dynamic "ingress" {
-    for_each = var.private-package == {} ? [] : [1]
+    for_each = length(var.private-package) > 0 ? [1] : []
     content {
       external_enabled = true
       target_port      = var.private-package.conf.server.port
@@ -68,7 +68,7 @@ resource "azurerm_container_app" "gatling_container" {
       command = var.container.command
 
       dynamic "env" {
-        for_each = local.env
+        for_each = local.environment
         content {
           name        = env.value.name
           value       = lookup(env.value, "value", null)
