@@ -69,8 +69,8 @@ variable "private-package" {
 
 variable "enterprise-cloud" {
   description = "Enterprise Cloud network settings: http proxy, fwd proxy, etc."
-  type    = map(any)
-  default = {}
+  type        = map(any)
+  default     = {}
 }
 
 variable "extra-content" {
