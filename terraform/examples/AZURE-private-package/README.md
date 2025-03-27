@@ -35,6 +35,18 @@ module "private-package" {
   source               = "git::https://github.com/gatling/gatling-enterprise-control-plane-deployment//terraform/azure/private-package"
   control-plane-name   = "<Name>"
   storage-account-name = "<StorageAccountName>"
+  # path    = ""
+  # upload = {
+  #   directory = "/tmp"
+  # }
+  # server = {
+  #   port        = 8080
+  #   bindAddress = "0.0.0.0"
+  #   certificate = {
+  #     path     = "/path/to/certificate.p12"
+  #     password = "password"
+  #   }
+  # }
 }
 ```
 
@@ -48,7 +60,8 @@ This module specifies the location parameters for the control plane, including r
 module "location" {
   source       = "git::https://github.com/gatling/gatling-enterprise-control-plane-deployment//terraform/azure/location"
   id           = "prl_azure"
-  region       = "<Region>"
+  description  = "Private Location on Azure"
+  region       = "westeurope"
   subscription = "<SubscriptionUUID>"
   network-id   = "/subscriptions/<SubscriptionUUID>/resourceGroups/<ResourceGroup>/providers/Microsoft.Network/virtualNetworks/<VNet>"
   subnet-name  = "<Subnet>"
@@ -81,21 +94,21 @@ Sets up the control plane with configurations for networking, security, and stor
 module "control-plane" {
   source               = "git::https://github.com/gatling/gatling-enterprise-control-plane-deployment//terraform/azure/control-plane"
   name                 = "<Name>"
-  region               = "<Region>"
-  resource-group-name  = "<ResourceGroup>"
   vault-name           = "<Vault>"
   secret-id            = "<SecretIdentifier>"
+  region               = "<Region>"
+  resource-group-name  = "<ResourceGroup>"
   storage-account-name = "<StorageAccount>"
   locations            = [module.location]
   private-package      = module.private-package
   # container = {
-  #   image       = "gatlingcorp/control-plane:latest"
   #   cpu         = 1.0
   #   memory      = "2Gi"
+  #   image       = "gatlingcorp/control-plane:latest"
   #   command     = []
   #   environment = []
   # }
-  # enterprise_cloud = {
+  # enterprise-cloud = {
   #   Setup the proxy configuration for the private location
   #   Reference: https://docs.gatling.io/reference/install/cloud/private-locations/network/#configuring-a-proxy
   # }
