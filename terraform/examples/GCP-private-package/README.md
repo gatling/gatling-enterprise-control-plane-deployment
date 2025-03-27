@@ -103,7 +103,7 @@ Sets up the control plane with configurations for networking, security, and stor
 # Reference: https://docs.gatling.io/reference/install/cloud/private-locations/gcp/installation/
 module "control-plane" {
   source            = "git::https://github.com/gatling/gatling-enterprise-control-plane-deployment//terraform/gcp/control-plane"
-  name              = "name"
+  name              = "<Name>"
   token-secret-name = "<TokenSecretName>"
   network = {
     zone    = "<Zone>"
