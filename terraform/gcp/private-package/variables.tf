@@ -37,18 +37,14 @@ variable "upload" {
 variable "server" {
   description = "Control Plane Repository Server configuration."
   type = object({
-    port        = number
-    bindAddress = string
+    port        = optional(number, 8080)
+    bindAddress = optional(string, "0.0.0.0")
     certificate = optional(object({
-      path     = string
+      path     = optional(string)
       password = optional(string)
-    }))
+    }), {})
   })
-  default = {
-    port        = 8080,
-    bindAddress = "0.0.0.0",
-    certificate = null
-  }
+  default = {}
 
   validation {
     condition     = var.server.port > 0 && var.server.port <= 65535

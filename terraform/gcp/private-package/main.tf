@@ -1,9 +1,9 @@
 locals {
   private-package = {
     type    = "gcp"
+    project = var.project
     bucket  = var.bucket
     path    = var.path
-    project = var.project
     upload  = var.upload
     server  = var.server
   }

@@ -50,9 +50,9 @@ variable "compute" {
 variable "container" {
   description = "Container configuration for the control plane"
   type = object({
-    image   = string
-    command = optional(list(string))
-    env     = optional(list(string))
+    image       = string
+    command     = optional(list(string))
+    environment = optional(list(string))
   })
 }
 
