@@ -52,11 +52,11 @@ module "location" {
   subscription = "<SubscriptionUUID>"
   network-id   = "/subscriptions/<SubscriptionUUID>/resourceGroups/<ResourceGroup>/providers/Microsoft.Network/virtualNetworks/<VNet>"
   subnet-name  = "<Subnet>"
-  image = {
-    type = "certified"
-    # java  = "latest"
-    # image = "/subscriptions/<SubscriptionUUID>/resourceGroups/<ResourceGroup>/providers/Microsoft.Compute/galleries/customImages/images/<Image>"
-  }
+  # image = {
+  #   type  = "certified"
+  #   java  = "latest"
+  #   image = "/subscriptions/<SubscriptionUUID>/resourceGroups/<ResourceGroup>/providers/Microsoft.Compute/galleries/customImages/images/<Image>"
+  # }
   # size                = "Standard_A4_v2"
   # engine              = "classic"
   # associate-public-ip = false
@@ -86,6 +86,8 @@ module "control-plane" {
   vault-name           = "<Vault>"
   secret-id            = "<SecretIdentifier>"
   storage-account-name = "<StorageAccount>"
+  locations            = [module.location]
+  private-package      = module.private-package
   # container = {
   #   image   = "gatlingcorp/control-plane:latest"
   #   cpu     = 1.0
@@ -93,8 +95,6 @@ module "control-plane" {
   #   command = []
   #   env     = []
   # }
-  locations       = [module.location]
-  private-package = module.private-package
   # enterprise_cloud = {
   #   Setup the proxy configuration for the private location
   #   Reference: https://docs.gatling.io/reference/install/cloud/private-locations/network/#configuring-a-proxy
