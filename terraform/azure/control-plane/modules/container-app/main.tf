@@ -39,7 +39,7 @@ resource "azurerm_container_app" "gatling_container" {
   }
 
   dynamic "ingress" {
-    for_each = var.private-package == {} ? [] : [1]
+    for_each = length(var.private-package) > 0 ? [1] : []
     content {
       external_enabled = true
       target_port      = var.private-package.conf.server.port
