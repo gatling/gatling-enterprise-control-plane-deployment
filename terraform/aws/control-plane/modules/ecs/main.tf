@@ -67,7 +67,7 @@ resource "aws_ecs_task_definition" "gatling_task" {
       command : var.task.command
       cpu : 0
       essential : true
-      portMappings : length(var.private-package) > 0  ? [
+      portMappings : length(var.private-package) > 0 ? [
         {
           containerPort : var.private-package.conf.server.port,
           hostPort : var.private-package.conf.server.port,
