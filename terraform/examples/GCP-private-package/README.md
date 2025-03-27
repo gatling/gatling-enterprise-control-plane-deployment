@@ -111,7 +111,8 @@ module "control-plane" {
     # subnetwork         = "<SubNetwork>"
     # enable-external-ip = true
   }
-  locations = [module.location]
+  locations       = [module.location]
+  private-package = module.private-package
   # container = {
   #   image       = "gatlingcorp/control-plane:latest"
   #   command     = []
