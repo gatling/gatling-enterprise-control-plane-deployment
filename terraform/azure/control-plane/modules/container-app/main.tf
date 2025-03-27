@@ -70,9 +70,9 @@ resource "azurerm_container_app" "gatling_container" {
       dynamic "env" {
         for_each = local.environment
         content {
-          name        = environment.value.name
-          value       = lookup(environment.value, "value", null)
-          secret_name = lookup(environment.value, "secret-name", null)
+          name        = env.value.name
+          value       = lookup(env.value, "value", null)
+          secret_name = lookup(env.value, "secret-name", null)
         }
       }
 
