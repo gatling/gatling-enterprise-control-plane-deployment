@@ -6,7 +6,7 @@ provider "google" {
 # Configure a GCP private location
 # Reference: https://docs.gatling.io/reference/install/cloud/private-locations/gcp/configuration/#control-plane-configuration-file
 module "location" {
-  source            = "../../gcp/location"
+  source            = "git::https://github.com/gatling/gatling-enterprise-control-plane-deployment//terraform/gcp/location"
   id                = "prl_gcp"
   project           = "<ProjectId>"
   zone              = "<Zone>"
@@ -43,7 +43,7 @@ module "location" {
 # Create a control plane based on GCP VM
 # Reference: https://docs.gatling.io/reference/install/cloud/private-locations/gcp/installation/
 module "control-plane" {
-  source            = "../../gcp/control-plane"
+  source            = "git::https://github.com/gatling/gatling-enterprise-control-plane-deployment//terraform/gcp/control-plane"
   name              = "name"
   token-secret-name = "<TokenSecretName>"
   network = {
