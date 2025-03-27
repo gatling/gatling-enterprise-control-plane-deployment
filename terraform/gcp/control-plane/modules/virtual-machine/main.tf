@@ -1,13 +1,13 @@
 locals {
-  conf_file_name = "control-plane.conf"
-  host_path      = "/etc/control-plane"
-  mount_path     = "/app/conf"
-  volume         = "-v ${local.host_path}/${local.conf_file_name}:${local.mount_path}/${local.conf_file_name}"
-  env_list       = concat(["-e CONTROL_PLANE_TOKEN=$CONTROL_PLANE_TOKEN"], lookup(var.container, "env", []))
-  env            = join(" ", local.env_list)
-  port           = length(var.private-package) > 0  ? "-p ${var.private-package.conf.server.port}:${var.private-package.conf.server.port}" : ""
-  command        = join(" ", var.container.command)
-  config_content = <<-EOF
+  conf_file_name   = "control-plane.conf"
+  host_path        = "/etc/control-plane"
+  mount_path       = "/app/conf"
+  volume           = "-v ${local.host_path}/${local.conf_file_name}:${local.mount_path}/${local.conf_file_name}"
+  environment_list = concat(["-e CONTROL_PLANE_TOKEN=$CONTROL_PLANE_TOKEN"], lookup(var.container, "environment", []))
+  environment      = join(" ", local.environment_list)
+  port             = length(var.private-package) > 0 ? "-p ${var.private-package.conf.server.port}:${var.private-package.conf.server.port}" : ""
+  command          = join(" ", var.container.command)
+  config_content   = <<-EOF
     control-plane {
       token = $${?CONTROL_PLANE_TOKEN}
       description = "${var.description}"
@@ -56,7 +56,7 @@ resource "google_compute_instance" "control_plane" {
     mkdir -p ${local.host_path}
     echo '${local.config_content}' | sudo tee ${local.host_path}/${local.conf_file_name}
 
-    sudo docker run -d --name ${var.name} ${local.env} ${local.volume} ${var.container.image} ${local.port} ${local.command}
+    sudo docker run -d --name ${var.name} ${local.environment} ${local.volume} ${var.container.image} ${local.port} ${local.command}
   EOF
 
   shielded_instance_config {
