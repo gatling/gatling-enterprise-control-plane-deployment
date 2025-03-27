@@ -45,7 +45,7 @@ module "location" {
   # }
   # size                = "Standard_A4_v2"
   # engine              = "classic"
-  # associate-public-ip = false
+  # associate-public-ip = true
   # tags                = {}
   # system_properties   = {}
   # java-home           = "/usr/lib/jvm/zulu"
@@ -74,11 +74,11 @@ module "control-plane" {
   storage-account-name = "<StorageAccount>"
   locations            = [module.location]
   # container = {
-  #   image   = "gatlingcorp/control-plane:latest"
-  #   cpu     = 1.0
-  #   memory  = "2Gi"
-  #   command = []
-  #   env     = []
+  #   image       = "gatlingcorp/control-plane:latest"
+  #   cpu         = 1.0
+  #   memory      = "2Gi"
+  #   command     = []
+  #   environment = []
   # }
   # enterprise_cloud = {
   #   Setup the proxy configuration for the private location
