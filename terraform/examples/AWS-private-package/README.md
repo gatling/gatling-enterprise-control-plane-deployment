@@ -29,7 +29,7 @@ This module specifies the private package parameters for the control plane. It i
 
 ```sh
 # Configure a private package (control plane repository & server) based on AWS S3
-# Reference: https://docs.gatling.io/reference/install/cloud/private-locations/private-packages/#gcp-cloud-storage
+# Reference: https://docs.gatling.io/reference/install/cloud/private-locations/private-packages/#aws-s3
 # Reference: https://docs.gatling.io/reference/install/cloud/private-locations/private-packages/#control-plane-server
 module "private-package" {
   source = "git::https://github.com/gatling/gatling-enterprise-control-plane-deployment//terraform/aws/private-package"
@@ -44,7 +44,7 @@ Ensure that your network permits outbound access to the domains listed in this d
 
 ```sh
 # Configure a AWS private location
-# Reference: https://docs.gatling.io/reference/install/cloud/private-locations/gcp/configuration/#control-plane-configuration-file
+# Reference: https://docs.gatling.io/reference/install/cloud/private-locations/aws/configuration/#control-plane-configuration-file
 module "location" {
   source          = "git::https://github.com/gatling/gatling-enterprise-control-plane-deployment//terraform/aws/location"
   id              = "prl_aws"
@@ -85,7 +85,7 @@ Sets up the control plane with configurations for networking, security, and S3 s
 
 ```sh
 # Create a control plane based on AWS ECS
-# Reference: https://docs.gatling.io/reference/install/cloud/private-locations/gcp/installation/
+# Reference: https://docs.gatling.io/reference/install/cloud/private-locations/aws/installation/
 module "control-plane" {
   source           = "git::https://github.com/gatling/gatling-enterprise-control-plane-deployment//terraform/aws/control-plane"
   name             = "<Name>"
