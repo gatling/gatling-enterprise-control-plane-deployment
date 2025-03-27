@@ -40,7 +40,7 @@ variable "server" {
     port        = optional(number, 8080)
     bindAddress = optional(string, "0.0.0.0")
     certificate = optional(object({
-      path     = string
+      path     = optional(string)
       password = optional(string)
     }), {})
   })
