@@ -2,14 +2,14 @@ locals {
   path        = "/app/conf"
   volume-name = "control-plane-conf"
   secret-name = "token-secret-id"
-  env = concat(
+  environment = concat(
     [
       {
         name        = "CONTROL_PLANE_TOKEN"
         secret-name = local.secret-name
       }
     ],
-    var.container.env
+    var.container.environment
   )
 }
 
@@ -68,11 +68,11 @@ resource "azurerm_container_app" "gatling_container" {
       command = var.container.command
 
       dynamic "env" {
-        for_each = local.env
+        for_each = local.environment
         content {
-          name        = env.value.name
-          value       = lookup(env.value, "value", null)
-          secret_name = lookup(env.value, "secret-name", null)
+          name        = environment.value.name
+          value       = lookup(environment.value, "value", null)
+          secret_name = lookup(environment.value, "secret-name", null)
         }
       }
 
