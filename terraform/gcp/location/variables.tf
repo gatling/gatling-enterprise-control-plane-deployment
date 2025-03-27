@@ -43,25 +43,24 @@ variable "instance-template" {
 variable "machine" {
   description = "Machine configuration for load testing infrastructure"
   type = object({
-    type        = string
-    preemptible = optional(bool)
-    engine      = string
-    image = object({
-      type    = string
-      java    = optional(string)
+    type        = optional(string, "c3-highcpu-4")
+    preemptible = optional(bool, false)
+    engine      = optional(string, "classic")
+    image = optional(object({
+      type    = optional(string, "certified")
+      java    = optional(string, "latest")
       project = optional(string)
       family  = optional(string)
       id      = optional(string)
-    })
-    disk = object({
-      sizeGb = number
-    })
+    }), {})
+    disk = optional(object({ sizeGb = number }), { sizeGb = 20 })
     network-interface = optional(object({
       network          = optional(string)
       subnetwork       = optional(string)
-      with-external-ip = optional(bool)
-    }))
+      with-external-ip = optional(bool, true)
+    }), {})
   })
+  default = {}
 
   validation {
     condition     = contains(["classic", "javascript"], var.machine.engine)

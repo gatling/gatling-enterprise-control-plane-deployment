@@ -30,7 +30,7 @@ variable "network" {
     zone               = string
     network            = optional(string)
     subnetwork         = optional(string)
-    enable-external-ip = bool
+    enable-external-ip = optional(bool, true)
   })
 
   validation {
@@ -44,56 +44,36 @@ variable "network" {
     )
     error_message = "Either network or subnetwork must be specified in the network configuration."
   }
-  validation {
-    condition     = var.network.enable-external-ip != null
-    error_message = "Zone must not be empty."
-  }
 }
 
 variable "compute" {
   description = "Compute configuration for the VM"
   type = object({
-    boot-disk-image            = string
-    machine-type               = string
+    boot-disk-image            = optional(string, "projects/cos-cloud/global/images/cos-stable-113-18244-85-49")
+    machine-type               = optional(string, "e2-standard-2")
     min-cpu-platform           = optional(string)
     confidential-instance-type = optional(string)
-    shielded = object({
-      enable-secure-boot          = bool
-      enable-vtpm                 = bool
-      enable-integrity-monitoring = bool
-    })
-    confidential = object({
-      enable        = bool
-      instance-type = string
-    })
+    shielded = optional(object({
+      enable-secure-boot          = optional(bool, true)
+      enable-vtpm                 = optional(bool, true)
+      enable-integrity-monitoring = optional(bool, true)
+    }), {})
+    confidential = optional(object({
+      enable        = optional(bool, false)
+      instance-type = optional(string, "e2-standard-2")
+    }), {})
   })
-  default = {
-    machine-type    = "e2-standard-2"
-    boot-disk-image = "projects/cos-cloud/global/images/cos-stable-113-18244-85-49"
-    shielded = {
-      enable-secure-boot          = true
-      enable-vtpm                 = true
-      enable-integrity-monitoring = true
-    }
-    confidential = {
-      enable        = false
-      instance-type = "e2-standard-2"
-    }
-  }
+  default = {}
 }
 
 variable "container" {
   description = "Container configuration for the control plane"
   type = object({
-    image   = string
-    command = optional(list(string))
-    env     = optional(list(string))
+    image   = optional(string, "gatlingcorp/control-plane:latest")
+    command = optional(list(string), [])
+    environment     = optional(list(string), [])
   })
-  default = {
-    image   = "gatlingcorp/control-plane:latest"
-    command = []
-    env     = []
-  }
+  default = {}
 }
 
 variable "locations" {
