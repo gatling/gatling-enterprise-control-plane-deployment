@@ -21,11 +21,11 @@ variable "resource-group-name" {
 variable "container" {
   description = "Container settings."
   type = object({
-    image   = string
-    command = optional(list(string))
-    env     = optional(list(map(string)))
-    cpu     = number
-    memory  = string
+    cpu         = number
+    memory      = string
+    image       = string
+    command     = optional(list(string))
+    environment = optional(list(map(string)))
   })
 }
 

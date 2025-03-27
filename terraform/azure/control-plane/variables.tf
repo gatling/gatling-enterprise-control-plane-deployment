@@ -57,6 +57,8 @@ variable "resource-group-name" {
 variable "container" {
   description = "Container settings."
   type = object({
+    cpu     = optional(number, 1.0)
+    memory  = optional(string, "2Gi")
     image   = optional(string, "gatlingcorp/control-plane:latest")
     command = optional(list(string), [])
     environment = optional(list(object({
@@ -64,8 +66,6 @@ variable "container" {
       value       = optional(string)
       secret-name = optional(string)
     })), [])
-    cpu    = optional(number, 1.0)
-    memory = optional(string, "2Gi")
   })
   default = {}
 }
