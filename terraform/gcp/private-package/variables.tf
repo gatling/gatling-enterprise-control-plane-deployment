@@ -41,8 +41,8 @@ variable "server" {
     bindAddress = optional(string, "0.0.0.0")
     certificate = optional(object({
       path     = optional(string)
-      password = optional(string)
-    }), {})
+      password = optional(string, null)
+    }), null)
   })
   default = {}
 
