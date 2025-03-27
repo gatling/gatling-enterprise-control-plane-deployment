@@ -3,7 +3,7 @@ provider "aws" {
 }
 
 # Configure a AWS private location
-# Reference: https://docs.gatling.io/reference/install/cloud/private-locations/gcp/configuration/#control-plane-configuration-file
+# Reference: https://docs.gatling.io/reference/install/cloud/private-locations/aws/configuration/#control-plane-configuration-file
 module "location" {
   source          = "git::https://github.com/gatling/gatling-enterprise-control-plane-deployment//terraform/aws/location"
   id              = "prl_aws"
@@ -38,7 +38,7 @@ module "location" {
 }
 
 # Create a control plane based on AWS ECS
-# Reference: https://docs.gatling.io/reference/install/cloud/private-locations/gcp/installation/
+# Reference: https://docs.gatling.io/reference/install/cloud/private-locations/aws/installation/
 module "control-plane" {
   source           = "git::https://github.com/gatling/gatling-enterprise-control-plane-deployment//terraform/aws/control-plane"
   name             = "<Name>"
