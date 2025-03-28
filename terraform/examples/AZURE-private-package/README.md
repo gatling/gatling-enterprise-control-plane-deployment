@@ -94,6 +94,7 @@ Sets up the control plane with configurations for networking, security, and stor
 module "control-plane" {
   source               = "git::https://github.com/gatling/gatling-enterprise-control-plane-deployment//terraform/azure/control-plane"
   name                 = "<Name>"
+  description          = "My Azure control plane description"
   vault-name           = "<Vault>"
   secret-id            = "<SecretIdentifier>"
   region               = "<Region>"
