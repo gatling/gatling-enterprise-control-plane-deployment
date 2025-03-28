@@ -1,5 +1,6 @@
 # Gatling Enterprise Private Locations & Packages Deployment with Infrastructure as Code (IaC)
 
+
 ![Gatling-enterprise-logo-RVB](https://github.com/user-attachments/assets/6cd75464-0173-4578-9ad1-b2481cc9b36b)
 
 ## Overview
