@@ -27,10 +27,11 @@ module "private-package" {
 # Configure a GCP private location
 # Reference: https://docs.gatling.io/reference/install/cloud/private-locations/gcp/configuration/#control-plane-configuration-file
 module "location" {
-  source  = "git::https://github.com/gatling/gatling-enterprise-control-plane-deployment//terraform/gcp/location"
-  id      = "prl_gcp"
-  project = "<ProjectId>"
-  zone    = "<Zone>"
+  source      = "git::https://github.com/gatling/gatling-enterprise-control-plane-deployment//terraform/gcp/location"
+  id          = "prl_gcp"
+  description = "Private Location on GCP"
+  project     = "<ProjectId>"
+  zone        = "<Zone>"
   # instance-template = "<InstanceTemplate>"
   # machine = {
   #   type        = "c3-highcpu-4"
@@ -66,6 +67,7 @@ module "location" {
 module "control-plane" {
   source            = "git::https://github.com/gatling/gatling-enterprise-control-plane-deployment//terraform/gcp/control-plane"
   name              = "<Name>"
+  description       = "My GCP control plane description"
   token-secret-name = "<TokenSecretName>"
   network = {
     zone    = "<Zone>"

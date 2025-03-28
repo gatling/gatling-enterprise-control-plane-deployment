@@ -34,6 +34,7 @@ This module specifies the location parameters for the control plane, including p
 module "location" {
   source            = "git::https://github.com/gatling/gatling-enterprise-control-plane-deployment//terraform/gcp/location"
   id                = "prl_gcp"
+  description       = "Private Location on GCP"
   project           = "<ProjectId>"
   zone              = "<Zone>"
   # instance-template = "<InstanceTemplate>"
@@ -77,6 +78,7 @@ Sets up the control plane with configurations for networking, security, and stor
 module "control-plane" {
   source            = "git::https://github.com/gatling/gatling-enterprise-control-plane-deployment//terraform/gcp/control-plane"
   name              = "<Name>"
+  description       = "My GCP control plane description"
   token-secret-name = "<TokenSecretName>"
   network = {
     zone    = "<Zone>"

@@ -8,6 +8,12 @@ variable "id" {
   }
 }
 
+variable "description" {
+  description = "Description of the location."
+  type        = string
+  default     = "Private Location on GCP"
+}
+
 variable "project" {
   description = "Project id on GCP."
   type        = string
@@ -26,12 +32,6 @@ variable "zone" {
     condition     = length(var.zone) > 0
     error_message = "Zone must not be empty."
   }
-}
-
-variable "description" {
-  description = "Description of the location."
-  type        = string
-  default     = "Private Location on GCP"
 }
 
 variable "instance-template" {
