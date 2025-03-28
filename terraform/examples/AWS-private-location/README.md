@@ -34,6 +34,7 @@ Ensure that your network permits outbound access to the domains listed in this d
 module "location" {
   source          = "git::https://github.com/gatling/gatling-enterprise-control-plane-deployment//terraform/aws/location"
   id              = "prl_aws"
+  description     = "Private Location on AWS"
   region          = "<Region>"
   subnets         = ["<SubnetId>"]
   security-groups = ["<SecurityGroupId>"]
@@ -75,17 +76,18 @@ Sets up the control plane with configurations for networking, security, and S3 s
 module "control-plane" {
   source           = "git::https://github.com/gatling/gatling-enterprise-control-plane-deployment//terraform/aws/control-plane"
   name             = "<Name>"
+  description      = "My AWS control plane description"
   token-secret-arn = "<TokenSecretARN>"
   subnets          = ["<SubnetId>"]
   security-groups  = ["<SecurityGroupId>"]
   locations        = [module.location]
   # task = {
+  #   cpu             = "1024"
+  #   memory          = "3072"
   #   image           = "gatlingcorp/control-plane:latest"
   #   command         = []
   #   secrets         = []
   #   environment     = []
-  #   cpu             = "1024"
-  #   memory          = "3072"
   #   cloudwatch-logs = true
   #   ecr             = false
   # }
