@@ -94,7 +94,7 @@ variable "elastic-ips" {
   default     = []
 
   validation {
-    condition     = !(var.auto-associate-public-ipv4 && length(var.elastic_ips) > 0)
+    condition     = !(var.auto-associate-public-ipv4 && length(var.elastic-ips) > 0)
     error_message = "When elastic_ips are provided, auto-associate-public-ipv4 must be false."
   }
 }
