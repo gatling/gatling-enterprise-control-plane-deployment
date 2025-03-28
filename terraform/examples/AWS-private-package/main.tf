@@ -1,5 +1,5 @@
 provider "aws" {
-  region = "<Region>"
+  region = "eu-west-3"
 }
 
 # Configure a private package (control plane repository & server) based on AWS S3
@@ -8,6 +8,18 @@ provider "aws" {
 module "private-package" {
   source = "git::https://github.com/gatling/gatling-enterprise-control-plane-deployment//terraform/aws/private-package"
   bucket = "<S3BucketName>"
+  # path    = ""
+  # upload = {
+  #   directory = "/tmp"
+  # }
+  # server = {
+  #   port        = 8080
+  #   bindAddress = "0.0.0.0"
+  #   certificate = {
+  #     path     = "/path/to/certificate.p12"
+  #     password = "password"
+  #   }
+  # }
 }
 
 # Configure a AWS private location
