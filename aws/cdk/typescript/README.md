@@ -1,5 +1,7 @@
 # Gatling Enterprise Private Locations & Packages AWS CDK (TypeScript)
 
+![Gatling-enterprise-logo-RVB](https://github.com/user-attachments/assets/6cd75464-0173-4578-9ad1-b2481cc9b36b)
+
 This CDK application sets up Gatling Enterprise Private Locations and Packages infrastructure on AWS. It includes constructs for the `Control Plane`, `Location`, and `Private Package` with network configurations and runtime environment settings for Gatling's Private Locations & Packages.
 
 ## Prerequisites

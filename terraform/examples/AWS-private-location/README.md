@@ -1,5 +1,7 @@
 # AWS-private-location
 
+![Gatling-enterprise-logo-RVB](https://github.com/user-attachments/assets/6cd75464-0173-4578-9ad1-b2481cc9b36b)
+
 This Terraform configuration sets up the AWS infrastructure for Gatling Enterprise's Private Locations deployment. The configuration uses two modules: one for specifying the location and the other for deploying the control plane.
 
 > [!WARNING]
