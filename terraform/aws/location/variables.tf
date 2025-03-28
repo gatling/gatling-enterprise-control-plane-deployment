@@ -92,6 +92,11 @@ variable "elastic-ips" {
   description = "Assign elastic IPs to your Locations. You will only be able to deploy a number of load generators up to the number of Elastic IP addresses you have configured."
   type        = list(string)
   default     = []
+
+  validation {
+    condition     = !(var.auto-associate-public-ipv4 && length(var.elastic-ips) > 0)
+    error_message = "When elastic_ips are provided, auto-associate-public-ipv4 must be false."
+  }
 }
 
 variable "profile-name" {
