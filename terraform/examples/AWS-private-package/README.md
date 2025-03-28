@@ -34,6 +34,18 @@ This module specifies the private package parameters for the control plane. It i
 module "private-package" {
   source = "git::https://github.com/gatling/gatling-enterprise-control-plane-deployment//terraform/aws/private-package"
   bucket = "<S3BucketName>"
+  # path    = ""
+  # upload = {
+  #   directory = "/tmp"
+  # }
+  # server = {
+  #   port        = 8080
+  #   bindAddress = "0.0.0.0"
+  #   certificate = {
+  #     path     = "/path/to/certificate.p12"
+  #     password = "password"
+  #   }
+  # }
 }
 ```
 
@@ -48,6 +60,7 @@ Ensure that your network permits outbound access to the domains listed in this d
 module "location" {
   source          = "git::https://github.com/gatling/gatling-enterprise-control-plane-deployment//terraform/aws/location"
   id              = "prl_aws"
+  description     = "Private Location on AWS"
   region          = "<Region>"
   subnets         = ["<SubnetId>"]
   security-groups = ["<SecurityGroupId>"]
@@ -89,18 +102,19 @@ Sets up the control plane with configurations for networking, security, and S3 s
 module "control-plane" {
   source           = "git::https://github.com/gatling/gatling-enterprise-control-plane-deployment//terraform/aws/control-plane"
   name             = "<Name>"
+  description      = "My AWS control plane description"
   token-secret-arn = "<TokenSecretARN>"
   subnets          = ["<SubnetId>"]
   security-groups  = ["<SecurityGroupId>"]
   locations        = [module.location]
   private-package  = module.private-package
   # task = {
+  #   cpu             = "1024"
+  #   memory          = "3072"
   #   image           = "gatlingcorp/control-plane:latest"
   #   command         = []
   #   secrets         = []
   #   environment     = []
-  #   cpu             = "1024"
-  #   memory          = "3072"
   #   cloudwatch-logs = true
   #   ecr             = false
   # }

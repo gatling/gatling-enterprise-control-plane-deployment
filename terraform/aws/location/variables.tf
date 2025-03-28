@@ -28,6 +28,11 @@ variable "engine" {
   description = "Engine of the location determining the compatible package formats (JavaScript or JVM)."
   type        = string
   default     = "classic"
+
+  validation {
+    condition     = contains(["classic", "javascript"], var.engine)
+    error_message = "The engine must be either 'classic' or 'javascript'."
+  }
 }
 
 variable "instance-type" {
@@ -45,12 +50,15 @@ variable "spot" {
 variable "ami" {
   description = "Image of the location."
   type = object({
-    type = string
-    java = optional(string)
+    type = optional(string, "certified")
+    java = optional(string, "latest")
     id   = optional(string)
   })
-  default = {
-    type = "certified"
+  default = {}
+
+  validation {
+    condition     = var.ami.type != "custom" || var.ami.id != null
+    error_message = "If ami.type is 'custom', then ami.id must be specified."
   }
 }
 
@@ -84,6 +92,11 @@ variable "elastic-ips" {
   description = "Assign elastic IPs to your Locations. You will only be able to deploy a number of load generators up to the number of Elastic IP addresses you have configured."
   type        = list(string)
   default     = []
+
+  validation {
+    condition     = !(var.auto-associate-public-ipv4 && length(var.elastic-ips) > 0)
+    error_message = "When elastic_ips are provided, auto-associate-public-ipv4 must be false."
+  }
 }
 
 variable "profile-name" {
@@ -107,15 +120,11 @@ variable "tags" {
 variable "tags-for" {
   description = "Tags to be assigned to the resources of the Location."
   type = object({
-    instance          = map(string)
-    volume            = map(string)
-    network-interface = map(string)
+    instance          = optional(map(string), {})
+    volume            = optional(map(string), {})
+    network-interface = optional(map(string), {})
   })
-  default = {
-    instance : {}
-    volume : {}
-    network-interface : {}
-  }
+  default = {}
 }
 
 variable "system-properties" {

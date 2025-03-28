@@ -17,15 +17,25 @@ variable "token-secret-arn" {
 variable "subnets" {
   description = "The subnet IDs for the control plane."
   type        = list(string)
+
+  validation {
+    condition     = length(var.subnets) > 0
+    error_message = "Subnets must not be empty."
+  }
 }
 
 variable "security-groups" {
   description = "Security group IDs to be used with the control plane."
   type        = list(string)
+
+  validation {
+    condition     = length(var.security-groups) > 0
+    error_message = "Security groups must not be empty."
+  }
 }
 
 variable "assign-public-ip" {
-  description = "Assign public IP o th control plane service."
+  description = "Assign public IP to the control plane service."
   type        = bool
   default     = true
 }
@@ -33,27 +43,17 @@ variable "assign-public-ip" {
 variable "task" {
   description = "Conrol plane task definition."
   type = object({
-    iam-role-arn    = optional(string)
-    image           = string
-    command         = optional(list(string))
-    secrets         = optional(list(map(string)))
-    environment     = optional(list(map(string)))
-    cpu             = optional(string)
-    memory          = optional(string)
-    cloudwatch-logs = optional(bool)
-    ecr             = optional(bool)
+    iam-role-arn    = optional(string, "")
+    cpu             = optional(string, "1024")
+    memory          = optional(string, "3072")
+    image           = optional(string, "gatlingcorp/control-plane:latest")
+    command         = optional(list(string), [])
+    secrets         = optional(list(map(string)), [])
+    environment     = optional(list(map(string)), [])
+    cloudwatch-logs = optional(bool, true)
+    ecr             = optional(bool, false)
   })
-  default = {
-    iam-role-arn    = ""
-    image           = "gatlingcorp/control-plane:latest"
-    command         = []
-    secrets         = []
-    environment     = []
-    cpu             = "1024"
-    memory          = "3072"
-    cloudwatch-logs = true
-    ecr             = false
-  }
+  default = {}
 }
 
 variable "locations" {
@@ -69,8 +69,8 @@ variable "private-package" {
 
 variable "enterprise-cloud" {
   description = "Enterprise Cloud network settings: http proxy, fwd proxy, etc."
-  type    = map(any)
-  default = {}
+  type        = map(any)
+  default     = {}
 }
 
 variable "extra-content" {

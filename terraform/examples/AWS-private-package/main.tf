@@ -1,5 +1,5 @@
 provider "aws" {
-  region = "<Region>"
+  region = "eu-west-3"
 }
 
 # Configure a private package (control plane repository & server) based on AWS S3
@@ -8,6 +8,18 @@ provider "aws" {
 module "private-package" {
   source = "git::https://github.com/gatling/gatling-enterprise-control-plane-deployment//terraform/aws/private-package"
   bucket = "<S3BucketName>"
+  # path    = ""
+  # upload = {
+  #   directory = "/tmp"
+  # }
+  # server = {
+  #   port        = 8080
+  #   bindAddress = "0.0.0.0"
+  #   certificate = {
+  #     path     = "/path/to/certificate.p12"
+  #     password = "password"
+  #   }
+  # }
 }
 
 # Configure a AWS private location
@@ -15,6 +27,7 @@ module "private-package" {
 module "location" {
   source          = "git::https://github.com/gatling/gatling-enterprise-control-plane-deployment//terraform/aws/location"
   id              = "prl_aws"
+  description     = "Private Location on AWS"
   region          = "<Region>"
   subnets         = ["<SubnetId>"]
   security-groups = ["<SecurityGroupId>"]
@@ -50,18 +63,19 @@ module "location" {
 module "control-plane" {
   source           = "git::https://github.com/gatling/gatling-enterprise-control-plane-deployment//terraform/aws/control-plane"
   name             = "<Name>"
+  description      = "My AWS control plane description"
   token-secret-arn = "<TokenSecretARN>"
   subnets          = ["<SubnetId>"]
   security-groups  = ["<SecurityGroupId>"]
   locations        = [module.location]
   private-package  = module.private-package
   # task = {
+  #   cpu             = "1024"
+  #   memory          = "3072"
   #   image           = "gatlingcorp/control-plane:latest"
   #   command         = []
   #   secrets         = []
   #   environment     = []
-  #   cpu             = "1024"
-  #   memory          = "3072"
   #   cloudwatch-logs = true
   #   ecr             = false
   # }

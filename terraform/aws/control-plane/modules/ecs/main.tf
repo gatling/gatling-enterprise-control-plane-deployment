@@ -10,7 +10,7 @@ locals {
       token = $${?CONTROL_PLANE_TOKEN}
       description = "${var.description}"
       enterprise-cloud = ${jsonencode(var.enterprise-cloud)}
-      locations = [ %{for location in var.locations} ${jsonencode(location.conf)}, %{endfor} ]
+      locations = [%{for location in var.locations} ${jsonencode(location.conf)}, %{endfor}]
       %{if length(var.private-package) > 0}repository = ${jsonencode(var.private-package.conf)}%{endif}
       %{for key, value in var.extra-content}${key} = "${value}"%{endfor}
     }
@@ -67,7 +67,7 @@ resource "aws_ecs_task_definition" "gatling_task" {
       command : var.task.command
       cpu : 0
       essential : true
-      portMappings : length(var.private-package) > 0  ? [
+      portMappings : length(var.private-package) > 0 ? [
         {
           containerPort : var.private-package.conf.server.port,
           hostPort : var.private-package.conf.server.port,

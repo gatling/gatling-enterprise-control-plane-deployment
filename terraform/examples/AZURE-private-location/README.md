@@ -32,28 +32,36 @@ This module specifies the location parameters for the control plane, including r
 # Configure a Azure private location
 # Reference: https://docs.gatling.io/reference/install/cloud/private-locations/azure/configuration/#control-plane-configuration-file
 module "location" {
-  source       = "git::https://github.com/gatling/gatling-enterprise-control-plane-deployment//terraform/azure/location"
-  id           = "prl_azure"
-  description  = "Private Location on Azure"
-  region       = "westeurope"
-  subscription = "<SubscriptionUUID>"
-  network-id   = "/subscriptions/<SubscriptionUUID>/resourceGroups/<ResourceGroup>/providers/Microsoft.Network/virtualNetworks/<VNet>"
-  subnet-name  = "<Subnet>"
-  # image = {
-  #   type  = "certified"
-  #   java  = "latest"
-  #   image = "/subscriptions/<SubscriptionUUID>/resourceGroups/<ResourceGroup>/providers/Microsoft.Compute/galleries/customImages/images/<Image>"
+  source          = "git::https://github.com/gatling/gatling-enterprise-control-plane-deployment//terraform/aws/location"
+  id              = "prl_aws"
+  description     = "Private Location on AWS"
+  region          = "<Region>"
+  subnets         = ["<SubnetId>"]
+  security-groups = ["<SecurityGroupId>"]
+  # instance-type   = "c7i.xlarge"
+  # engine          = "classic"
+  # ami = {
+  #   type = "certified"
+  #   java = "latest"
+  #   id   = "ami-00000000000000000"
   # }
-  # size                = "Standard_A4_v2"
-  # engine              = "classic"
-  # associate-public-ip = true
-  # tags                = {}
-  # system_properties   = {}
+  # spot                       = false
+  # auto-associate-public-ipv4 = true
+  # elastic-ips                = ["203.0.113.3", "203.0.113.4"]
+  # profile-name               = "profile-name"
+  # iam-instance-profile = "iam-instance-profile"
+  # tags                       = {}
+  # tags-for = {
+  #   instance          = {}
+  #   volume            = {}
+  #   network-interface = {}
+  # }
+  # system-properties   = {}
   # java-home           = "/usr/lib/jvm/zulu"
   # jvm-options         = []
   # enterprise-cloud = {
-  #   #  Setup the proxy configuration for the private location
-  #   #  Reference: https://docs.gatling.io/reference/install/cloud/private-locations/network/#configuring-a-proxy
+  #   Setup the proxy configuration for the private location
+  #   Reference: https://docs.gatling.io/reference/install/cloud/private-locations/network/#configuring-a-proxy
   # }
 }
 ```
@@ -66,23 +74,25 @@ Sets up the control plane with configurations for networking, security, and stor
 # Create a control plane based on Azure Container App
 # Reference: https://docs.gatling.io/reference/install/cloud/private-locations/azure/installation/
 module "control-plane" {
-  source               = "git::https://github.com/gatling/gatling-enterprise-control-plane-deployment//terraform/azure/control-plane"
-  name                 = "<Name>"
-  vault-name           = "<Vault>"
-  secret-id            = "<SecretIdentifier>"
-  region               = "<Region>"
-  resource-group-name  = "<ResourceGroup>"
-  storage-account-name = "<StorageAccount>"
-  locations            = [module.location]
-  # container = {
-  #   cpu         = 1.0
-  #   memory      = "2Gi"
-  #   image       = "gatlingcorp/control-plane:latest"
-  #   command     = []
-  #   environment = []
+  source           = "git::https://github.com/gatling/gatling-enterprise-control-plane-deployment//terraform/aws/control-plane"
+  name             = "<Name>"
+  description      = "My AWS control plane description"
+  token-secret-arn = "<TokenSecretARN>"
+  subnets          = ["<SubnetId>"]
+  security-groups  = ["<SecurityGroupId>"]
+  locations        = [module.location]
+  # task = {
+  #   cpu             = "1024"
+  #   memory          = "3072"
+  #   image           = "gatlingcorp/control-plane:latest"
+  #   command         = []
+  #   secrets         = []
+  #   environment     = []
+  #   cloudwatch-logs = true
+  #   ecr             = false
   # }
   # enterprise-cloud = {
-  #   Setup the proxy configuration for the private location
+  #   Setup the proxy configuration for the control plane
   #   Reference: https://docs.gatling.io/reference/install/cloud/private-locations/network/#configuring-a-proxy
   # }
 }

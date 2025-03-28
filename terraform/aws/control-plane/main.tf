@@ -20,10 +20,7 @@ module "ecs" {
   security-groups  = var.security-groups
   assign-public-ip = var.assign-public-ip
   token-secret-arn = var.token-secret-arn
-  task = merge(
-    var.task,
-    { iam-role-arn = module.iam.task-role-arn }
-  )
+  task             = merge(var.task, { iam-role-arn = module.iam.task-role-arn })
   locations        = var.locations
   private-package  = var.private-package
   enterprise-cloud = var.enterprise-cloud
