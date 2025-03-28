@@ -2,6 +2,11 @@
 
 This CloudFormation template sets up Gatling Enterprise Private Locations infrastructure on AWS. It contains nested stacks for the "Location" and "Control Plane" components, which provide network configurations and runtime environment settings for Gatling's Private Locations.
 
+> [!WARNING]
+> These scripts are here to help you bootstrapping your installation.
+> They are likely to frequently change in an incompatible fashion.
+> Feel free to fork them and adapt them to your needs
+
 ## Prerequisites
 
 Before deploying, ensure you have:
