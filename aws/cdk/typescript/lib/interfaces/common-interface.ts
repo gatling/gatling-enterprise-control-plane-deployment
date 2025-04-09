@@ -25,7 +25,7 @@ export interface Location {
   "instance-type": string;
   spot?: boolean;
   ami: AMI;
-  engine: string;
+  engine?: string;
   "elastic-ips"?: string[];
   tags?: Record<string, string>;
   "tags-for"?: TagsFor;
