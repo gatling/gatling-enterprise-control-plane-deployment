@@ -40,7 +40,6 @@ export interface Location {
 interface AMI {
   type: string;
   java?: string;
-  image?: string;
   id?: string;
 }
 
