@@ -10,47 +10,41 @@ export class ControlPlaneStack extends Stack {
     super(scope, id, props);
 
     const {
-      vpcId,
-      subnetIds,
-      availabilityZones,
-      securityGroupIds,
-      tokenSecretARN,
       name,
-      description,
-      image,
-      command = [],
-      environment = {},
-      secrets = {},
+      description = "My AWS control plane description",
+      tokenSecretArn,
+      vpcId,
+      availabilityZones,
+      subnets,
+      securityGroups,
+      task,
       locations,
       privatePackage,
-      cloudWatchLogs = true,
-      useECR = false,
-      enterpriseCloud = {}
+      enterpriseCloud = {},
     } = props;
 
     const IAM = new IAMstack(this, "iam", {
       name,
+      ecr: task?.ecr ?? false,
+      locations,
       privatePackage,
-      cloudWatchLogs,
-      useECR
     });
 
     new ECSstack(this, "ecs", {
-      vpcId,
-      availabilityZones,
-      subnetIds,
-      securityGroupIds,
-      ecsTaskRoleArn: IAM.ecsTaskRoleArn,
       name,
       description,
-      image,
-      command,
-      environment,
-      secrets: { CONTROL_PLANE_TOKEN: tokenSecretARN, ...secrets },
+      vpcId,
+      availabilityZones,
+      subnets,
+      securityGroups,
+      ecsTaskRoleArn: IAM.ecsTaskRoleArn,
+      task: {
+        ...task,
+        secrets: { CONTROL_PLANE_TOKEN: tokenSecretArn, ...task?.secrets },
+      },
       locations,
       privatePackage,
-      cloudWatchLogs,
-      enterpriseCloud
+      enterpriseCloud,
     });
   }
 }
