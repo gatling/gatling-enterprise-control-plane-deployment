@@ -21,22 +21,28 @@ export class ECSstack extends NestedStack {
     super(scope, id, props);
 
     const {
-      vpcId,
-      availabilityZones,
-      subnetIds,
-      securityGroupIds,
       name,
       description,
+      vpcId,
+      availabilityZones,
+      subnets,
+      securityGroups,
       ecsTaskRoleArn,
-      image,
-      command,
-      secrets,
-      environment,
+      task,
       locations,
       privatePackage,
-      cloudWatchLogs,
       enterpriseCloud,
     } = props;
+
+    const {
+      cpu = 1024,
+      memory = 3072,
+      image = "gatlingcorp/control-plane:latest",
+      command = [],
+      secrets = {},
+      environment = {},
+      cloudwatchLogs = true,
+    } = task;
 
     const volumeNname: string = "control-plane-conf";
     const path: string = "/app/conf";
@@ -61,7 +67,7 @@ export class ECSstack extends NestedStack {
     const vpc = Vpc.fromVpcAttributes(this, "ExistingVpc", {
       vpcId: vpcId,
       availabilityZones: availabilityZones,
-      privateSubnetIds: subnetIds,
+      privateSubnetIds: subnets,
     });
 
     const cluster = new Cluster(this, "GatlingEnterpriseCluster", {
@@ -71,7 +77,7 @@ export class ECSstack extends NestedStack {
 
     const taskRole = Role.fromRoleArn(this, "EcsTaskRole", ecsTaskRoleArn);
 
-    const logGroup = cloudWatchLogs
+    const logGroup = cloudwatchLogs
       ? new LogGroup(this, "LogGroup", {
           logGroupName: `/ecs/${name}-service`,
           retention: RetentionDays.ONE_MONTH,
@@ -86,8 +92,8 @@ export class ECSstack extends NestedStack {
         family: `${name}-task`,
         taskRole,
         executionRole: taskRole,
-        cpu: 1024,
-        memoryLimitMiB: 3072,
+        cpu: cpu,
+        memoryLimitMiB: memory,
         volumes: [
           {
             name: volumeNname,
@@ -110,7 +116,7 @@ export class ECSstack extends NestedStack {
           `echo "$CONFIG_CONTENT" > ${path}/control-plane.conf`,
         ],
         readonlyRootFilesystem: false,
-        logging: cloudWatchLogs
+        logging: cloudwatchLogs
           ? LogDrivers.awsLogs({
               logGroup,
               streamPrefix: "init",
@@ -135,7 +141,6 @@ export class ECSstack extends NestedStack {
             secretArn
           );
           ecsSecrets[key] = EcsSecret.fromSecretsManager(secret);
-          secret.grantRead(taskDefinition.taskRole);
         }
       }
     }
@@ -162,7 +167,7 @@ export class ECSstack extends NestedStack {
               },
             ]
           : [],
-        logging: cloudWatchLogs
+        logging: cloudwatchLogs
           ? LogDrivers.awsLogs({
               logGroup,
               streamPrefix: "main",
@@ -189,11 +194,11 @@ export class ECSstack extends NestedStack {
       desiredCount: 1,
       assignPublicIp: true,
       vpcSubnets: {
-        subnets: subnetIds.map((subnetId) =>
+        subnets: subnets.map((subnetId) =>
           Subnet.fromSubnetId(this, subnetId, subnetId)
         ),
       },
-      securityGroups: securityGroupIds.map((sgId) =>
+      securityGroups: securityGroups.map((sgId) =>
         SecurityGroup.fromSecurityGroupId(this, `SecurityGroup-${sgId}`, sgId)
       ),
     });
