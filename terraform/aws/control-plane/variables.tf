@@ -43,10 +43,13 @@ variable "assign-public-ip" {
 variable "task" {
   description = "Conrol plane task definition."
   type = object({
-    iam-role-arn    = optional(string, "")
-    cpu             = optional(string, "1024")
-    memory          = optional(string, "3072")
-    image           = optional(string, "gatlingcorp/control-plane:latest")
+    iam-role-arn = optional(string, "")
+    cpu          = optional(string, "1024")
+    memory       = optional(string, "3072")
+    image        = optional(string, "gatlingcorp/control-plane:latest")
+    init = optional(object({
+      image = optional(string, "busybox")
+    }), {})
     command         = optional(list(string), [])
     secrets         = optional(list(map(string)), [])
     environment     = optional(list(map(string)), [])
