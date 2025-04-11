@@ -1,19 +1,12 @@
-export interface PrivatePackage {
-  bucket: string;
-  path: string;
-  upload?: {
-    directory?: string;
-  };
-  server?: Server;
-}
-
-interface Server {
-  port?: number;
-  bindAddress?: string;
-  certificate?: {
-    path: string;
-    password?: string;
-  };
+export interface Task {
+  cpu?: number;
+  memory?: number;
+  image?: string;
+  command?: string[];
+  secrets?: Record<string, string>;
+  environment?: Record<string, string>;
+  cloudwatchLogs?: boolean;
+  ecr?: boolean;
 }
 
 export interface Location {
@@ -51,4 +44,22 @@ interface TagsFor {
 
 export interface enterpriseCloud {
   url?: string;
+}
+
+export interface PrivatePackage {
+  bucket: string;
+  path: string;
+  upload?: {
+    directory?: string;
+  };
+  server?: Server;
+}
+
+interface Server {
+  port?: number;
+  bindAddress?: string;
+  certificate?: {
+    path: string;
+    password?: string;
+  };
 }
