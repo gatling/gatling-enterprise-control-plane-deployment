@@ -35,7 +35,7 @@ resource "aws_ecs_task_definition" "gatling_task" {
   container_definitions = jsonencode([
     {
       name : "conf-loader-init-container"
-      image : "busybox"
+      image : var.task.init.image
       cpu : 0
       essential : false
       command : [

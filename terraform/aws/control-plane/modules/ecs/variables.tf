@@ -35,13 +35,16 @@ variable "assign-public-ip" {
 variable "task" {
   description = "Conrol plane task definition."
   type = object({
-    iam-role-arn    = string
+    iam-role-arn = string
+    init = object({
+      image = string
+    })
     image           = string
-    command         = optional(list(string))
-    secrets         = optional(list(map(string)))
-    environment     = optional(list(map(string)))
-    cpu             = optional(string)
-    memory          = optional(string)
+    command         = list(string)
+    secrets         = list(map(string))
+    environment     = list(map(string))
+    cpu             = string
+    memory          = string
     cloudwatch-logs = bool
     ecr             = bool
   })
