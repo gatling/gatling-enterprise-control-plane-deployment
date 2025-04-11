@@ -1,20 +1,16 @@
 import { StackProps } from "aws-cdk-lib";
-import { enterpriseCloud, Location, PrivatePackage } from "./common-interface";
+import { Task, Location, PrivatePackage, enterpriseCloud } from "./common-interface";
 
 export interface ECSstackProps extends StackProps {
-  vpcId: string;
-  availabilityZones: string[];
-  subnetIds: string[];
-  securityGroupIds: string[];
-  ecsTaskRoleArn: string;
   name: string;
   description: string;
-  image: string;
-  command?: string[];
-  environment?: Record<string, string>;
-  secrets?: Record<string, string>;
+  vpcId: string;
+  availabilityZones: string[];
+  subnets: string[];
+  securityGroups: string[];
+  ecsTaskRoleArn: string;
+  task: Task;
   locations: Location[];
   privatePackage?: PrivatePackage;
-  cloudWatchLogs?: boolean;
   enterpriseCloud?: enterpriseCloud;
 }
