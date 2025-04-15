@@ -43,11 +43,20 @@ interface TagsFor {
 }
 
 export interface enterpriseCloud {
-  proxy: {
-    forward?: Record<string, string>;
-    http?: Record<string, string>;
-    truststore?: Record<string, string>;
-    keystore?: Record<string, string>;
+  proxy?: {
+    forward?: {
+      url?: string;
+    };
+    http?: {
+      url?: string;
+    };
+    truststore?: {
+      path?: string;
+    };
+    keystore?: {
+      path?: string;
+      password?: string;
+    };
   };
 }
 
