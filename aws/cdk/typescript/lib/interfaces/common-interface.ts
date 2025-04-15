@@ -65,7 +65,7 @@ export interface enterpriseCloud {
 
 export interface PrivatePackage {
   bucket: string;
-  path: string;
+  path?: string;
   upload?: {
     directory?: string;
   };
