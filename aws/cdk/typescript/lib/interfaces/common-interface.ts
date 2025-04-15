@@ -1,6 +1,9 @@
 export interface Task {
   cpu?: number;
   memory?: number;
+  init?: {
+    image?: string;
+  };
   image?: string;
   command?: string[];
   secrets?: Record<string, string>;

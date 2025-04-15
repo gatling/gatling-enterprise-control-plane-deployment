@@ -37,6 +37,7 @@ export class ECSstack extends NestedStack {
     const {
       cpu = 1024,
       memory = 3072,
+      init: { image: initImage = "busybox" } = {},
       image = "gatlingcorp/control-plane:latest",
       command = [],
       secrets = {},
@@ -105,7 +106,7 @@ export class ECSstack extends NestedStack {
     const initContainer = taskDefinition.addContainer(
       "ConfLoaderInitContainer",
       {
-        image: ContainerImage.fromRegistry("busybox"),
+        image: ContainerImage.fromRegistry(initImage),
         essential: false,
         environment: {
           CONFIG_CONTENT: configContent,
