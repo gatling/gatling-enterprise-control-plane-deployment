@@ -20,7 +20,7 @@ export class ControlPlaneStack extends Stack {
       task,
       locations,
       privatePackage,
-      enterpriseCloud = {},
+      enterpriseCloud = { proxy: {} },
     } = props;
 
     const IAM = new IAMstack(this, "iam", {
