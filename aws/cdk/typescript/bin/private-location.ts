@@ -14,6 +14,7 @@ const location = {
   subnets: ["<SubnetId>"],
   "security-groups": ["<SecurityGroupId>"],
   "instance-type": "c7i.xlarge",
+  // engine: "classic",
   ami: {
     type: "certified",
     //   java: "latest",
@@ -51,16 +52,19 @@ new ControlPlaneStack(app, stackName, {
   securityGroups: ["<SecurityGroupId>"],
   locations: [location],
   // task: {
-  //   cpu: "1024",
-  //   memory: "3072",
+  //   cpu: 1024,
+  //   memory: 3072,
+  //   init: {
+  //     image: "busybox",
+  //   },
   //   image: "gatlingcorp/control-plane:latest",
   //   command: [],
-  //   secrets: [],
-  //   environment: [],
-  //   "cloudwatch-logs": true,
+  //   secrets: {},
+  //   environment: {},
+  //   cloudwatchLogs: true,
   //   ecr: false,
   // },
-  // "enterprise-cloud": {
+  // enterpriseCloud: {
   //   // Setup the proxy configuration for the control plane
   //   // Reference: https://docs.gatling.io/reference/install/cloud/private-locations/network/#configuring-a-proxy
   // },

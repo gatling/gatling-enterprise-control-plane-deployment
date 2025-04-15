@@ -32,37 +32,33 @@ The Control Plane stack configures networking, security, and storage for Gatling
 ```typescript
 new ControlPlaneStack(app, stackName, {
   // Possible values available on interface ControlPlaneProps in lib/interfaces/control-plane-interface.ts
-  tokenSecretARN: "token-secret-ARN",
-  name: "gatling-pl",
+  name: "<Name>",
   description: "My AWS control plane description",
-  vpcId: "vpc-id",
-  availabilityZones: ["eu-west-3a", "eu-west-3b", "eu-west-3c"],
-  subnetIds: ["subnet-a", "subnet-b", "subnet-c"],
-  securityGroupIds: ["sg-id"],
-  image: "gatlingcorp/control-plane:latest",
-  locations: [location]
-  //privatePackage,
-  //cloudWatchLogs: true,
-  //useECR: false,
-  //enterpriseCloud: {
-    //url: "http://private-control-plane-forward-proxy/gatling"
-  //}
+  tokenSecretArn: "<TokenSecretARN>",
+  vpcId: "<VPCId>",
+  availabilityZones: ["<AZ>"],
+  subnets: ["<SubnetId>"],
+  securityGroups: ["<SecurityGroupId>"],
+  locations: [location],
+  // task: {
+  //   cpu: 1024,
+  //   memory: 3072,
+  //   init: {
+  //     image: "busybox",
+  //   },
+  //   image: "gatlingcorp/control-plane:latest",
+  //   command: [],
+  //   secrets: {},
+  //   environment: {},
+  //   cloudwatchLogs: true,
+  //   ecr: false,
+  // },
+  // enterpriseCloud: {
+  //   // Setup the proxy configuration for the control plane
+  //   // Reference: https://docs.gatling.io/reference/install/cloud/private-locations/network/#configuring-a-proxy
+  // },
 });
 ```
-
-- tokenSecretARN (required): AWS Secrets Manager Plaintext secret ARN of the stored control plane token.
-- name (required): The name of the control plane.
-- description: Description of the control plane.
-- vpcId (required): VPC ID where the resources will be deployed.
-- subnetIds (required): List of subnet IDs where the resources will be deployed.
-- securityGroupIds (required): List of security group IDs to be used.
-- image: Image of the control plane.
-- command: The command to run in the control-plane container.
-- locations (required): The list of location module(s).
-- privatePackage: The name of the private package object for configuration.
-- cloudWatchLogs: Indicates if CloudWatch Logs are enabled.
-- useECR: Indicates if ECR IAM permissions should be created.
-- enterpriseCloud.url: Set up a forward proxy for the control plane.
 
 #### Location
 
@@ -73,39 +69,37 @@ const location = {
   // Possible values available on interface Location in lib/interfaces/common-interface.ts
   id: "prl_aws",
   description: "Private Location on AWS",
-  region: "eu-west-3",
-  subnetIds: ["subnet-a", "subnet-b", "subnet-c"],
-  "security-groups": ["sg-id"],
+  region: "‹Region>",
+  subnets: ["<SubnetId>"],
+  "security-groups": ["<SecurityGroupId>"],
   "instance-type": "c7i.xlarge",
+  // engine: "classic",
   ami: {
-    type: "certified"
+    type: "certified",
+    //   java: "latest",
+    //   id: "ami-00000000000000000",
   },
-  engine: "classic"
-  //enterprise-cloud: {
-    //url: http://private-location-forward-proxy/gatling
-  //}
+  // engine: "classic",
+  // spot: false,
+  // "auto-associate-public-ipv4": true,
+  // "elastic-ips": ["203.0.113.3"],
+  // "profile-name": "profile-name",
+  // "iam-instance-profile": "iam-instance-profile",
+  // tags: {},
+  // "tags-for": {
+  //   instance: {},
+  //   volume: {},
+  //   "network-interface": {},
+  // },
+  // "system-properties": {},
+  // "java-home": "/usr/lib/jvm/zulu",
+  // "jvm-options": [],
+  // "enterprise-cloud": {
+  //   // Setup the proxy configuration for the private location
+  //   // Reference: https://docs.gatling.io/reference/install/cloud/private-locations/network/#configuring-a-proxy
+  // },
 };
 ```
-
-- id: Identifier for the location. Default is "prl_aws".
-- description: Description of the location.
-- region: AWS region for deployment, specified as "eu-west-1".
-- subnetIds: string JSON array of subnet IDs (e.g., "[\"subnet-a\",\"subnet-b\"]").
-- security-groups: string JSON array of security group IDs to control network access (e.g., "[\"sg-id\"]").
-- elastic-ips: string JSON array of elastic IPs assigned to your location.
-- instance-type: Instance type of the location.
-- spot: Flag to enable spot instances.
-- ami.type: AMI type of the location.
-- ami.java: Java version of the location.
-- engine: Engine of the location determining the compatible package formats (JavaScript or JVM).
-- profile-name: Profile name to be assigned to the location.
-- iam-instance-profile: IAM instance profile to be assigned to the location.
-- tags: Tags to be assigned to the Location.
-- tags-for: Tags to be assigned to the resources of the location.
-- system-properties: System properties to be assigned on the location.
-- java-home: Overwrite JAVA_HOME definition.
-- jvm-options: string JSON array to assign JvmOptions to your location.
-- enterprise-cloud.url: Set up a forward proxy for the location.
 
 #### Private Package (Optional)
 
@@ -115,17 +109,20 @@ The Private Package object defines a secure S3 bucket where private packages are
 const privatePackage = {
   // Possible values available on interface PrivatePackage in lib/interfaces/common-interface.ts
   bucket: "private-package",
-  path: "/"
+  // path: "",
+  // upload: {
+  //   directory: "/tmp",
+  // },
+  // server: {
+  //   port: 8080,
+  //   bindAddress: "0.0.0.0",
+  //   certificate: {
+  //     path: "/path/to/certificate.p12",
+  //     password: "password",
+  //   },
+  // }
 };
 ```
-
-- bucket (required): Name of the S3 bucket used to store private packages.
-- path: The path within the S3 bucket.
-- upload.directory: Temporary upload directory.
-- server.port: The server port. (default: 8080)
-- server.bindAddress: The server bind address. (default: 0.0.0.0)
-- server.certificate.path: The path to the certificate file. Leave empty if not provided.
-- server.certificate.password: The password for the certificate. Leave empty if not provided.
 
 ## Deployment Instructions
 

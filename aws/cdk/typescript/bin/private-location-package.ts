@@ -9,7 +9,18 @@ const stackName = "GatlingEnterprise-PrivateLocationPackage-Stack";
 const privatePackage = {
   // Possible values available on interface PrivatePackage in lib/interfaces/common-interface.ts
   bucket: "private-package",
-  path: "/"
+  // path: "",
+  // upload: {
+  //   directory: "/tmp",
+  // },
+  // server: {
+  //   port: 8080,
+  //   bindAddress: "0.0.0.0",
+  //   certificate: {
+  //     path: "/path/to/certificate.p12",
+  //     password: "password",
+  //   },
+  // }
 };
 
 const location = {
@@ -56,18 +67,21 @@ new ControlPlaneStack(app, stackName, {
   subnets: ["<SubnetId>"],
   securityGroups: ["<SecurityGroupId>"],
   locations: [location],
-  privatePackage
+  privatePackage,
   // task: {
-  //   cpu: "1024",
-  //   memory: "3072",
+  //   cpu: 1024,
+  //   memory: 3072,
+  //   init: {
+  //     image: "busybox",
+  //   },
   //   image: "gatlingcorp/control-plane:latest",
   //   command: [],
-  //   secrets: [],
-  //   environment: [],
-  //   "cloudwatch-logs": true,
+  //   secrets: {},
+  //   environment: {},
+  //   cloudwatchLogs: true,
   //   ecr: false,
   // },
-  // "enterprise-cloud": {
+  // enterpriseCloud: {
   //   // Setup the proxy configuration for the control plane
   //   // Reference: https://docs.gatling.io/reference/install/cloud/private-locations/network/#configuring-a-proxy
   // },
