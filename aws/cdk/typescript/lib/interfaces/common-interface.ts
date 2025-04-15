@@ -1,19 +1,15 @@
-export interface PrivatePackage {
-  bucket: string;
-  path: string;
-  upload?: {
-    directory?: string;
+export interface Task {
+  cpu?: number;
+  memory?: number;
+  init?: {
+    image?: string;
   };
-  server?: Server;
-}
-
-interface Server {
-  port?: number;
-  bindAddress?: string;
-  certificate?: {
-    path: string;
-    password?: string;
-  };
+  image?: string;
+  command?: string[];
+  secrets?: Record<string, string>;
+  environment?: Record<string, string>;
+  cloudwatchLogs?: boolean;
+  ecr?: boolean;
 }
 
 export interface Location {
@@ -25,7 +21,7 @@ export interface Location {
   "instance-type": string;
   spot?: boolean;
   ami: AMI;
-  engine: string;
+  engine?: string;
   "elastic-ips"?: string[];
   tags?: Record<string, string>;
   "tags-for"?: TagsFor;
@@ -40,7 +36,6 @@ export interface Location {
 interface AMI {
   type: string;
   java?: string;
-  image?: string;
   id?: string;
 }
 
@@ -51,5 +46,37 @@ interface TagsFor {
 }
 
 export interface enterpriseCloud {
-  url?: string;
+  proxy?: {
+    forward?: {
+      url?: string;
+    };
+    http?: {
+      url?: string;
+    };
+    truststore?: {
+      path?: string;
+    };
+    keystore?: {
+      path?: string;
+      password?: string;
+    };
+  };
+}
+
+export interface PrivatePackage {
+  bucket: string;
+  path?: string;
+  upload?: {
+    directory?: string;
+  };
+  server?: Server;
+}
+
+interface Server {
+  port?: number;
+  bindAddress?: string;
+  certificate?: {
+    path: string;
+    password?: string;
+  };
 }

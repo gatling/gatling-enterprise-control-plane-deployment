@@ -1,22 +1,16 @@
 import { StackProps } from "aws-cdk-lib";
-import { ISecret } from "aws-cdk-lib/aws-secretsmanager";
-import { enterpriseCloud, Location, PrivatePackage } from "./common-interface";
+import {Task, Location, enterpriseCloud, PrivatePackage } from "./common-interface";
 
 export interface ControlPlaneProps extends StackProps {
+  name: string;
+  description?: string;
+  tokenSecretArn: string;
   vpcId: string;
   availabilityZones: string[];
-  subnetIds: string[];
-  securityGroupIds: string[];
-  tokenSecretARN: string;
-  name: string;
-  description: string;
-  image: string;
-  command?: string[];
-  environment?: Record<string, string>;
-  secrets?: Record<string, ISecret>;
+  subnets: string[];
+  securityGroups: string[];
   locations: Location[];
+  task?: Task;
   privatePackage?: PrivatePackage;
-  cloudWatchLogs?: boolean;
-  useECR?: boolean;
   enterpriseCloud?: enterpriseCloud;
 }
