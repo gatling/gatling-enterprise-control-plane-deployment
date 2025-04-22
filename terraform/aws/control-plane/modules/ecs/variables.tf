@@ -50,6 +50,23 @@ variable "task" {
   })
 }
 
+variable "git" {
+  description = "Conrol plane git configuration."
+  type = object({
+    host = string
+    credentials = object({
+      username            = string
+      token-secret-arn = string
+    })
+    ssh = object({
+      private-key-secret-arn = string
+    }),
+    cache = object({
+      paths   = list(string)
+    })
+  })
+}
+
 variable "locations" {
   description = "JSON configuration for the locations."
   type        = list(any)

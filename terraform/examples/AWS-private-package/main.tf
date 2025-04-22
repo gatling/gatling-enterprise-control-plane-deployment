@@ -82,6 +82,21 @@ module "control-plane" {
   #   cloudwatch-logs = true
   #   ecr             = false
   # }
+  # git = {
+  #   Configure git credentials for the control plane. Requires builder image: "gatlingcorp/control-plane:latest-builder"
+  #   Reference: https://docs.gatling.io/reference/execute/cloud/user/build-from-sources/
+  #   host = "github.com"
+  #   credentials = {
+  #     username         = "<GitUsername>"
+  #     token-secret-arn = "<GitTokenSecretARN>"
+  #   }
+  #   ssh = {
+  #     private-key-secret-arn = "<GitSSHPrivateKeySecretARN>"
+  #   }
+  #   cache = {
+  #     paths = ["/app/.m2", "/app/.gradle", "/app/.sbt", "/app/.npm"]
+  #   }
+  # }
   # enterprise-cloud = {
   #   Setup the proxy configuration for the control plane
   #   Reference: https://docs.gatling.io/reference/install/cloud/private-locations/network/#configuring-a-proxy

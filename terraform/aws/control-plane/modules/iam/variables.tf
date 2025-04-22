@@ -4,7 +4,7 @@ variable "token-secret-arn" {
 }
 
 variable "aws_region" {
-  type        = string
+  type = string
 }
 
 variable "name" {
@@ -20,6 +20,23 @@ variable "locations" {
 variable "private-package" {
   description = "JSON configuration for the private packages."
   type        = map(any)
+}
+
+variable "git" {
+  description = "Conrol plane git configuration."
+  type = object({
+    host = string
+    credentials = object({
+      username            = string
+      token-secret-arn = string
+    })
+    ssh = object({
+      private-key-secret-arn = string
+    }),
+    cache = object({
+      paths   = list(string)
+    })
+  })
 }
 
 variable "cloudwatch-logs" {

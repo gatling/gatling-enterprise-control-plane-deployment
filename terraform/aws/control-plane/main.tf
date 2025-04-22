@@ -7,6 +7,7 @@ module "iam" {
   token-secret-arn = var.token-secret-arn
   locations        = var.locations
   private-package  = var.private-package
+  git              = var.git
   cloudwatch-logs  = var.task.cloudwatch-logs
   ecr              = var.task.ecr
 }
@@ -21,6 +22,7 @@ module "ecs" {
   assign-public-ip = var.assign-public-ip
   token-secret-arn = var.token-secret-arn
   task             = merge(var.task, { iam-role-arn = module.iam.task-role-arn })
+  git              = var.git
   locations        = var.locations
   private-package  = var.private-package
   enterprise-cloud = var.enterprise-cloud
