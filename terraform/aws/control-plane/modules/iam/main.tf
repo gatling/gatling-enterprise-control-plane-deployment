@@ -102,6 +102,11 @@ locals {
     local.elastic_ip_statements,
     local.iam_profile_name_statements
   )
+
+  git = {
+    ssh_enabled   = length(var.git.ssh.private-key-secret-arn) > 0
+    creds_enabled = length(var.git.credentials.username) > 0 && length(var.git.credentials.token-secret-arn) > 0
+  }
 }
 
 resource "aws_iam_role" "gatling_role" {
@@ -157,7 +162,7 @@ resource "aws_iam_policy" "asm_policy" {
         Action = [
           "secretsmanager:GetSecretValue"
         ],
-        Resource = var.token-secret-arn
+        Resource = concat([var.token-secret-arn], local.git.creds_enabled ? [var.git.credentials.token-secret-arn] : [], local.git.ssh_enabled ? [var.git.ssh.private-key-secret-arn] : [])
       }
     ]
   })
