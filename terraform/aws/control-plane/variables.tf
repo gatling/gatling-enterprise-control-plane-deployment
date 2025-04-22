@@ -40,6 +40,32 @@ variable "assign-public-ip" {
   default     = true
 }
 
+variable "git" {
+  description = "Conrol plane git configuration."
+  type = object({
+    host = optional(string, "")
+    credentials = optional(object({
+      username            = optional(string, "")
+      token-secret-arn = optional(string, "")
+    }), {})
+    ssh = optional(object({
+      private-key-secret-arn = optional(string, "")
+    }), {}),
+    cache = optional(object({
+      paths   = optional(list(string), [""])
+    }), {})
+  })
+  default = {}
+
+  validation {
+    condition = (
+      length(var.git.credentials.username) == 0 ||
+      length(var.git.credentials.token-secret-arn) > 0
+    )
+    error_message = "When credentials.username is set, credentials.token-secret-arn must also be provided."
+  }
+}
+
 variable "task" {
   description = "Conrol plane task definition."
   type = object({
