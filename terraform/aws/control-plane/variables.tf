@@ -43,7 +43,7 @@ variable "assign-public-ip" {
 variable "git" {
   description = "Conrol plane git configuration."
   type = object({
-    host = optional(string, "")
+    host = optional(string, "github.com")
     credentials = optional(object({
       username            = optional(string, "")
       token-secret-arn = optional(string, "")
@@ -52,7 +52,7 @@ variable "git" {
       private-key-secret-arn = optional(string, "")
     }), {}),
     cache = optional(object({
-      paths   = optional(list(string), [""])
+      paths   = optional(list(string), [])
     }), {})
   })
   default = {}
