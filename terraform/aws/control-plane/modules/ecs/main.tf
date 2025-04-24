@@ -29,14 +29,14 @@ locals {
       {
         sourceVolume : local.volume_name
         containerPath : local.conf_path
-        readOnly : true
+        readOnly : false
       }
     ],
     local.git.ssh_enabled ? [
       {
         sourceVolume : local.volume_name
         containerPath : local.ssh_path
-        readOnly : true
+        readOnly : false
       }
     ] : [],
     [
