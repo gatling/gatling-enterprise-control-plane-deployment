@@ -162,14 +162,19 @@ resource "aws_iam_policy" "asm_policy" {
         Action = [
           "secretsmanager:GetSecretValue"
         ],
-        Resource = concat([var.token-secret-arn], local.git.creds_enabled ? [var.git.credentials.token-secret-arn] : [], local.git.ssh_enabled ? [var.git.ssh.private-key-secret-arn] : [])
+        Resource = concat(
+          [var.token-secret-arn],
+          [for secret in var.task.secrets : secret["valueFrom"] if contains(keys(secret), "valueFrom")],
+          local.git.creds_enabled ? [var.git.credentials.token-secret-arn] : [],
+          local.git.ssh_enabled ? [var.git.ssh.private-key-secret-arn] : []
+        )
       }
     ]
   })
 }
 
 resource "aws_iam_policy" "ecr_policy" {
-  count = var.ecr ? 1 : 0
+  count = var.task.ecr ? 1 : 0
   name  = "${var.name}-ecr-policy"
   policy = jsonencode({
     Version = "2012-10-17",
@@ -189,7 +194,7 @@ resource "aws_iam_policy" "ecr_policy" {
 }
 
 resource "aws_iam_policy" "cloudwatch_logs_policy" {
-  count = var.cloudwatch-logs ? 1 : 0
+  count = var.task.cloudwatch-logs ? 1 : 0
   name  = "${var.name}-cloudwatch-logs-policy"
   policy = jsonencode({
     Version = "2012-10-17",
@@ -219,7 +224,7 @@ resource "aws_iam_role_policy_attachment" "package_s3_policy_attachment" {
 }
 
 resource "aws_iam_role_policy_attachment" "cloudwatch_logs_policy_attachment" {
-  count      = var.cloudwatch-logs ? 1 : 0
+  count      = var.task.cloudwatch-logs ? 1 : 0
   role       = aws_iam_role.gatling_role.name
   policy_arn = aws_iam_policy.cloudwatch_logs_policy[0].arn
 }
@@ -230,7 +235,7 @@ resource "aws_iam_role_policy_attachment" "asm_policy_attachment" {
 }
 
 resource "aws_iam_role_policy_attachment" "ecr_policy_attachment" {
-  count      = var.ecr ? 1 : 0
+  count      = var.task.ecr ? 1 : 0
   role       = aws_iam_role.gatling_role.name
   policy_arn = aws_iam_policy.ecr_policy[0].arn
 }
