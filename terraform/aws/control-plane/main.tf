@@ -8,8 +8,7 @@ module "iam" {
   locations        = var.locations
   private-package  = var.private-package
   git              = var.git
-  cloudwatch-logs  = var.task.cloudwatch-logs
-  ecr              = var.task.ecr
+  task             = var.task
 }
 
 module "ecs" {

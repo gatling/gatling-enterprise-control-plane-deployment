@@ -39,12 +39,11 @@ variable "git" {
   })
 }
 
-variable "cloudwatch-logs" {
-  description = "Control Plane CloudWatch Logs."
-  type        = bool
-}
-
-variable "ecr" {
-  description = "Enable ECR IAM Permissions."
-  type        = bool
+variable "task" {
+  description = "Conrol plane task definition."
+  type = object({
+    secrets         = list(map(string))
+    cloudwatch-logs = bool
+    ecr             = bool
+  })
 }
