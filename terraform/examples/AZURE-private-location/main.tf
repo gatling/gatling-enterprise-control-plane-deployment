@@ -33,16 +33,18 @@ module "location" {
 # Create a control plane based on Azure Container App
 # Reference: https://docs.gatling.io/reference/install/cloud/private-locations/azure/installation/
 module "control-plane" {
-  source               = "git::https://github.com/gatling/gatling-enterprise-control-plane-deployment//terraform/azure/control-plane"
-  name                 = "<Name>"
-  description          = "My Azure control plane description"
-  vault-name           = "<Vault>"
-  secret-id            = "<SecretIdentifier>"
-  region               = "<Region>"
-  resource-group-name  = "<ResourceGroup>"
-  storage-account-name = "<StorageAccount>"
-  locations            = [module.location]
-  # container = {
+  source              = "git::https://github.com/gatling/gatling-enterprise-control-plane-deployment//terraform/azure/control-plane"
+  name                = "<Name>"
+  description         = "My Azure control plane description"
+  vault-name          = "<Vault>"
+  token-secret-id     = "<TokenSecretIdentifier>"
+  region              = "<Region>"
+  resource-group-name = "<ResourceGroup>"
+  locations           = [module.location]
+  # container-app = {
+  #   init = {
+  #     image = "busybox"
+  #   }
   #   cpu         = 1.0
   #   memory      = "2Gi"
   #   image       = "gatlingcorp/control-plane:latest"
