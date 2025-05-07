@@ -24,12 +24,12 @@ variable "vault-name" {
   }
 }
 
-variable "secret-id" {
+variable "token-secret-id" {
   description = "Secret identifier where the control token plane is stored."
   type        = string
 
   validation {
-    condition     = length(var.secret-id) > 0
+    condition     = length(var.token-secret-id) > 0
     error_message = "Secret identifier must not be empty."
   }
 }
@@ -54,13 +54,20 @@ variable "resource-group-name" {
   }
 }
 
-variable "container" {
-  description = "Container settings."
+variable "container-app" {
+  description = "Container app settings."
   type = object({
+    init = optional(object({
+      image = optional(string, "busybox")
+    }), {})
     cpu     = optional(number, 1.0)
     memory  = optional(string, "2Gi")
     image   = optional(string, "gatlingcorp/control-plane:latest")
     command = optional(list(string), [])
+    secrets = optional(list(object({
+      name        = optional(string)
+      secret-name = optional(string)
+    })), [])
     environment = optional(list(object({
       name        = optional(string)
       value       = optional(string)
@@ -70,13 +77,31 @@ variable "container" {
   default = {}
 }
 
-variable "storage-account-name" {
-  description = "Storage account name to be used with the control plane."
-  type        = string
+variable "git" {
+  description = "Conrol plane git configuration."
+  type = object({
+    host = optional(string, "github.com")
+    credentials = optional(object({
+      username        = optional(string, "")
+      token-secret-id = optional(string, "")
+    }), {})
+    ssh = optional(object({
+      storage-account-name = optional(string, "")
+      file-share-name      = optional(string, "")
+      file-name            = optional(string, "")
+    }), {}),
+    cache = optional(object({
+      paths = optional(list(string), [])
+    }), {})
+  })
+  default = {}
 
   validation {
-    condition     = length(var.storage-account-name) > 0
-    error_message = "Storage account name must not be empty."
+    condition = (
+      length(var.git.credentials.username) == 0 ||
+      length(var.git.credentials.token-secret-id) > 0
+    )
+    error_message = "When credentials.username is set, credentials.token-secret-id must also be provided."
   }
 }
 

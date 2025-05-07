@@ -1,27 +1,27 @@
 module "storage-account" {
   source               = "./modules/storage-account"
-  description          = var.description
+  count                = length(var.git.ssh.storage-account-name) > 0 ? 1 : 0
   resource-group-name  = var.resource-group-name
-  storage-account-name = var.storage-account-name
-  locations            = var.locations
-  private-package      = var.private-package
-  enterprise-cloud     = var.enterprise-cloud
-  extra-content        = var.extra-content
+  storage-account-name = var.git.ssh.storage-account-name
 }
 
 module "container-app" {
   source              = "./modules/container-app"
   name                = var.name
-  secret-id           = var.secret-id
+  description         = var.description
+  token-secret-id     = var.token-secret-id
   resource-group-name = var.resource-group-name
   region              = var.region
-  container           = var.container
-  storage = {
-    account-name               = var.storage-account-name
-    account-primary-access-key = module.storage-account.primary-access-key
-    share-name                 = module.storage-account.share-name
-  }
-  private-package = var.private-package
+  container-app       = var.container-app
+  git = length(var.git.ssh.storage-account-name) > 0 ? merge(var.git, {
+    ssh = merge(var.git.ssh, {
+      account-primary-access-key = module.storage-account[0].primary_access_key
+    })
+  }) : var.git
+  locations        = var.locations
+  private-package  = var.private-package
+  enterprise-cloud = var.enterprise-cloud
+  extra-content    = var.extra-content
 }
 
 module "role-assignment" {
@@ -29,5 +29,6 @@ module "role-assignment" {
   resource-group-name = var.resource-group-name
   vault-name          = var.vault-name
   container           = module.container-app.container
+  storage             = length(var.git.ssh.storage-account-name) > 0
   private-package     = var.private-package
 }

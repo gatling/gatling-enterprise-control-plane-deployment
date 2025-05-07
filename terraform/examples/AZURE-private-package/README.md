@@ -101,22 +101,41 @@ Sets up the control plane with configurations for networking, security, and stor
 # Create a control plane based on Azure Container App
 # Reference: https://docs.gatling.io/reference/install/cloud/private-locations/azure/installation/
 module "control-plane" {
-  source               = "git::https://github.com/gatling/gatling-enterprise-control-plane-deployment//terraform/azure/control-plane"
-  name                 = "<Name>"
-  description          = "My Azure control plane description"
-  vault-name           = "<Vault>"
-  secret-id            = "<SecretIdentifier>"
-  region               = "<Region>"
-  resource-group-name  = "<ResourceGroup>"
-  storage-account-name = "<StorageAccount>"
-  locations            = [module.location]
-  private-package      = module.private-package
-  # container = {
+  source              = "git::https://github.com/gatling/gatling-enterprise-control-plane-deployment//terraform/azure/control-plane"
+  name                = "<Name>"
+  description         = "My Azure control plane description"
+  vault-name          = "<Vault>"
+  token-secret-id     = "<TokenSecretIdentifier>"
+  region              = "<Region>"
+  resource-group-name = "<ResourceGroup>"
+  locations           = [module.location]
+  private-package     = module.private-package
+  # container-app = {
+  #   init = {
+  #     image = "busybox"
+  #   }
   #   cpu         = 1.0
   #   memory      = "2Gi"
   #   image       = "gatlingcorp/control-plane:latest"
   #   command     = []
   #   environment = []
+  # }
+  # git = {
+  #   # Configure git credentials for the control plane. Requires builder image: "gatlingcorp/control-plane:latest-builder"
+  #   # Reference: https://docs.gatling.io/reference/execute/cloud/user/build-from-sources/
+  #   host = "github.com"
+  #   credentials = {
+  #     username        = "<GitUsername>"
+  #     token-secret-id = "<GitTokenSecretId>"
+  #   }
+  #   ssh = {
+  #     storage-account-name = "presalest"
+  #     file-share-name      = "presalest"
+  #     file-name            = "key.pem"
+  #   }
+  #   cache = {
+  #     paths = ["/app/.m2", "/app/.gradle", "/app/.sbt", "/app/.npm"]
+  #   }
   # }
   # enterprise-cloud = {
   #   Setup the proxy configuration for the private location

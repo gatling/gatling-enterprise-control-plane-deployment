@@ -18,3 +18,8 @@ variable "private-package" {
   type        = map(any)
   default     = {}
 }
+
+variable "storage" {
+  description = "Boolean to indicate if the storage account is used."
+  type = bool
+}

@@ -15,7 +15,7 @@ resource "azurerm_role_definition" "gatling_custom_role" {
   description = "Role for Gatling Control plane permissions."
 
   permissions {
-    actions = [
+    actions = concat([
       "Microsoft.MarketplaceOrdering/agreements/offers/plans/read",
       "Microsoft.MarketplaceOrdering/agreements/offers/plans/sign/action",
       "Microsoft.Resources/subscriptions/resourceGroups/write",
@@ -27,12 +27,13 @@ resource "azurerm_role_definition" "gatling_custom_role" {
       "Microsoft.Network/publicIPAddresses/write",
       "Microsoft.Network/networkInterfaces/write",
       "Microsoft.Network/networkInterfaces/join/action",
-      "Microsoft.Storage/storageAccounts/read",
-      "Microsoft.Storage/storageAccounts/listkeys/action",
       "Microsoft.Compute/galleries/images/versions/read",
       "Microsoft.Compute/virtualMachines/read",
       "Microsoft.Compute/virtualMachines/write"
-    ]
+      ], var.storage ? [
+      "Microsoft.Storage/storageAccounts/read",
+      "Microsoft.Storage/storageAccounts/listkeys/action"
+    ] : [])
   }
 }
 
