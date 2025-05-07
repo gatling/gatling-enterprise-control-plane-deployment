@@ -129,9 +129,9 @@ module "control-plane" {
   #     token-secret-id = "<GitTokenSecretId>"
   #   }
   #   ssh = {
-  #     storage-account-name = "presalest"
-  #     file-share-name      = "presalest"
-  #     file-name            = "key.pem"
+  #     storage-account-name = "<StorageAccountName>"
+  #     file-share-name      = "<FileShareName>"
+  #     file-name            = "<FileName>"
   #   }
   #   cache = {
   #     paths = ["/app/.m2", "/app/.gradle", "/app/.sbt", "/app/.npm"]
