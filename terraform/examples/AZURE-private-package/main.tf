@@ -78,8 +78,8 @@ module "control-plane" {
   #   # Reference: https://docs.gatling.io/reference/execute/cloud/user/build-from-sources/
   #   host = "github.com"
   #   credentials = {
-  #     username        = "karimatwa"
-  #     token-secret-id = "https://gatlingvault.vault.azure.net/secrets/github-token/fd927b5f46c648fb84302991e78403d2"
+  #     username        = "<GitUsername>"
+  #     token-secret-id = "<GitTokenSecretId>"
   #   }
   #   ssh = {
   #     storage-account-name = "<StorageAccountName>"
