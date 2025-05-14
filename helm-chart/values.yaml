@@ -109,10 +109,9 @@ privateLocations:
                   limits:
                     memory: "2Gi"
                     cpu: "2"
-            restartPolicy": "Never"
             imagePullSecrets: []  # List of existing Kubernetes Secrets to pull images from private registries.
             securityContext: {} # Security context for running the container with specific privileges or user IDs.
-            volumes": []
+            volumes: []
         ttlSecondsAfterFinished: 60
 # AWS Private Location configuration
 # Reference: https://docs.gatling.io/reference/install/cloud/private-locations/aws/configuration/#control-plane-configuration-file
