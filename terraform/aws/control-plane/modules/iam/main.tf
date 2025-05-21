@@ -85,7 +85,7 @@ locals {
       Sid      = "AllowPassRole_${location.conf.iam-instance-profile}"
       Effect   = "Allow"
       Action   = "iam:PassRole"
-      Resource = "arn:aws:iam:${data.aws_caller_identity.current.account_id}:role/${location.conf.iam-instance-profile}"
+      Resource = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${location.conf.iam-instance-profile}"
     }
     if location.conf.iam-instance-profile != null
   ])
