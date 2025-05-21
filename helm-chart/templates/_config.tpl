@@ -80,8 +80,12 @@ control-plane {
   {{- $repoType := .Values.privatePackage.repository.type }}
   {{- $config := index .Values.privatePackage.repository.configurations $repoType }}
   repository = {
+    {{- if .Values.privatePackage.repository.upload }}
     upload: {{ toJson .Values.privatePackage.repository.upload }},
+    {{- end }}
+    {{- if .Values.privatePackage.repository.server }}
     server: {{ toJson .Values.privatePackage.repository.server }},
+    {{- end }}
     type: "{{ $repoType }}"
     {{- range $key, $value := $config }}
     {{ $key }}: {{ toJson $value }},
