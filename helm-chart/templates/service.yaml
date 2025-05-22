@@ -10,9 +10,9 @@ metadata:
 spec:
   selector:
     app.kubernetes.io/name: {{ .Values.controlPlane.name }}
-      {{- with .Values.controlPlane.podLabels }}
-        {{ toYaml . | nindent 8 }}
-      {{- end }}
+    {{- with .Values.controlPlane.podLabels }}
+      {{ toYaml . | nindent 4 }}
+    {{- end }}
   ports:
   {{ toYaml .Values.privatePackage.repository.service.ports | nindent 2 }}
   type: {{ .Values.privatePackage.repository.service.type }}
