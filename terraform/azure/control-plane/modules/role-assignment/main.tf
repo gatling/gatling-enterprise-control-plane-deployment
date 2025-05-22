@@ -18,6 +18,7 @@ resource "azurerm_role_definition" "gatling_custom_role" {
     actions = concat([
       "Microsoft.MarketplaceOrdering/agreements/offers/plans/read",
       "Microsoft.MarketplaceOrdering/agreements/offers/plans/sign/action",
+      "Microsoft.Resources/subscriptions/resourceGroups/read",
       "Microsoft.Resources/subscriptions/resourceGroups/write",
       "Microsoft.Resources/subscriptions/resourceGroups/delete",
       "Microsoft.MarketplaceOrdering/offertypes/publishers/offers/plans/agreements/read",
