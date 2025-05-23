@@ -91,7 +91,7 @@ module "location" {
   #   network-interface = {
   #     network          = "<Network>"
   #     subnetwork       = "<SubNetwork>"
-  #     with-external-ip = false
+  #     with-external-ip = true
   #   }
   # }
   # system-properties = {}
