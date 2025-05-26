@@ -89,6 +89,7 @@ module "location" {
   #     sizeGb = 20
   #   }
   #   network-interface = {
+  #     project          = "<NetworkInterfaceProjectName>"
   #     network          = "<Network>"
   #     subnetwork       = "<SubNetwork>"
   #     with-external-ip = true
