@@ -55,6 +55,7 @@ variable "machine" {
     }), {})
     disk = optional(object({ sizeGb = number }), { sizeGb = 20 })
     network-interface = optional(object({
+      project          = optional(string)
       network          = optional(string)
       subnetwork       = optional(string)
       with-external-ip = optional(bool, true)
