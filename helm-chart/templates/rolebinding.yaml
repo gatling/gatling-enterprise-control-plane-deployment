@@ -11,5 +11,5 @@ roleRef:
   name: "{{ .Values.controlPlane.name }}-role"
 subjects:
   - kind: ServiceAccount
-    name: "{{ .Values.controlPlane.name }}-service-account"
+    name: "{{ .Values.controlPlane.serviceAccount.name }}"
     namespace: "{{ .Values.namespace }}"

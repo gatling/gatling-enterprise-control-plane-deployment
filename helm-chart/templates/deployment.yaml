@@ -29,7 +29,7 @@ spec:
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
     spec:
-      serviceAccountName: "{{ .Values.controlPlane.name }}-service-account"
+      serviceAccountName: "{{ .Values.controlPlane.serviceAccount.name }}"
       {{- if .Values.controlPlane.securityContext }}
       securityContext:
         {{ toYaml .Values.controlPlane.securityContext | nindent 8 }}

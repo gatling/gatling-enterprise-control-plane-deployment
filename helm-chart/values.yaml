@@ -9,6 +9,10 @@ controlPlane:
   name: gatling-cp
   # Human-readable description for the Control Plane.
   description: My K8s control plane description
+  # ServiceAccount configuration: create set to true (create a new ServiceAccount with the given name.), or false (assume an existing ServiceAccount with the given name.)
+  serviceAccount:
+    create: true
+    name: "gatling-cp-service-account"
   image:
     # Docker image for the Control Plane container.
     name: gatlingcorp/control-plane:latest
