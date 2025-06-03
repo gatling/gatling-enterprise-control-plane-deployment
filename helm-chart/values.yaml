@@ -66,18 +66,18 @@ controlPlane:
 privateLocations:
   # Kubernetes Private Location configuration
   # Reference: https://docs.gatling.io/reference/install/cloud/private-locations/kubernetes/configuration/#control-plane-configuration-file
-  - id: "prl_kubernetes" # Unique identifier for the private location
-    description: "Private Location on Kubernetes" # Short description
-    type: "kubernetes" # The type of private location
-    engine: "classic" # The execution engine type (e.g., "classic", "javascript")
+  - id: "prl_kubernetes"                            # Unique identifier for the private location, must be prefixed by prl_, only consist of numbers 0-9, lowercase letters a-z, and underscores, with a max length of 30 characters
+    description: "Private Location on Kubernetes"   # Short description
+    type: "kubernetes"                              # The type of private location
+    engine: "classic"                               # The execution engine type (e.g., "classic", "javascript")
     image:
-      type: "certified" # Image type (certified or custom)
-    #   java: "latest"               # For classic engine; no-op for javascript
-    #   image: "gatlingcorp/classic-openjdk:latest"  # Custom image name
-    # systemProperties: {}           # System properties for the JVM
-    # javaHome: "/usr/lib/jvm/zulu"  # Java home path
+      type: "certified"                             # Image type: certified (hosted on DockerHub, and available for the linux/amd64 and linux/arm64 platforms) or custom (You can build your own images from https://github.com/gatling/frontline-injector-docker-image)
+    #   java: "latest"                              # For classic engine; no-op for javascript
+    #   image: "gatlingcorp/classic-openjdk:latest" # Custom image name
+    # systemProperties: {}                          # System properties for the JVM
+    # javaHome: "/usr/lib/jvm/zulu"                 # Java home path
     # jvmOptions: ["-Xmx4G", "-Xms512M"]
-    # keepLoadGeneratorAlive: false  # Whether to keep the load generator alive (for debugging - Do not forget to delete ghost pods.)
+    # keepLoadGeneratorAlive: false                 # Whether to keep the load generator alive (for debugging - Do not forget to delete ghost pods.)
     # enterpriseCloud:
     #   Setup the proxy configuration for the private location
     #   Reference: https://docs.gatling.io/reference/install/cloud/private-locations/network/#configuring-a-proxy
@@ -115,13 +115,13 @@ privateLocations:
         ttlSecondsAfterFinished: 60
 # AWS Private Location configuration
 # Reference: https://docs.gatling.io/reference/install/cloud/private-locations/aws/configuration/#control-plane-configuration-file
-# - id: "prl_kubernetes_aws"                 # Unique identifier for the AWS private location
+# - id: "prl_kubernetes_aws"                 # Unique identifier for the private location, must be prefixed by prl_, only consist of numbers 0-9, lowercase letters a-z, and underscores, with a max length of 30 characters
 #   description: "Private Location on AWS"   # Brief description of the AWS location
 #   type: "aws"                              # Location type (AWS)
 #   region: "eu-west-3"                      # AWS region where the instance will run
 #   engine: "classic"                        # Execution engine type (e.g., "classic" or "javascript")
 #   ami:
-#     type: "certified"                      # AMI image type: "certified" for default or "custom" for user-provided images
+#     type: "certified"                      # AMI image type: certified (hosted on DockerHub, and available for the linux/amd64 and linux/arm64 platforms) or custom (You can build your own images from https://github.com/gatling/frontline-injector-docker-image)
 #     # java: "latest"                       # (Optional) Java version for the classic engine; no effect for javascript engine
 #     # id: "ami-id"                         # (Required if using custom AMI) Custom AMI identifier
 #   securityGroups: ["sg-id"]                # List of AWS security group IDs to attach to the instance
@@ -146,14 +146,14 @@ privateLocations:
 #
 # Azure Private Location configuration
 # Reference: https://docs.gatling.io/reference/install/cloud/private-locations/azure/configuration/#control-plane-configuration-file
-# - id: "prl_kubernetes_azure"               # Unique identifier for the Azure private location
+# - id: "prl_kubernetes_azure"               # Unique identifier for the private location, must be prefixed by prl_, only consist of numbers 0-9, lowercase letters a-z, and underscores, with a max length of 30 characters
 #   description: "Private Location on Azure" # Brief description of the Azure location
 #   type: "azure"                            # Location type (Azure)
 #   region: "westeurope"                     # Azure region (location name)
 #   size: "Standard_A4_v2"                   # Virtual machine size according to Azure specifications
 #   engine: "classic"                        # Execution engine type
 #   image:
-#     type: "certified"                      # Image type: "certified" for default, "custom" for user-provided
+#     type: "certified"                      # Image type: certified (hosted on DockerHub, and available for the linux/amd64 and linux/arm64 platforms) or custom (You can build your own images from https://github.com/gatling/frontline-injector-docker-image)
 #     # java: "latest"                       # (Optional) Java version setting for the classic engine; ignored for javascript engine
 #     # image: "/subscriptions/.../customImages/images/<MyImage>"  # (Optional) Custom image path for user-provided images
 #   subscription: "<SubscriptionId>"         # Azure subscription ID for resource management
@@ -170,7 +170,7 @@ privateLocations:
 #
 # GCP Private Location configuration
 # Reference: https://docs.gatling.io/reference/install/cloud/private-locations/gcp/configuration/#control-plane-configuration-file
-# - id: "prl_kubernetes_gcp"                 # Unique identifier for the GCP private location
+# - id: "prl_kubernetes_gcp"                 # Unique identifier for the private location, must be prefixed by prl_, only consist of numbers 0-9, lowercase letters a-z, and underscores, with a max length of 30 characters
 #   description: "Private Location on GCP"   # Brief description of the GCP location
 #   type: "gcp"                              # Location type (GCP)
 #   project: "project-id"                    # Your GCP project ID
@@ -181,7 +181,7 @@ privateLocations:
 #     engine: "classic"                      # Execution engine type (e.g., "classic" or "javascript")
 #     # preemptible: false                   # (Optional) Set to true for using preemptible instances to reduce costs
 #     image:
-#       type: "certified"                    # Image type: "certified" for default or "custom" for user-provided images
+#       type: "certified"                    # Image type: certified (hosted on DockerHub, and available for the linux/amd64 and linux/arm64 platforms) or custom (You can build your own images from https://github.com/gatling/frontline-injector-docker-image)
 #       java: "latest"                       # (Optional) Java version for the image if required by your workload
 #       # id: "image-id"                     # (Optional) Custom image ID to use
 #       # project: "project-id"              # (Optional) Specify project if using a custom image from a different project
