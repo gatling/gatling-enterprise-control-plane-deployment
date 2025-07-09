@@ -4,7 +4,7 @@
 
 This Terraform configuration sets up the Azure infrastructure for Gatling Enterprise's Private Locations & Private Packages deployment. The configuration uses three modules: one for specifying the location, another for specifying the private package, and a third for deploying the control plane.
 
-![azure-diagram](https://github.com/user-attachments/assets/8bb3b3c8-e39b-4e52-93d8-ea392ed46122)
+<img width="2456" alt="azure-diagram" src="https://github.com/user-attachments/assets/a60e8c4a-9e6c-474f-b5e4-8c50e4f798f1" />
 
 > [!WARNING]
 > These scripts are here to help you bootstrapping your installation.
