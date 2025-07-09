@@ -7,9 +7,7 @@
 
 This repository includes configurations for deploying Gatling Private Locations and Packages across multiple cloud platforms. These scripts are designed to facilitate the setup of Gatling load testing solutions in a standardized, secure, and scalable manner. Gatling's Private Locations feature allows you to conduct load tests from specific geographical locations using privately hosted load generators. Meanwhile, Private Packages enable private storage of testing scripts and configurations.
 
-![generic-diagram](https://github.com/user-attachments/assets/47f341f1-e0f8-4b2e-a8f7-2252d1696f5f)
-
-
+<img width="2448" alt="generic-diagram" src="https://github.com/user-attachments/assets/a9f8ba7a-a400-48f6-99f7-396837f213d7" />
 
 ## Why Use This Repository?
 
