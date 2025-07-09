@@ -4,7 +4,7 @@
 
 This Terraform configuration sets up the AWS infrastructure for Gatling Enterprise's Private Locations deployment. The configuration uses two modules: one for specifying the location and the other for deploying the control plane.
 
-![aws-diagram](https://github.com/user-attachments/assets/9bcabed2-db71-4829-b768-ac6d7124010e)
+<img width="2456" alt="aws-diagram" src="https://github.com/user-attachments/assets/b9b753e2-451c-4797-bf87-f0717e0f9d7c" />
 
 > [!WARNING]
 > These scripts are here to help you bootstrapping your installation.
