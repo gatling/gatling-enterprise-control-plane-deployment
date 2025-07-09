@@ -6,6 +6,7 @@ This Terraform configuration sets up the AWS infrastructure for Gatling Enterpri
 
 <img width="2456" alt="aws-diagram" src="https://github.com/user-attachments/assets/b9b753e2-451c-4797-bf87-f0717e0f9d7c" />
 
+
 > [!WARNING]
 > These scripts are here to help you bootstrapping your installation.
 > They are likely to frequently change in an incompatible fashion.
