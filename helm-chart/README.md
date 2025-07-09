@@ -5,8 +5,7 @@
 
 This Helm chart deploys Gatling Enterprise Private Locations and Private Packages to your Kubernetes cluster. It provides three main configuration sections—`controlPlane`, `privateLocations`, and `privatePackage`—to customize your setup.
 
-![kubernetes-diagram](https://github.com/user-attachments/assets/00616deb-dcb9-4694-8f1c-cbd95c7726bf)
-
+<img width="2456" alt="kubernetes-diagram" src="https://github.com/user-attachments/assets/e64d57da-f553-4978-b090-e8e751189669" />
 
 ## Prerequisites
 
