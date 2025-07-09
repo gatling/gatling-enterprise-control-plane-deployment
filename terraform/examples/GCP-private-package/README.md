@@ -4,7 +4,7 @@
 
 This Terraform configuration sets up the GCP infrastructure for Gatling Enterprise's Private Locations & Private Packages deployment. The configuration uses three modules: one for specifying the location, another for specifying the private package, and a third for deploying the control plane.
 
-![gcp-diagram](https://github.com/user-attachments/assets/733fdaa8-06ca-4a9a-bb7b-cc721434419c)
+<img width="2456" alt="gcp-diagram" src="https://github.com/user-attachments/assets/d41fa49a-a908-440e-a133-5a9def1c44d6" />
 
 > [!WARNING]
 > These scripts are here to help you bootstrapping your installation.
