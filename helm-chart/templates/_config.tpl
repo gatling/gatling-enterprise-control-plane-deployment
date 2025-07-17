@@ -68,15 +68,11 @@ control-plane {
       machine = {{ toJson .machine }}
     {{- end }}
       debug.keep-load-generator-alive = {{ toJson (default false .keepLoadGeneratorAlive) }}
-      system-properties = [
-      {{- range $index, $prop := .systemProperties }}
-        {{- if $index }},{{ end }}
-        {
-          "name": "{{ $prop.name }}",
-          "value": {{ $prop.value }}
-        }
+      system-properties = {
+      {{- range $key, $val := .systemProperties }}
+        {{ $key }} = {{ $val }}
       {{- end }}
-      ]
+      }
     {{- if .javaHome }}
       java-home = "{{ .javaHome }}"
     {{- end }}
