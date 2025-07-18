@@ -70,7 +70,7 @@ control-plane {
       debug.keep-load-generator-alive = {{ toJson (default false .keepLoadGeneratorAlive) }}
       system-properties = {
       {{- range $key, $val := .systemProperties }}
-        {{ $key }} = {{ $val }}
+        "{{ $key }}" = {{ $val }}
       {{- end }}
       }
     {{- if .javaHome }}
