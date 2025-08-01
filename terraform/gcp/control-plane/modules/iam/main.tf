@@ -26,7 +26,7 @@ locals {
   ]
 
   has_custom_image = anytrue([
-    for location in var.locations : location.conf.machine.image.type == "custom"
+    for location in var.locations : location.conf.machine != null ? location.conf.machine.image.type == "custom" : false
   ])
 
   has_instance_template = anytrue([

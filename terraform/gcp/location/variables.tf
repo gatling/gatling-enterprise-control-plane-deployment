@@ -61,33 +61,33 @@ variable "machine" {
       with-external-ip = optional(bool, true)
     }), {})
   })
-  default = {}
+  default = null
 
   validation {
-    condition     = contains(["classic", "javascript"], var.machine.engine)
+    condition     = var.machine == null ? true : contains(["classic", "javascript"], var.machine.engine)
     error_message = "The engine must be either 'classic' or 'javascript'."
   }
 
   validation {
-    condition     = contains(["certified", "custom"], var.machine.image.type)
+    condition     = var.machine == null ? true : contains(["certified", "custom"], var.machine.image.type)
     error_message = "The image type must be either 'certified' or 'custom'."
   }
 
   validation {
-    condition = var.machine.image.type != "custom" || (
+    condition = var.machine == null ? true : (var.machine.image.type != "custom" || (
       var.machine.image.project != null &&
       (var.machine.image.id != null || var.machine.image.family != null)
-    )
+    ))
     error_message = "If image.type is 'custom', then project must be defined and either id or family must be specified."
   }
 
   validation {
-    condition     = var.machine.disk.sizeGb >= 20
+    condition     = var.machine == null ? true : var.machine.disk.sizeGb >= 20
     error_message = "Disk sizeGb must be greater than or equal to 20."
   }
 
   validation {
-    condition     = can(regex("^[a-z][a-z0-9-]+$", var.machine.type))
+    condition     = var.machine == null ? true : can(regex("^[a-z][a-z0-9-]+$", var.machine.type))
     error_message = "Machine type must start with a letter and contain only lower-case letters, digits, or hyphens."
   }
 }
