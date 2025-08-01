@@ -11,8 +11,7 @@ module "location" {
   description = "Private Location on GCP"
   project     = "<ProjectId>"
   zone        = "<Zone>"
-  # instance-template = "<InstanceTemplate>"
-  # machine = {
+  machine = {
   #   type        = "c3-highcpu-4"
   #   preemptible = false
   #   engine      = "classic"
@@ -32,7 +31,8 @@ module "location" {
   #     subnetwork       = "<SubNetwork>"
   #     with-external-ip = true
   #   }
-  # }
+  }
+  # instance-template = "<InstanceTemplate>"
   # system-properties = {}
   # java-home         = "/usr/lib/jvm/zulu"
   # jvm-options       = ["-Xmx4G", "-Xms512M"]
