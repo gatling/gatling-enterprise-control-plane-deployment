@@ -12,6 +12,7 @@ controlPlane:
   # Build your own sources on the control plane (specify builder image, activate private packages & configure your env variables GIT_USERNAME & GIT_TOKEN, ref: https://docs.gatling.io/reference/run-tests/build-from-sources/).
   builder:
     enabled: false
+    type: https
   # ServiceAccount configuration: create set to true (create a new ServiceAccount with the given name.), or false (assume an existing ServiceAccount with the given name.)
   serviceAccount:
     create: true
@@ -37,7 +38,7 @@ controlPlane:
         secretKeyRef:
           name: gatling-enterprise
           key: api-token
-    # Builder env variables GIT_USERNAME & GIT_TOKEN, ref: https://docs.gatling.io/reference/run-tests/build-from-sources/.
+    # Builder HTTPS clone environment variables GIT_USERNAME & GIT_TOKEN, ref: https://docs.gatling.io/reference/run-tests/build-from-sources/.
     # - name: GIT_USERNAME # DO NOT CHANGE
     #   valueFrom:
     #     secretKeyRef:

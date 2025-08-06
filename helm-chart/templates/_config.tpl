@@ -4,9 +4,13 @@ control-plane {
   description = "{{ .Values.controlPlane.description }}"
   {{- if and .Values.controlPlane.builder (default false .Values.controlPlane.builder.enabled) }}
   builder {
-    git.global.credentials.https {
-      username = ${?GIT_USERNAME}
-      password = ${?GIT_TOKEN}
+    git.global.credentials {
+    {{- if eq .Values.controlPlane.builder.type "https" }}
+      https {
+        username = ${?GIT_USERNAME}
+        password = ${?GIT_TOKEN}
+      }
+    {{- end}}
     }
   }
   {{- end }}
