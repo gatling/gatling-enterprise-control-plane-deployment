@@ -2,6 +2,18 @@
 control-plane {
   token = ${?CONTROL_PLANE_TOKEN}
   description = "{{ .Values.controlPlane.description }}"
+  {{- if and .Values.controlPlane.builder (default false .Values.controlPlane.builder.enabled) }}
+  builder {
+    git.global.credentials {
+    {{- if eq .Values.controlPlane.builder.cloneOver "https" }}
+      https {
+        username = ${?GIT_USERNAME}
+        password = ${?GIT_TOKEN}
+      }
+    {{- end}}
+    }
+  }
+  {{- end }}
   enterprise-cloud = {{ toJson .Values.controlPlane.enterpriseCloud }}
   locations = [
   {{- range .Values.privateLocations }}

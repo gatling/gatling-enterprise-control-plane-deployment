@@ -9,6 +9,10 @@ controlPlane:
   name: gatling-cp
   # Human-readable description for the Control Plane.
   description: My K8s control plane description
+  # Build your own sources on the control plane (specify builder image, activate private packages & configure your env variables GIT_USERNAME & GIT_TOKEN, ref: https://docs.gatling.io/reference/run-tests/build-from-sources/).
+  builder:
+    enabled: false
+    cloneOver: https
   # ServiceAccount configuration: create set to true (create a new ServiceAccount with the given name.), or false (assume an existing ServiceAccount with the given name.)
   serviceAccount:
     create: true
@@ -34,6 +38,17 @@ controlPlane:
         secretKeyRef:
           name: gatling-enterprise
           key: api-token
+    # Builder HTTPS clone environment variables GIT_USERNAME & GIT_TOKEN, ref: https://docs.gatling.io/reference/run-tests/build-from-sources/.
+    # - name: GIT_USERNAME # DO NOT CHANGE
+    #   valueFrom:
+    #     secretKeyRef:
+    #       name: git-https-auth
+    #       key: username
+    # - name: GIT_TOKEN # DO NOT CHANGE
+    #   valueFrom:
+    #     secretKeyRef:
+    #       name: git-https-auth
+    #       key: token
   # Override the default container entrypoint command if needed.
   command: []
   # Defines volumes for the Pod (e.g., configMaps, secrets, persistent volumes).
