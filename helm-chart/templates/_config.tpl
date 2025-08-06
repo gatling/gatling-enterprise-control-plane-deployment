@@ -5,7 +5,7 @@ control-plane {
   {{- if and .Values.controlPlane.builder (default false .Values.controlPlane.builder.enabled) }}
   builder {
     git.global.credentials {
-    {{- if eq .Values.controlPlane.builder.type "https" }}
+    {{- if eq .Values.controlPlane.builder.cloneOver "https" }}
       https {
         username = ${?GIT_USERNAME}
         password = ${?GIT_TOKEN}
