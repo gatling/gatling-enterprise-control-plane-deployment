@@ -32,7 +32,7 @@ jobs:
         run: find aws/cloudformation/templates -type f -name "*.yaml" -exec cfn-lint {} +
 
       - name: Set up AWS CLI
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v4.3.1
         with:
           role-to-assume: ${{ secrets.SE_CF_AWS_ROLE }}
           aws-region: eu-west-3
