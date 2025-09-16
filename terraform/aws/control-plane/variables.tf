@@ -75,6 +75,9 @@ variable "task" {
     image        = optional(string, "gatlingcorp/control-plane:latest")
     init = optional(object({
       image = optional(string, "busybox")
+      command = optional(list(string), [])
+      environment = optional(list(map(string)), [])
+      secrets = optional(list(map(string)), [])
     }), {})
     command         = optional(list(string), [])
     secrets         = optional(list(map(string)), [])
@@ -105,9 +108,4 @@ variable "enterprise-cloud" {
 variable "extra-content" {
   type    = map(any)
   default = {}
-}
-
-variable "extra-init-command" {
-  description = "Extra command to execute inside the init container"
-  type        = string
 }

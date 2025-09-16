@@ -165,6 +165,7 @@ resource "aws_iam_policy" "asm_policy" {
         Resource = concat(
           [var.token-secret-arn],
           [for secret in var.task.secrets : secret["valueFrom"] if contains(keys(secret), "valueFrom")],
+          [for secret in var.task.init.secrets : secret["valueFrom"] if contains(keys(secret), "valueFrom")],
           local.git.creds_enabled ? [var.git.credentials.token-secret-arn] : [],
           local.git.ssh_enabled ? [var.git.ssh.private-key-secret-arn] : []
         )

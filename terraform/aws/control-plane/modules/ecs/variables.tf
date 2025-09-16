@@ -38,6 +38,9 @@ variable "task" {
     iam-role-arn = string
     init = object({
       image = string
+      command = optional(list(string), [])
+      environment = optional(list(map(string)), [])
+      secrets = optional(list(map(string)), [])
     })
     image           = string
     command         = list(string)
@@ -83,9 +86,4 @@ variable "enterprise-cloud" {
 
 variable "extra-content" {
   type = map(any)
-}
-
-variable "extra-init-command" {
-  description = "Extra command to execute inside the init container"
-  type        = string
 }

@@ -50,12 +50,13 @@ locals {
     "echo \"$CONFIG_CONTENT\" > ${local.conf_path}/control-plane.conf && chown -R 1001 ${local.conf_path} && chmod 400 ${local.conf_path}/control-plane.conf",
     local.git.ssh_enabled ? "echo 'Host ${var.git.host}\n IdentityFile ${local.ssh_path}/id_gatling\n  StrictHostKeyChecking no' >> ${local.ssh_path}/config && echo \"$SSH_KEY\" > ${local.ssh_path}/id_gatling && chown -R 1001 ${local.ssh_path} && chmod 400 ${local.ssh_path}/id_gatling" : "",
     local.git.creds_enabled ? "echo \"https://$GIT_USERNAME:$GIT_TOKEN@${var.git.host}\" > ${local.git_path} && chown -R 1001 ${local.conf_path} && chmod 400 ${local.git_path}" : "",
+    join("&&", var.task.init.command)
   ])
   init = {
     command = [
       "/bin/sh",
       "-c",
-      "${join(" && ", local.init_commands)} && ${var.extra-init-command}"
+      join(" && ", local.init_commands)
     ]
     secrets = concat(
       local.git.creds_enabled ? [
@@ -69,7 +70,8 @@ locals {
           name      = "SSH_KEY"
           valueFrom = var.git.ssh.private-key-secret-arn
         }
-      ] : []
+      ] : [],
+      var.task.init.secrets
     )
     environment = concat(
       [
@@ -87,7 +89,8 @@ locals {
           name  = "GIT_CREDENTIALS"
           value = local.git_path
         }
-      ] : []
+      ] : [],
+      var.task.init.environment
     )
     mountPoints = concat(
       [
