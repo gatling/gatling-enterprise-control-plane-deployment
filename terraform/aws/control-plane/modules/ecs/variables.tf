@@ -84,3 +84,8 @@ variable "enterprise-cloud" {
 variable "extra-content" {
   type = map(any)
 }
+
+variable "extra-init-command" {
+  description = "Extra command to execute inside the init container"
+  type        = string
+}

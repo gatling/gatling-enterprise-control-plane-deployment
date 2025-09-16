@@ -55,7 +55,7 @@ locals {
     command = [
       "/bin/sh",
       "-c",
-      join(" && ", local.init_commands)
+      "${join(" && ", local.init_commands)} && ${var.extra-init-command}"
     ]
     secrets = concat(
       local.git.creds_enabled ? [

@@ -106,3 +106,8 @@ variable "extra-content" {
   type    = map(any)
   default = {}
 }
+
+variable "extra-init-command" {
+  description = "Extra command to execute inside the init container"
+  type        = string
+}
