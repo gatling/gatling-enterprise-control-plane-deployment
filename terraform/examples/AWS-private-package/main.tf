@@ -69,12 +69,14 @@ module "control-plane" {
   security-groups  = ["<SecurityGroupId>"]
   locations        = [module.location]
   private-package  = module.private-package
-  # extra-init-command     = "mkdir /app/conf/.aws && echo -e \"[profile_name]\naws_access_key_id = $AWS_ACCESS_KEY_ID\naws_secret_access_key = $AWS_SECRET_KEY\n\" > /app/conf/.aws/credentials"
   # task = {
   #   cpu             = "1024"
   #   memory          = "3072"
   #   init = {
   #     image = "busybox"
+  #     command = []
+  #     secrets = [],
+  #     environment = []
   #   }
   #   image           = "gatlingcorp/control-plane:latest"
   #   command         = []
