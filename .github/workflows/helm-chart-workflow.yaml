@@ -47,7 +47,7 @@ jobs:
           echo "CHART_FILE=$CHART_FILE" >> $GITHUB_ENV 
 
       - name: Set up AWS CLI
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v5
         with:
           role-to-assume: ${{ secrets.SE_HELM_AWS_ROLE }}
           aws-region: ${{ vars.SE_HELM_AWS_REGION }}
