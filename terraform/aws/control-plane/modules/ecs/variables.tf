@@ -38,6 +38,9 @@ variable "task" {
     iam-role-arn = string
     init = object({
       image = string
+      command = optional(list(string), [])
+      environment = optional(list(map(string)), [])
+      secrets = optional(list(map(string)), [])
     })
     image           = string
     command         = list(string)
