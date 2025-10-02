@@ -58,6 +58,10 @@ spec:
         - name: {{ .Values.controlPlane.name }}
           image: {{ .Values.controlPlane.image.name }}
           imagePullPolicy: {{ .Values.controlPlane.image.pullPolicy }}
+          {{- if .Values.controlPlane.containerSecurityContext }}
+          securityContext:
+            {{ toYaml .Values.controlPlane.containerSecurityContext | nindent 12 }}
+          {{- end }}
           {{- if .Values.controlPlane.command }}
           command:  
             {{ toYaml .Values.controlPlane.command | nindent 12 }}

@@ -70,8 +70,10 @@ controlPlane:
     limits:
       memory: "1Gi"
       cpu: "1"
-  # Security context for running the container with specific privileges or user IDs.
+  # Security context for running the pod with specific privileges or user IDs.
   securityContext: {}
+  # Security context for running the container with specific privileges or user IDs.
+  containerSecurityContext: {}
   # enterpriseCloud:
   #   Setup proxy configuration for the control plane
   #   Reference: https://docs.gatling.io/reference/install/cloud/private-locations/network/#configuring-a-proxy
