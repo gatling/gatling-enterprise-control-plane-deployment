@@ -45,8 +45,8 @@ variable "task" {
     secrets         = list(map(string))
     cloudwatch-logs = bool
     ecr             = bool
-    init = optional(object({
-      secrets = optional(list(map(string)), [])
-    }), {})
+    init = object({
+      secrets = list(map(string))
+    })
   })
 }

@@ -54,7 +54,7 @@ module "control-plane" {
   #   init = {
   #     image = "busybox"
   #     command = []
-  #     secrets = [],
+  #     secrets = []
   #     environment = []
   #   }
   #   image           = "gatlingcorp/control-plane:latest"
