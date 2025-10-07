@@ -103,10 +103,10 @@ jobs:
           CHART_DIR=$(dirname "$CHART_FILE")
 
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-            PAGE_TITLE="Gatling Helm Repository - Dev"
+            PAGE_TITLE="Helm Repository - Dev"
             HELM_REPO_URL="http://${AWS_S3_BUCKET}.s3.amazonaws.com"
           else
-            PAGE_TITLE="Gatling Helm Repository"
+            PAGE_TITLE="Helm Repository"
             HELM_REPO_URL="https://helm.gatling.io"
           fi
           
