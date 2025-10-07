@@ -116,6 +116,7 @@ jobs:
           sed -i "s|{{HELM_REPO_URL}}|\"${HELM_REPO_URL}\"|g" ./helm-chart/public/index.html
           aws s3 cp ./helm-chart/public/index.html "s3://${AWS_S3_BUCKET}/index.html"
           aws s3 cp ./helm-chart/public/gatling.png "s3://${AWS_S3_BUCKET}/gatling.png"
+          aws s3 cp ./helm-chart/public/favicon.ico "s3://${AWS_S3_BUCKET}/favicon.ico"
 
           cd "$CHART_DIR"
           aws s3 cp $CHART_FILE "s3://${AWS_S3_BUCKET}/charts/"
