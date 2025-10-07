@@ -1,4 +1,4 @@
-# AWS-private-package
+# AWS Private Locations & Package
 
 [<picture><source media="(prefers-color-scheme: dark)" srcset="https://docs.gatling.io/images/logo-gatling.svg"><img src="https://docs.gatling.io/images/logo-gatling-noir.svg" alt="Gatling" width="50%"></picture>](https://gatling.io)
 
