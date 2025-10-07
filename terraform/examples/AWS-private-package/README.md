@@ -118,10 +118,13 @@ module "control-plane" {
   locations        = [module.location]
   private-package  = module.private-package
   # task = {
-  #   cpu             = "1024"
-  #   memory          = "3072"
+  #   cpu    = "1024"
+  #   memory = "3072"
   #   init = {
-  #     image = "busybox"
+  #     image       = "busybox"
+  #     command     = []
+  #     secrets     = []
+  #     environment = []
   #   }
   #   image           = "gatlingcorp/control-plane:latest"
   #   command         = []
