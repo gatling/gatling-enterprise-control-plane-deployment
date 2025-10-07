@@ -18,7 +18,7 @@ controlPlane:
     create: true
     name: "gatling-cp-service-account"
   image:
-    # Docker image for the Control Plane container.
+    # Docker image for the Control Plane container (For build from sources, use the dedicated image: "gatlingcorp/control-plane:latest-builder").
     name: gatlingcorp/control-plane:latest
     # How to pull the image (Always, IfNotPresent, Never).
     pullPolicy: Always
