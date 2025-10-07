@@ -1,10 +1,10 @@
 # Azure-private-package
 
-![Gatling-enterprise-logo-RVB](https://github.com/user-attachments/assets/6cd75464-0173-4578-9ad1-b2481cc9b36b)
+![Gatling-enterprise-logo-RVB](https://github.com/user-attachments/assets/a43f4206-e3d3-4562-ac05-1051c223af08)
 
 This Terraform configuration sets up the Azure infrastructure for Gatling Enterprise's Private Locations & Private Packages deployment. The configuration uses three modules: one for specifying the location, another for specifying the private package, and a third for deploying the control plane.
 
-<img width="2456" alt="azure-diagram" src="https://github.com/user-attachments/assets/a60e8c4a-9e6c-474f-b5e4-8c50e4f798f1" />
+<img width="2456" alt="azure-diagram" src="https://github.com/user-attachments/assets/9e1829d4-4da6-441a-bd9c-48d02bb02e53" />
 
 > [!WARNING]
 > These scripts are here to help you bootstrapping your installation.
