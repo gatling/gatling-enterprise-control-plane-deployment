@@ -49,12 +49,12 @@ module "control-plane" {
   security-groups  = ["<SecurityGroupId>"]
   locations        = [module.location]
   # task = {
-  #   cpu             = "1024"
-  #   memory          = "3072"
+  #   cpu    = "1024"
+  #   memory = "3072"
   #   init = {
-  #     image = "busybox"
-  #     command = []
-  #     secrets = []
+  #     image       = "busybox"
+  #     command     = []
+  #     secrets     = []
   #     environment = []
   #   }
   #   image           = "gatlingcorp/control-plane:latest"
