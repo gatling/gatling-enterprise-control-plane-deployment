@@ -66,6 +66,10 @@ spec:
           command:  
             {{ toYaml .Values.controlPlane.command | nindent 12 }}
           {{- end }}
+          {{- if .Values.controlPlane.args }}
+          args:  
+            {{ toYaml .Values.controlPlane.args | nindent 12 }}
+          {{- end }}
           {{- if .Values.controlPlane.env }}
           env:
             {{ toYaml .Values.controlPlane.env | nindent 12 }}
