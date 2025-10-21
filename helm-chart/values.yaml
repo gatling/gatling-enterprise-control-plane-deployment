@@ -51,6 +51,8 @@ controlPlane:
     #       key: token
   # Override the default container entrypoint command if needed.
   command: []
+  # Add additional arguments to the container if needed.
+  args: []
   # Defines volumes for the Pod (e.g., configMaps, secrets, persistent volumes).
   volumes: []
   # Mount points for the volumes specified above.
