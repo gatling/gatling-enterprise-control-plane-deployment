@@ -14,11 +14,15 @@ control-plane {
     }
   }
   {{- end }}
-  enterprise-cloud = {{ toJson .Values.controlPlane.enterpriseCloud }}
+  enterprise-cloud = {
+    {{ include "render.map" .Values.controlPlane.enterpriseCloud | nindent 4 }}
+  }
   locations = [
   {{- range .Values.privateLocations }}
     {
-      enterprise-cloud = {{ toJson .enterpriseCloud }}
+      enterprise-cloud = {
+        {{ include "render.map" .enterpriseCloud | nindent 8 }}
+      }
       id = "{{ .id }}"
       description = "{{ .description }}"
       type = "{{ .type }}"
