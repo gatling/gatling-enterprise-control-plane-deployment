@@ -76,9 +76,21 @@ controlPlane:
   securityContext: {}
   # Security context for running the container with specific privileges or user IDs.
   containerSecurityContext: {}
-  # enterpriseCloud:
-  #   Setup proxy configuration for the control plane
-  #   Reference: https://docs.gatling.io/reference/install/cloud/private-locations/network/#configuring-a-proxy
+  # enterpriseCloud:                              # Setup the proxy configuration for the control plane, reference: https://docs.gatling.io/reference/install/cloud/private-locations/network/#configuring-a-proxy
+  #   proxy:
+  #     forward:                                  # Forward Proxy URL
+  #       url = "http://control-plane-forward-proxy/gatling"
+  #     http:                                     # HTTP Proxy URL with defined port
+  #       url: "http://control-plane-http-proxy:3128"
+  #       noproxy: "example.com,other.com"        # comma-separated list of hosts for which not to use a proxy (e.g: private repository domain, optional), see https://curl.se/docs/manpage.html#--noproxy
+  #       credentials:                            # mount the credentials as environment variables
+  #         username: ${?PROXY_USERNAME}
+  #         password: ${?PROXY_PASSWORD}
+  #     truststore:
+  #       path: "/path/to/truststore.pem"         # absolute path to a file containing the certificates in PEM format (can contains multiple concatenated PEM certificates)      
+  #     keystore:
+  #       path: "/path/to/truststore.pem"         # absolute path to a file containing the key and its certificate in PKCS12 format
+  #       password: ${?PASSWORD}                  # optional password if needed to open the keystore
   # AWSroleARN: "arn:aws:iam::<AccountId>:role/<Role-Name>" # Optional AWS IAM role ARN for the Control Plane, used to access AWS resources.
   # AzureClientID: "<ClientId>" # Optional Azure Identity client ID for the Control Plane, used to access Azure resources.
   # GCPServiceAccount: "<ServiceAccount>" # Optional GCP service account for the Control Plane, used to access GCP resources.
@@ -101,9 +113,22 @@ privateLocations:
     # javaHome: "/usr/lib/jvm/zulu"                 # Java home path
     # jvmOptions: ["-Xmx4G", "-Xms512M"]
     # keepLoadGeneratorAlive: false                 # Whether to keep the load generator alive (for debugging - Do not forget to delete ghost pods.)
-    # enterpriseCloud:
-    #   Setup the proxy configuration for the private location
-    #   Reference: https://docs.gatling.io/reference/install/cloud/private-locations/network/#configuring-a-proxy
+    # enterpriseCloud:                              # Setup the proxy configuration for the private location, reference: https://docs.gatling.io/reference/install/cloud/private-locations/network/#configuring-a-proxy
+    #   proxy:
+    #     forward:                                  # Forward Proxy URL
+    #       url = "http://private-location-forward-proxy/gatling"
+    #     http:                                     # HTTP Proxy URL with defined port
+    #       url: "http://private-location-http-proxy:3128"
+    #       noproxy: "example.com,other.com"        # comma-separated list of hosts for which not to use a proxy (e.g: private repository domain, optional), see https://curl.se/docs/manpage.html#--noproxy
+    #       credentials:                            # mount the credentials as environment variables
+    #         username: ${?PROXY_USERNAME}
+    #         password: ${?PROXY_PASSWORD}
+    #     truststore:
+    #       path: "/path/to/truststore.pem"         # absolute path to a file containing the certificates in PEM format (can contains multiple concatenated PEM certificates)      
+    #     keystore:
+    #       path: "/path/to/truststore.pem"         # absolute path to a file containing the key and its certificate in PKCS12 format
+    #       password: ${?PASSWORD}                  # optional password if needed to open the keystore
+
     # Kubernetes Job spec for the load generator
     job:
       spec:

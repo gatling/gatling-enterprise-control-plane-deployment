@@ -14,33 +14,99 @@ control-plane {
     }
   }
   {{- end }}
+  {{- if .Values.controlPlane.enterpriseCloud }}
   enterprise-cloud = {
-    {{ include "render.map" .Values.controlPlane.enterpriseCloud | nindent 4 }}
+    {{- with .Values.controlPlane.enterpriseCloud.proxy }}
+    proxy = {
+    {{- with .forward }}
+      forward {
+        url = {{.url}}
+      }
+    {{- end }}
+    {{- with .http }}
+      http = {
+        url = "{{.url}}"
+        noproxy = "{{.noproxy}}"
+        {{- with .credentials }}
+        credentials = {
+          username = {{.username}}
+          password = {{.password}}
+        }
+        {{- end }}
+      }
+      {{- end }}
+      {{- with .truststore }}
+      truststore = {
+        path = "{{.path}}" 
+      }
+      {{- end }}
+      {{- with .keystore }}
+      keystore = {
+        path = "{{.path}}" 
+        password = {{.password}}
+      }
+      {{- end }}
+    }
+    {{ end }}
   }
+  {{ end }}
   locations = [
   {{- range .Values.privateLocations }}
     {
-      enterprise-cloud = {
-        {{ include "render.map" .enterpriseCloud | nindent 8 }}
-      }
       id = "{{ .id }}"
       description = "{{ .description }}"
       type = "{{ .type }}"
+      {{- if .enterpriseCloud }}
+      enterprise-cloud = {
+        {{- with .enterpriseCloud.proxy }}
+        proxy = {
+          {{- with .forward }}
+          forward {
+            url = {{.url}}
+          }
+          {{- end }}
+          {{- with .http }}
+          http = {
+            url = "{{.url}}"
+            noproxy = "{{.noproxy}}"
+            {{- with .credentials }}
+            credentials = {
+              username = {{.username}}
+              password = {{.password}}
+            }
+            {{- end }}
+          }
+          {{- end }}
+          {{- with .truststore }}
+          truststore = {
+            path = "{{.path}}" 
+          }
+          {{- end }}
+          {{- with .keystore }}
+          keystore = {
+            path = "{{.path}}" 
+            password = {{.password}}
+          }
+          {{- end }}
+        }
+        {{ end }}
+      }
+      {{ end }}
     {{- if eq .type "kubernetes" }}
       namespace = "{{ $.Values.namespace }}"
       engine = "{{ .engine }}"
       image = {{ toJson .image }}
       {{- with .job }}
       job = {
-        "apiVersion": "batch/v1",
-        "kind": "Job",
-        "metadata": {
-            "generateName": "gatling-job-",
-            "namespace": "{{ $.Values.namespace }}"
+        apiVersion = "batch/v1",
+        kind = "Job",
+        metadata: {
+            generateName = "gatling-job-",
+            namespace = "{{ $.Values.namespace }}"
         },
-        "spec": {
-            "template": {{ toJson .spec.template }},
-            "ttlSecondsAfterFinished": {{ .spec.ttlSecondsAfterFinished }}
+        spec = {
+            template = {{ toJson .spec.template }},
+            ttlSecondsAfterFinished = {{ .spec.ttlSecondsAfterFinished }}
         }
       }
       {{- end }}
@@ -104,11 +170,11 @@ control-plane {
   {{- $config := index .Values.privatePackage.repository.configurations $repoType }}
   repository = {
     {{- if .Values.privatePackage.repository.upload }}
-    upload: {{ toJson .Values.privatePackage.repository.upload }},
+    upload = {{ toJson .Values.privatePackage.repository.upload }},
     {{- end }}
-    type: "{{ $repoType }}"
+    type = "{{ $repoType }}"
     {{- range $key, $value := $config }}
-    {{ $key }}: {{ toJson $value }},
+    {{ $key }} = {{ toJson $value }},
     {{- end }}
   }
   {{- end }}
