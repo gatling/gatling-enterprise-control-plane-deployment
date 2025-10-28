@@ -9,7 +9,8 @@ locals {
       description = "${var.description}"
       enterprise-cloud = ${jsonencode(var.enterprise-cloud)}
       locations = [%{for location in var.locations} ${jsonencode(location.conf)}, %{endfor}]
-      %{if length(var.private-package) > 0}repository = ${jsonencode(var.private-package.conf)}%{endif}
+      %{if length(var.private-package) > 0}server = ${jsonencode(var.private-package.conf.server)}%{endif}
+      %{if length(var.private-package) > 0}repository = ${jsonencode({ for k, v in var.private-package.conf : k => v if k != "server" })}%{endif}
       %{for key, value in var.extra-content}${key} = "${value}"%{endfor}
     }
   EOF
