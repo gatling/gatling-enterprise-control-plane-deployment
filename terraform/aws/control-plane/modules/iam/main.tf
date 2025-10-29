@@ -99,7 +99,6 @@ locals {
 
   iam_ec2_policy_statements = concat(
     local.static_ec2_statements,
-    local.elastic_ip_statements,
     local.iam_profile_name_statements
   )
 
@@ -125,11 +124,19 @@ resource "aws_iam_role" "gatling_role" {
   })
 }
 
-resource "aws_iam_policy" "ec2_policy" {
+resource "aws_iam_policy" "ec2_policy_base" {
   name = "${var.name}-ec2-policy"
   policy = jsonencode({
     Version   = "2012-10-17",
     Statement = local.iam_ec2_policy_statements
+  })
+}
+
+resource "aws_iam_policy" "ec2_policy_elastic_ips" {
+  name = "${var.name}-ec2-policy-elastic-ips"
+  policy = jsonencode({
+    Version   = "2012-10-17",
+    Statement = local.elastic_ip_statements
   })
 }
 
@@ -213,9 +220,14 @@ resource "aws_iam_policy" "cloudwatch_logs_policy" {
   })
 }
 
-resource "aws_iam_role_policy_attachment" "ec2_policy_attachment" {
+resource "aws_iam_role_policy_attachment" "ec2_policy_base_attachment" {
   role       = aws_iam_role.gatling_role.name
-  policy_arn = aws_iam_policy.ec2_policy.arn
+  policy_arn = aws_iam_policy.ec2_policy_base.arn
+}
+
+resource "aws_iam_role_policy_attachment" "ec2_policy_elastic_ips_attachment" {
+  role       = aws_iam_role.gatling_role.name
+  policy_arn = aws_iam_policy.ec2_policy_elastic_ips.arn
 }
 
 resource "aws_iam_role_policy_attachment" "package_s3_policy_attachment" {
