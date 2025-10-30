@@ -97,6 +97,15 @@ locals {
     [local.elastic_ip_statements_extra],
   ])
 
+  elastic_ip_statement_chunks = [
+    for i in range(0, length(local.elastic_ip_statements), 10) :
+    slice(
+      local.elastic_ip_statements,
+      i,
+      min(i + 10, length(local.elastic_ip_statements))
+    )
+  ]
+
   iam_ec2_policy_statements = concat(
     local.static_ec2_statements,
     local.iam_profile_name_statements
@@ -133,10 +142,15 @@ resource "aws_iam_policy" "ec2_policy_base" {
 }
 
 resource "aws_iam_policy" "ec2_policy_elastic_ips" {
-  name = "${var.name}-ec2-policy-elastic-ips"
+  for_each = {
+    for idx, statements in local.elastic_ip_statement_chunks :
+    idx => statements
+  }
+
+  name = "${var.name}-ec2-policy-elastic-ips-${each.key}"
   policy = jsonencode({
     Version   = "2012-10-17",
-    Statement = local.elastic_ip_statements
+    Statement = each.value
   })
 }
 
@@ -226,8 +240,9 @@ resource "aws_iam_role_policy_attachment" "ec2_policy_base_attachment" {
 }
 
 resource "aws_iam_role_policy_attachment" "ec2_policy_elastic_ips_attachment" {
+  for_each = aws_iam_policy.ec2_policy_elastic_ips
   role       = aws_iam_role.gatling_role.name
-  policy_arn = aws_iam_policy.ec2_policy_elastic_ips.arn
+  policy_arn = each.value.arn
 }
 
 resource "aws_iam_role_policy_attachment" "package_s3_policy_attachment" {
