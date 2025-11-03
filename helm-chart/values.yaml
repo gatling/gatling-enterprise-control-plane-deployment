@@ -109,6 +109,7 @@ privateLocations:
       type: "certified"                             # Image type: certified (hosted on DockerHub, and available for the linux/amd64 and linux/arm64 platforms) or custom (You can build your own images from https://github.com/gatling/frontline-injector-docker-image)
     #   java: "latest"                              # For classic engine; no-op for javascript
     #   image: "gatlingcorp/classic-openjdk:latest" # Custom image name
+    # context: "test"                              # Context name (optional, default based on current-context kubernetes configuration)
     # systemProperties: {}                          # System properties for the JVM
     # javaHome: "/usr/lib/jvm/zulu"                 # Java home path
     # jvmOptions: ["-Xmx4G", "-Xms512M"]

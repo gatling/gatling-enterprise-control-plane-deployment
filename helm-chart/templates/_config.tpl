@@ -96,6 +96,9 @@ control-plane {
       namespace = "{{ $.Values.namespace }}"
       engine = "{{ .engine }}"
       image = {{ toJson .image }}
+      {{- if .context }}
+      context = "{{ .context }}"
+      {{- end }}
       {{- with .job }}
       job = {
         apiVersion = "batch/v1",
