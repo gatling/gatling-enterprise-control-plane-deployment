@@ -98,3 +98,14 @@ variable "certificates" {
   type        = string
   default     = ""
 }
+variable "server" {
+  description = "Control Plane Repository Server configuration."
+  type = object({
+    port        = number
+    bindAddress = string
+    certificate = object({
+      path     = string
+      password = string
+    })
+  })
+}
