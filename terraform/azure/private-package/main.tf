@@ -5,6 +5,5 @@ locals {
     container : var.control-plane-name
     path : var.path
     upload  : var.upload
-    server  : var.server
   }
 }

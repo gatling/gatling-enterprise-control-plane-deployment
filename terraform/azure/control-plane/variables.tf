@@ -73,6 +73,7 @@ variable "container-app" {
       value       = optional(string)
       secret-name = optional(string)
     })), [])
+    expose-externally = optional(bool, true)
   })
   default = {}
 }
@@ -129,4 +130,26 @@ variable "enterprise-cloud" {
 variable "extra-content" {
   type    = map(any)
   default = {}
+}
+
+variable "server" {
+  description = "Control Plane Repository Server configuration."
+  type = object({
+    port        = optional(number, 8080)
+    bindAddress = optional(string, "0.0.0.0")
+    certificate = optional(object({
+      path     = optional(string)
+      password = optional(string, null)
+    }), null)
+  })
+  default = {}
+
+  validation {
+    condition     = var.server.port > 0 && var.server.port <= 65535
+    error_message = "Server port must be between 1 and 65535."
+  }
+  validation {
+    condition     = length(var.server.bindAddress) > 0
+    error_message = "Server bindAddress must not be empty."
+  }
 }
