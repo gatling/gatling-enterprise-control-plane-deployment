@@ -33,6 +33,7 @@ locals {
       description = "${var.description}"
       enterprise-cloud = ${jsonencode(var.enterprise-cloud)}
       locations = [%{for location in var.locations} ${jsonencode(location.conf)}, %{endfor}]
+      server = ${jsonencode(var.server)}
       %{if length(var.private-package) > 0}repository = ${jsonencode(var.private-package.conf)}%{endif}
       %{for key, value in var.extra-content}${key} = "${value}"%{endfor}
     }
@@ -139,10 +140,10 @@ resource "azurerm_container_app" "gatling_container" {
   }
 
   dynamic "ingress" {
-    for_each = length(var.private-package) > 0 ? [1] : []
+    for_each = [1]
     content {
       external_enabled = true
-      target_port      = var.private-package.conf.server.port
+      target_port      = var.server.port
       traffic_weight {
         percentage      = 100
         latest_revision = true

@@ -87,3 +87,15 @@ variable "enterprise-cloud" {
 variable "extra-content" {
   type = map(any)
 }
+
+variable "server" {
+  description = "Control Plane Repository Server configuration."
+  type = object({
+    port        = number
+    bindAddress = string
+    certificate = optional(object({
+      path     = optional(string)
+      password = optional(string, null)
+    }), null)
+  })
+}
