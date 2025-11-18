@@ -240,7 +240,7 @@ resource "aws_iam_role_policy_attachment" "ec2_policy_base_attachment" {
 }
 
 resource "aws_iam_role_policy_attachment" "ec2_policy_elastic_ips_attachment" {
-  for_each = aws_iam_policy.ec2_policy_elastic_ips
+  for_each   = aws_iam_policy.ec2_policy_elastic_ips
   role       = aws_iam_role.gatling_role.name
   policy_arn = each.value.arn
 }

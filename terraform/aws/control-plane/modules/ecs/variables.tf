@@ -37,10 +37,10 @@ variable "task" {
   type = object({
     iam-role-arn = string
     init = object({
-      image = string
-      command = list(string)
+      image       = string
+      command     = list(string)
       environment = list(map(string))
-      secrets = list(map(string))
+      secrets     = list(map(string))
     })
     image           = string
     command         = list(string)
@@ -58,14 +58,14 @@ variable "git" {
   type = object({
     host = string
     credentials = object({
-      username            = string
+      username         = string
       token-secret-arn = string
     })
     ssh = object({
       private-key-secret-arn = string
     }),
     cache = object({
-      paths   = list(string)
+      paths = list(string)
     })
   })
 }
