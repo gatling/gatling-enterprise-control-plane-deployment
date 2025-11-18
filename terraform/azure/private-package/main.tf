@@ -4,6 +4,6 @@ locals {
     storage-account : var.storage-account-name
     container : var.control-plane-name
     path : var.path
-    upload  : var.upload
+    upload : var.upload
   }
 }

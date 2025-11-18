@@ -144,7 +144,7 @@ resource "aws_ecs_task_definition" "gatling_task" {
       command : var.task.command
       cpu : 0
       essential : true
-      portMappings :  [
+      portMappings : [
         {
           containerPort : var.server.port,
           hostPort : var.server.port,

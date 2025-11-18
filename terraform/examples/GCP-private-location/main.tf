@@ -12,25 +12,25 @@ module "location" {
   project     = "<ProjectId>"
   zone        = "<Zone>"
   machine = {
-  #   type        = "c3-highcpu-4"
-  #   preemptible = false
-  #   engine      = "classic"
-  #   image = {
-  #     type    = "certified"
-  #     java    = "latest"
-  #     project = "<ProjectName>"
-  #     family  = "<ImageFamily>"
-  #     id      = "<ImageId>"
-  #   }
-  #   disk = {
-  #     sizeGb = 20
-  #   }
-  #   network-interface = {
-  #     project          = "<NetworkInterfaceProjectName>"
-  #     network          = "<Network>"
-  #     subnetwork       = "<SubNetwork>"
-  #     with-external-ip = true
-  #   }
+    #   type        = "c3-highcpu-4"
+    #   preemptible = false
+    #   engine      = "classic"
+    #   image = {
+    #     type    = "certified"
+    #     java    = "latest"
+    #     project = "<ProjectName>"
+    #     family  = "<ImageFamily>"
+    #     id      = "<ImageId>"
+    #   }
+    #   disk = {
+    #     sizeGb = 20
+    #   }
+    #   network-interface = {
+    #     project          = "<NetworkInterfaceProjectName>"
+    #     network          = "<Network>"
+    #     subnetwork       = "<SubNetwork>"
+    #     with-external-ip = true
+    #   }
   }
   # instance-template = "<InstanceTemplate>"
   # system-properties = {}
