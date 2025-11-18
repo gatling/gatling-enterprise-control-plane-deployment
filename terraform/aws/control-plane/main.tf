@@ -2,7 +2,7 @@ data "aws_region" "current" {}
 
 module "iam" {
   source           = "./modules/iam"
-  aws_region       = data.aws_region.current.name
+  aws_region       = data.aws_region.current.region
   name             = var.name
   token-secret-arn = var.token-secret-arn
   locations        = var.locations
@@ -13,7 +13,7 @@ module "iam" {
 
 module "ecs" {
   source           = "./modules/ecs"
-  aws_region       = data.aws_region.current.name
+  aws_region       = data.aws_region.current.region
   name             = var.name
   description      = var.description
   subnets          = var.subnets
