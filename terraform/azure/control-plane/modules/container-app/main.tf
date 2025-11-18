@@ -140,12 +140,12 @@ resource "azurerm_container_app" "gatling_container" {
   }
 
   ingress {
-      external_enabled = var.container-app.expose-externally
-      target_port      = var.server.port
-      traffic_weight {
-        percentage      = 100
-        latest_revision = true
-      }
+    external_enabled = var.container-app.expose-externally
+    target_port      = var.server.port
+    traffic_weight {
+      percentage      = 100
+      latest_revision = true
+    }
   }
 
   dynamic "secret" {

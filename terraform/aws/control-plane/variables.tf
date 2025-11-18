@@ -45,14 +45,14 @@ variable "git" {
   type = object({
     host = optional(string, "github.com")
     credentials = optional(object({
-      username            = optional(string, "")
+      username         = optional(string, "")
       token-secret-arn = optional(string, "")
     }), {})
     ssh = optional(object({
       private-key-secret-arn = optional(string, "")
     }), {}),
     cache = optional(object({
-      paths   = optional(list(string), [])
+      paths = optional(list(string), [])
     }), {})
   })
   default = {}
@@ -74,10 +74,10 @@ variable "task" {
     memory       = optional(string, "3072")
     image        = optional(string, "gatlingcorp/control-plane:latest")
     init = optional(object({
-      image = optional(string, "busybox")
-      command = optional(list(string), [])
+      image       = optional(string, "busybox")
+      command     = optional(list(string), [])
       environment = optional(list(map(string)), [])
-      secrets = optional(list(map(string)), [])
+      secrets     = optional(list(map(string)), [])
     }), {})
     command         = optional(list(string), [])
     secrets         = optional(list(map(string)), [])

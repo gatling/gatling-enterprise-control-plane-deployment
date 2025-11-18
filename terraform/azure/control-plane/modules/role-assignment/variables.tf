@@ -10,7 +10,7 @@ variable "resource-group-name" {
 
 variable "vault-name" {
   description = "Vault name where the control plane token secret is stored."
-  type = string
+  type        = string
 }
 
 variable "private-package" {
@@ -21,5 +21,5 @@ variable "private-package" {
 
 variable "storage" {
   description = "Boolean to indicate if the storage account is used."
-  type = bool
+  type        = bool
 }
