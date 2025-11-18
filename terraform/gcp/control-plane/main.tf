@@ -15,6 +15,7 @@ module "virtual-machine" {
   container         = var.container
   locations         = var.locations
   private-package   = var.private-package
+  server            = var.server
   enterprise-cloud  = var.enterprise-cloud
   extra-content     = var.extra-content
 }
