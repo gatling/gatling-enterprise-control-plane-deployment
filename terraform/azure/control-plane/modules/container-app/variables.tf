@@ -35,6 +35,7 @@ variable "container-app" {
     command     = list(string)
     secrets     = list(map(string))
     environment = list(map(string))
+    expose-externally = bool
   })
 }
 

@@ -64,6 +64,7 @@ module "control-plane" {
   #   image       = "gatlingcorp/control-plane:latest"
   #   command     = []
   #   environment = []
+  #   expose-externally = true
   # }
   # git = {
   #   # Configure git credentials for the control plane. Requires builder image: "gatlingcorp/control-plane:latest-builder"

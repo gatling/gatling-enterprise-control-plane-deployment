@@ -139,16 +139,13 @@ resource "azurerm_container_app" "gatling_container" {
     type = "SystemAssigned"
   }
 
-  dynamic "ingress" {
-    for_each = [1]
-    content {
-      external_enabled = true
+  ingress {
+      external_enabled = var.container-app.expose-externally
       target_port      = var.server.port
       traffic_weight {
         percentage      = 100
         latest_revision = true
       }
-    }
   }
 
   dynamic "secret" {

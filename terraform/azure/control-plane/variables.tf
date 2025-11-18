@@ -73,6 +73,7 @@ variable "container-app" {
       value       = optional(string)
       secret-name = optional(string)
     })), [])
+    expose-externally = optional(bool, true)
   })
   default = {}
 }

@@ -50,6 +50,7 @@ module "control-plane" {
   #   image       = "gatlingcorp/control-plane:latest"
   #   command     = []
   #   environment = []
+  #   expose-externally = true
   # }
   # enterprise-cloud = {
   #   Setup the proxy configuration for the private location
