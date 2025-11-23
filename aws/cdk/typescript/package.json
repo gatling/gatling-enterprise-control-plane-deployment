@@ -5,7 +5,7 @@
     "app": "bin/app.js"
   },
   "dependencies": {
-    "aws-cdk-lib": "2.224.0",
+    "aws-cdk-lib": "2.227.0",
     "constructs": "^10.4.3",
     "source-map-support": "^0.5.21"
   },
