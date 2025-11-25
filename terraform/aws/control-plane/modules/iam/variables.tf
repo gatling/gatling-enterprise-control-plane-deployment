@@ -27,14 +27,14 @@ variable "git" {
   type = object({
     host = string
     credentials = object({
-      username            = string
+      username         = string
       token-secret-arn = string
     })
     ssh = object({
       private-key-secret-arn = string
     }),
     cache = object({
-      paths   = list(string)
+      paths = list(string)
     })
   })
 }
