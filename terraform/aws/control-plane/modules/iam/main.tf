@@ -234,6 +234,25 @@ resource "aws_iam_policy" "cloudwatch_logs_policy" {
   })
 }
 
+resource "aws_iam_policy" "ecs_exec_policy" {
+  name = "${var.name}-ecs-exec-policy"
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "ssmmessages:CreateControlChannel",
+          "ssmmessages:CreateDataChannel",
+          "ssmmessages:OpenControlChannel",
+          "ssmmessages:OpenDataChannel"
+        ],
+        Resource = "*"
+      }
+    ]
+  })
+}
+
 resource "aws_iam_role_policy_attachment" "ec2_policy_base_attachment" {
   role       = aws_iam_role.gatling_role.name
   policy_arn = aws_iam_policy.ec2_policy_base.arn
@@ -266,4 +285,9 @@ resource "aws_iam_role_policy_attachment" "ecr_policy_attachment" {
   count      = var.task.ecr ? 1 : 0
   role       = aws_iam_role.gatling_role.name
   policy_arn = aws_iam_policy.ecr_policy[0].arn
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_exec_policy_attachment" {
+  role       = aws_iam_role.gatling_role.name
+  policy_arn = aws_iam_policy.ecs_exec_policy.arn
 }
