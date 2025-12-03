@@ -93,9 +93,9 @@ variable "server" {
   type = object({
     port        = number
     bindAddress = string
-    certificate = optional(object({
-      path     = optional(string)
-      password = optional(string, null)
-    }), null)
+    certificate = object({
+      path     = string
+      password = string
+    })
   })
 }
