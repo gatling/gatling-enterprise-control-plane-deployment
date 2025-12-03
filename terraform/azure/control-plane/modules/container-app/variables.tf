@@ -29,12 +29,13 @@ variable "container-app" {
     init = object({
       image = string
     })
-    cpu         = number
-    memory      = string
-    image       = string
-    command     = list(string)
-    secrets     = list(map(string))
-    environment = list(map(string))
+    cpu               = number
+    memory            = string
+    image             = string
+    command           = list(string)
+    secrets           = list(map(string))
+    environment       = list(map(string))
+    expose-externally = bool
   })
 }
 
@@ -75,4 +76,16 @@ variable "enterprise-cloud" {
 
 variable "extra-content" {
   type = map(any)
+}
+
+variable "server" {
+  description = "Control Plane Repository Server configuration."
+  type = object({
+    port        = number
+    bindAddress = string
+    certificate = object({
+      path     = string
+      password = string
+    })
+  })
 }

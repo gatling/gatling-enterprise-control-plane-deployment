@@ -12,14 +12,6 @@ module "private-package" {
   # upload = {
   #   directory = "/tmp"
   # }
-  # server = {
-  #   port        = 8080
-  #   bindAddress = "0.0.0.0"
-  #   certificate = {
-  #     path     = "/path/to/certificate.p12"
-  #     password = "password"
-  #   }
-  # }
 }
 
 # Configure a AWS private location
@@ -103,5 +95,13 @@ module "control-plane" {
   # enterprise-cloud = {
   #   Setup the proxy configuration for the control plane
   #   Reference: https://docs.gatling.io/reference/install/cloud/private-locations/network/#configuring-a-proxy
+  # }
+  # server = {
+  #   port        = 8080
+  #   bindAddress = "0.0.0.0"
+  #   certificate = {
+  #     path     = "/path/to/certificate.p12"
+  #     password = "password"
+  #   }
   # }
 }

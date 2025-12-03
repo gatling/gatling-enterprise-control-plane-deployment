@@ -12,25 +12,25 @@ module "location" {
   project     = "<ProjectId>"
   zone        = "<Zone>"
   machine = {
-  #   type        = "c3-highcpu-4"
-  #   preemptible = false
-  #   engine      = "classic"
-  #   image = {
-  #     type    = "certified"
-  #     java    = "latest"
-  #     project = "<ProjectName>"
-  #     family  = "<ImageFamily>"
-  #     id      = "<ImageId>"
-  #   }
-  #   disk = {
-  #     sizeGb = 20
-  #   }
-  #   network-interface = {
-  #     project          = "<NetworkInterfaceProjectName>"
-  #     network          = "<Network>"
-  #     subnetwork       = "<SubNetwork>"
-  #     with-external-ip = true
-  #   }
+    #   type        = "c3-highcpu-4"
+    #   preemptible = false
+    #   engine      = "classic"
+    #   image = {
+    #     type    = "certified"
+    #     java    = "latest"
+    #     project = "<ProjectName>"
+    #     family  = "<ImageFamily>"
+    #     id      = "<ImageId>"
+    #   }
+    #   disk = {
+    #     sizeGb = 20
+    #   }
+    #   network-interface = {
+    #     project          = "<NetworkInterfaceProjectName>"
+    #     network          = "<Network>"
+    #     subnetwork       = "<SubNetwork>"
+    #     with-external-ip = true
+    #   }
   }
   # instance-template = "<InstanceTemplate>"
   # system-properties = {}
@@ -79,5 +79,13 @@ module "control-plane" {
   # enterprise-cloud = {
   #   Setup the proxy configuration for the private location
   #   Reference: https://docs.gatling.io/reference/install/cloud/private-locations/network/#configuring-a-proxy
+  # }
+  # server = {
+  #   port        = 8080
+  #   bindAddress = "0.0.0.0"
+  #   certificate = {
+  #     path     = "/path/to/certificate.p12"
+  #     password = "password"
+  #   }
   # }
 }
