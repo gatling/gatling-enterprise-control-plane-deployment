@@ -1,8 +1,18 @@
 locals {
-  conf_path      = "/app/conf"
-  ssh_path       = "/app/.ssh"
-  git_path       = "${local.conf_path}/.git-credentials"
-  volume_name    = "control-plane-volume"
+  # Paths
+  conf_path   = "/app/conf"
+  ssh_path    = "/app/.ssh"
+  git_path    = "${local.conf_path}/.git-credentials"
+  volume_name = "control-plane-volume"
+
+  # Certificate configuration
+  certs_path               = "${local.conf_path}/certs"
+  custom_ca_file_path      = "${local.certs_path}/ca.pem"
+  install_script_file_path = "${local.certs_path}/install-certificates.sh"
+  certificates_enabled     = length(var.certificates) > 0
+  certificates_b64         = local.certificates_enabled ? base64encode(var.certificates) : ""
+  install_script_b64       = local.certificates_enabled ? base64encode(file("${path.module}/install-certificates.sh")) : ""
+
   config_content = <<-EOF
     control-plane {
       token = $${?CONTROL_PLANE_TOKEN}
@@ -45,12 +55,21 @@ locals {
         containerPath = cache_path
         readOnly      = false
       }
-  ])
+    ],
+    [
+      {
+        sourceVolume : "java-security"
+        containerPath : "/usr/lib/jvm/zulu/lib/security"
+        readOnly : false
+      }
+    ]
+  )
   init_commands = compact([
     "echo \"$CONFIG_CONTENT\" > ${local.conf_path}/control-plane.conf && chown -R 1001 ${local.conf_path} && chmod 400 ${local.conf_path}/control-plane.conf",
     local.git.ssh_enabled ? "echo 'Host ${var.git.host}\n IdentityFile ${local.ssh_path}/id_gatling\n  StrictHostKeyChecking no' >> ${local.ssh_path}/config && echo \"$SSH_KEY\" > ${local.ssh_path}/id_gatling && chown -R 1001 ${local.ssh_path} && chmod 400 ${local.ssh_path}/id_gatling" : "",
     local.git.creds_enabled ? "echo \"https://$GIT_USERNAME:$GIT_TOKEN@${var.git.host}\" > ${local.git_path} && chown -R 1001 ${local.conf_path} && chmod 400 ${local.git_path}" : "",
-    join("&&", var.task.init.command)
+    local.certificates_enabled ? "mkdir -p ${local.certs_path} && printf '%s' '${local.install_script_b64}' | base64 -d > ${local.install_script_file_path} && chmod +x ${local.install_script_file_path} && sh ${local.install_script_file_path}" : "",
+    join(" && ", var.task.init.command)
   ])
   init = {
     command = [
@@ -90,6 +109,24 @@ locals {
           value = local.git_path
         }
       ] : [],
+      local.certificates_enabled ? [
+        {
+          name = "CUSTOM_CA_FILE_PATH"
+          value = local.custom_ca_file_path
+        },
+        {
+          name  = "CUSTOM_CA_CERTIFICATES_B64"
+          value = local.certificates_b64
+        },
+        {
+          name = "GIT_SSL_CAINFO"
+          value = local.custom_ca_file_path
+        },
+        {
+          name = "NODE_EXTRA_CA_CERTS"
+          value = local.custom_ca_file_path
+        }
+      ] : [],
       var.task.init.environment
     )
     mountPoints = concat(
@@ -106,7 +143,15 @@ locals {
           containerPath : local.ssh_path
           readOnly : false
         }
-    ] : [])
+      ] : [],
+      [
+        {
+          sourceVolume : "java-security"
+          containerPath : "/shared-java-security"
+          readOnly : false
+        }
+      ]
+    )
   }
 }
 
@@ -128,6 +173,7 @@ resource "aws_ecs_task_definition" "gatling_task" {
       image : var.task.init.image
       cpu : 0
       essential : false
+      entryPoint : []
       command : local.init.command
       environment : local.init.environment
       secrets : local.init.secrets
@@ -173,14 +219,19 @@ resource "aws_ecs_task_definition" "gatling_task" {
   volume {
     name = local.volume_name
   }
+
+  volume {
+    name = "java-security"
+  }
 }
 
 resource "aws_ecs_service" "gatling_service" {
-  name            = "${var.name}-service"
-  cluster         = aws_ecs_cluster.gatling_cluster.id
-  task_definition = aws_ecs_task_definition.gatling_task.arn
-  desired_count   = 1
-  launch_type     = "FARGATE"
+  name                   = "${var.name}-service"
+  cluster                = aws_ecs_cluster.gatling_cluster.id
+  task_definition        = aws_ecs_task_definition.gatling_task.arn
+  desired_count          = 1
+  launch_type            = "FARGATE"
+  enable_execute_command = true
 
   network_configuration {
     subnets          = var.subnets

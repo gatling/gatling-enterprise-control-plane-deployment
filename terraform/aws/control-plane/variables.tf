@@ -109,3 +109,14 @@ variable "extra-content" {
   type    = map(any)
   default = {}
 }
+
+variable "certificates" {
+  description = <<-EOT
+    Content of custom CA certificates in PEM format to be added to the Java truststore.
+    Use file() function to load from a file: certificates = file("path/to/cert.pem")
+    Multiple certificates can be included in a single PEM file.
+    Leave empty or omit to skip certificate installation.
+  EOT
+  type        = string
+  default     = ""
+}

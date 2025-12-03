@@ -26,4 +26,5 @@ module "ecs" {
   private-package  = var.private-package
   enterprise-cloud = var.enterprise-cloud
   extra-content    = var.extra-content
+  certificates     = var.certificates
 }

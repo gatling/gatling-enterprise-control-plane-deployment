@@ -1,5 +1,6 @@
 provider "aws" {
-  region = "<Region>"
+  region = "eu-west-3"
+  profile = "sandbox"
 }
 
 # Configure a AWS private location
@@ -48,11 +49,18 @@ module "control-plane" {
   subnets          = ["<SubnetId>"]
   security-groups  = ["<SecurityGroupId>"]
   locations        = [module.location]
+
+  # Custom CA Certificates (optional)
+  # Provide custom CA certificates to trust private/internal services
+  # Useful for private Git repositories, npm registries, Maven repositories, etc.
+  # Uncomment and specify your certificate file path
+  # If no custom certificates are needed, you can omit this parameter entirely
+  # certificates = file("custom-ca-certificates.pem")
   # task = {
   #   cpu    = "1024"
   #   memory = "3072"
   #   init = {
-  #     image       = "busybox"
+  #     image       = "busybox" # If you use custom certificates, ensure a JRE is available on the image. Ex: azul/zulu-openjdk:25-jre-latest
   #     command     = []
   #     secrets     = []
   #     environment = []
