@@ -41,7 +41,7 @@ variable "assign-public-ip" {
 }
 
 variable "git" {
-  description = "Conrol plane git configuration."
+  description = "Control plane git configuration."
   type = object({
     host = optional(string, "github.com")
     credentials = optional(object({
@@ -67,7 +67,7 @@ variable "git" {
 }
 
 variable "task" {
-  description = "Conrol plane task definition."
+  description = "Control plane task definition."
   type = object({
     iam-role-arn = optional(string, "")
     cpu          = optional(string, "1024")
