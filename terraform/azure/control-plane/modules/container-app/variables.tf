@@ -39,7 +39,7 @@ variable "container-app" {
 }
 
 variable "git" {
-  description = "Conrol plane git configuration."
+  description = "Control plane git configuration."
   type = object({
     host = string
     credentials = object({

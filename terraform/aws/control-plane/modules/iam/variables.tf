@@ -23,7 +23,7 @@ variable "private-package" {
 }
 
 variable "git" {
-  description = "Conrol plane git configuration."
+  description = "Control plane git configuration."
   type = object({
     host = string
     credentials = object({
@@ -40,7 +40,7 @@ variable "git" {
 }
 
 variable "task" {
-  description = "Conrol plane task definition."
+  description = "Control plane task definition."
   type = object({
     secrets         = list(map(string))
     cloudwatch-logs = bool

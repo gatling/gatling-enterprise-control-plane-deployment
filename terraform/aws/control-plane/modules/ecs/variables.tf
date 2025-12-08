@@ -33,7 +33,7 @@ variable "assign-public-ip" {
 }
 
 variable "task" {
-  description = "Conrol plane task definition."
+  description = "Control plane task definition."
   type = object({
     iam-role-arn = string
     init = object({
@@ -54,7 +54,7 @@ variable "task" {
 }
 
 variable "git" {
-  description = "Conrol plane git configuration."
+  description = "Control plane git configuration."
   type = object({
     host = string
     credentials = object({

@@ -78,7 +78,7 @@ variable "container-app" {
 }
 
 variable "git" {
-  description = "Conrol plane git configuration."
+  description = "Control plane git configuration."
   type = object({
     host = optional(string, "github.com")
     credentials = optional(object({
