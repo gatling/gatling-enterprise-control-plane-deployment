@@ -20,7 +20,7 @@ control-plane {
     proxy = {
     {{- with .forward }}
       forward {
-        url = {{.url}}
+        url = "{{.url}}"
       }
     {{- end }}
     {{- with .http }}
@@ -29,8 +29,8 @@ control-plane {
         noproxy = "{{.noproxy}}"
         {{- with .credentials }}
         credentials = {
-          username = {{.username}}
-          password = {{.password}}
+          username = "{{.username}}"
+          password = "{{.password}}"
         }
         {{- end }}
       }
@@ -43,7 +43,7 @@ control-plane {
       {{- with .keystore }}
       keystore = {
         path = "{{.path}}" 
-        password = {{.password}}
+        password = "{{.password}}"
       }
       {{- end }}
     }
@@ -62,7 +62,7 @@ control-plane {
         proxy = {
           {{- with .forward }}
           forward {
-            url = {{.url}}
+            url = "{{.url}}"
           }
           {{- end }}
           {{- with .http }}
@@ -71,8 +71,8 @@ control-plane {
             noproxy = "{{.noproxy}}"
             {{- with .credentials }}
             credentials = {
-              username = {{.username}}
-              password = {{.password}}
+              username = "{{.username}}"
+              password = "{{.password}}"
             }
             {{- end }}
           }
@@ -85,7 +85,7 @@ control-plane {
           {{- with .keystore }}
           keystore = {
             path = "{{.path}}" 
-            password = {{.password}}
+            password = "{{.password}}"
           }
           {{- end }}
         }
@@ -101,14 +101,14 @@ control-plane {
       {{- end }}
       {{- with .job }}
       job = {
-        apiVersion = "batch/v1",
-        kind = "Job",
+        apiVersion = "batch/v1"
+        kind = "Job"
         metadata: {
-            generateName = "gatling-job-",
+            generateName = "gatling-job-"
             namespace = "{{ $.Values.namespace }}"
-        },
+        }
         spec = {
-            template = {{ toJson .spec.template }},
+            template = {{ toJson .spec.template }}
             ttlSecondsAfterFinished = {{ .spec.ttlSecondsAfterFinished }}
         }
       }
@@ -134,8 +134,8 @@ control-plane {
       tags-for = {{ toJson .tagsFor }}
     {{- end }}
     {{- if eq .type "azure" }}
-      region = "{{ .region }}
-      engine = "{{ .engine }}""
+      region = "{{ .region }}"
+      engine = "{{ .engine }}"
       size = "{{ .size }}"
       image = {{ toJson .image }}
       subscription = "{{ .subscription }}"
@@ -155,7 +155,7 @@ control-plane {
       debug.keep-load-generator-alive = {{ toJson (default false .keepLoadGeneratorAlive) }}
       system-properties = {
       {{- range $key, $val := .systemProperties }}
-        "{{ $key }}" = {{ $val }}
+        "{{ $key }}" = "{{ $val }}"
       {{- end }}
       }
     {{- if .javaHome }}
@@ -167,17 +167,17 @@ control-plane {
   ]
   {{- if .Values.privatePackage.enabled }}
     {{- if .Values.privatePackage.repository.server }}
-    server: {{ toJson .Values.privatePackage.repository.server }},
+    server: {{ toJson .Values.privatePackage.repository.server }}
     {{- end }}
   {{- $repoType := .Values.privatePackage.repository.type }}
   {{- $config := index .Values.privatePackage.repository.configurations $repoType }}
   repository = {
     {{- if .Values.privatePackage.repository.upload }}
-    upload = {{ toJson .Values.privatePackage.repository.upload }},
+    upload = {{ toJson .Values.privatePackage.repository.upload }}
     {{- end }}
     type = "{{ $repoType }}"
     {{- range $key, $value := $config }}
-    {{ $key }} = {{ toJson $value }},
+    "{{ $key }}" = {{ toJson $value }}
     {{- end }}
   }
   {{- end }}
