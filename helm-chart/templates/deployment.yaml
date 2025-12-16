@@ -50,9 +50,88 @@ spec:
       imagePullSecrets:
         {{ toYaml .Values.controlPlane.image.pullSecrets | nindent 8 }}
       {{- end }}
-      {{- if .Values.controlPlane.initContainers }}
+      {{- if or .Values.controlPlane.customCACertificates.configName .Values.controlPlane.initContainers }}
       initContainers:
+      {{- if .Values.controlPlane.customCACertificates.configName }}
+        - name: certificates-installer
+          image: azul/zulu-openjdk:25-jre-headless-latest
+          imagePullPolicy: IfNotPresent
+          command: ["bash", "-c"]
+          args:
+            - |
+              set -e
+
+              CERT_SOURCE="/app/conf/certs/ca.pem"
+
+              # Validate certificate file exists and is not empty
+              if [ ! -f "$CERT_SOURCE" ]; then
+                echo "ERROR: Certificate file not found at $CERT_SOURCE"
+                echo "Please verify ConfigMap '{{ .Values.controlPlane.customCACertificates.configName }}' exists and contains key '{{ .Values.controlPlane.customCACertificates.pemKey }}'"
+                exit 1
+              fi
+
+              if [ ! -s "$CERT_SOURCE" ]; then
+                echo "ERROR: Certificate file is empty"
+                exit 1
+              fi
+
+              # Validate PEM format
+              if ! grep -q "BEGIN CERTIFICATE" "$CERT_SOURCE"; then
+                echo "ERROR: No valid PEM certificates found"
+                echo "File must contain PEM-encoded certificates with '-----BEGIN CERTIFICATE-----' headers"
+                exit 1
+              fi
+
+              # Split PEM chain into individual certificate files (required for keytool)
+              tmpdir=$(mktemp -d)
+              cert_prefix="$tmpdir/cert-"
+              cert_suffix=".pem"
+
+              awk '
+              /-----BEGIN CERTIFICATE-----/ { n++; collecting=1 }
+              collecting { print > "'"$cert_prefix"'" n "'"$cert_suffix"'" }
+              /-----END CERTIFICATE-----/ { collecting=0 }
+              ' "$CERT_SOURCE"
+
+              # Copy Java security directory to shared volume
+              cp -R "$JAVA_HOME/lib/security/." /shared-java-security/
+
+              # Import each certificate into the Java truststore
+              count=0
+              for cert in "$cert_prefix"*"$cert_suffix"; do
+                  [ -f "$cert" ] || continue
+                  count=$((count + 1))
+
+                  if ! keytool -importcert -noprompt \
+                    -alias "custom-ca-$count" \
+                    -file "$cert" \
+                    -keystore "/shared-java-security/cacerts" \
+                    -storepass changeit 2>&1; then
+                    echo "ERROR: Failed to import certificate $cert into Java truststore"
+                    exit 1
+                  fi
+              done
+
+              if [ $count -eq 0 ]; then
+                echo "ERROR: No certificates were imported"
+                exit 1
+              fi
+
+              # Cleanup
+              rm -rf "$tmpdir"
+
+              echo "✓ Successfully imported $count custom CA certificate(s)"
+          volumeMounts:
+            - name: custom-ca-config
+              mountPath: /app/conf/certs
+              readOnly: true
+            - name: java-security
+              mountPath: /shared-java-security
+              readOnly: false
+      {{- end }}
+      {{- if .Values.controlPlane.initContainers }}
         {{ toYaml .Values.controlPlane.initContainers | nindent 8 }}
+      {{- end }}
       {{- end }}
       containers:
         - name: {{ .Values.controlPlane.name }}
@@ -70,9 +149,17 @@ spec:
           args:  
             {{ toYaml .Values.controlPlane.args | nindent 12 }}
           {{- end }}
-          {{- if .Values.controlPlane.env }}
+          {{- if or .Values.controlPlane.env .Values.controlPlane.customCACertificates.secretName }}
           env:
+          {{- if .Values.controlPlane.env }}
             {{ toYaml .Values.controlPlane.env | nindent 12 }}
+          {{- end }}
+          {{- if .Values.controlPlane.customCACertificates.configName }}
+            - name: GIT_SSL_CAINFO
+              value: "/app/conf/certs/ca.pem"
+            - name: NODE_EXTRA_CA_CERTS
+              value: "/app/conf/certs/ca.pem"
+          {{- end }}
           {{- end }}
           resources:
             requests:
@@ -88,6 +175,14 @@ spec:
             - mountPath: {{ .Values.privatePackage.repository.configurations.filesystem.directory }}
               name: "{{ .Values.controlPlane.name }}-pv-volume"
           {{- end }}
+          {{- if .Values.controlPlane.customCACertificates.configName }}
+            - name: custom-ca-config
+              mountPath: /app/conf/certs
+              readOnly: true
+            - name: java-security
+              mountPath: /usr/lib/jvm/zulu/lib/security
+              readOnly: false
+          {{- end }}
           {{- if .Values.controlPlane.volumeMounts }}
             {{ toYaml .Values.controlPlane.volumeMounts | nindent 12 }}
           {{- end }}
@@ -99,6 +194,16 @@ spec:
         - name: "{{ .Values.controlPlane.name }}-pv-volume"
           persistentVolumeClaim:
             claimName: "{{ .Values.controlPlane.name }}-pvc"
+      {{- end }}
+      {{- if .Values.controlPlane.customCACertificates.configName }}
+        - name: custom-ca-config
+          configMap:
+            name: {{ .Values.controlPlane.customCACertificates.configName }}
+            items:
+              - key: {{ .Values.controlPlane.customCACertificates.pemKey }}
+                path: ca.pem
+        - name: java-security
+          emptyDir: {}
       {{- end }}
       {{- if .Values.controlPlane.volumes }}
         {{ toYaml .Values.controlPlane.volumes | nindent 8 }}
