@@ -57,6 +57,17 @@ controlPlane:
   volumes: []
   # Mount points for the volumes specified above.
   volumeMounts: []
+  # Custom CA certificates support
+  # When configured, enables the Control Plane to trust custom Certificate Authorities
+  # Useful to trust private/internal services for private Git repositories, npm registries, Maven repositories, etc.
+  customCACertificates:
+    # Name of Kubernetes ConfigMap containing PEM-formatted CA certificates
+    # Leave empty to disable custom CA certificate support
+    # Create the ConfigMap in the same namespace configured above (see 'namespace' setting)
+    # Create with: kubectl -n <namespace> create configmap <configmap-name> --from-file=ca.pem=/path/to/certs.pem
+    configName: ""
+    # Key within the ConfigMap containing the PEM certificate file (default: ca.pem)
+    pemKey: "ca.pem"
   # Constrains Pods to nodes that match these key-value labels.
   nodeSelector: {}
   # Affinity rules (e.g., nodeAffinity, podAffinity, or podAntiAffinity).
