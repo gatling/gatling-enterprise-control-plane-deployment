@@ -1,0 +1,43 @@
+name: Helm chart validation
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'helm-chart/**'
+      - '.github/workflows/helm-chart-*.yaml'
+  pull_request:
+    paths:
+      - 'helm-chart/**'
+      - '.github/workflows/helm-chart-*.yaml'
+
+jobs:
+  test-package-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Setup Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: 'latest'
+
+      - name: Lint Helm Chart
+        working-directory: helm-chart
+        run: helm lint .
+
+      - name: Validate Helm Templates
+        working-directory: helm-chart
+        run: helm template . --debug --dry-run
+
+      - name: Package Helm chart
+        run: |
+          helm package ./helm-chart/ --destination ./packaged-charts/
+          echo "Packaged chart:"
+          ls -lh ./packaged-charts/
