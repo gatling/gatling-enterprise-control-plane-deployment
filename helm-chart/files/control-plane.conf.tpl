@@ -1,4 +1,3 @@
-{{- define "configFileContent" -}}
 control-plane {
   token = ${?CONTROL_PLANE_TOKEN}
   description = "{{ .Values.controlPlane.description }}"
@@ -182,4 +181,3 @@ control-plane {
   }
   {{- end }}
 }
-{{- end }}

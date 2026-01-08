@@ -7,4 +7,4 @@ metadata:
     helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
 data:
   control-plane.conf: |
-{{ tpl (include "configFileContent" .) . | indent 4 }}
+{{ tpl (.Files.Get "files/control-plane.conf.tpl") . | indent 4 }}
