@@ -71,10 +71,9 @@ jobs:
           VERSION: ${{ github.event.inputs.version }}
         run: |
           sed -i "s/^version:.*/version: $VERSION/" helm-chart/Chart.yaml
-          sed -i "s/^appVersion:.*/appVersion: \"$VERSION\"/" helm-chart/Chart.yaml
           
           echo "✓ Updated Chart.yaml to version $VERSION"
-          grep -E '^(version|appVersion):' helm-chart/Chart.yaml
+          grep -E '^version:' helm-chart/Chart.yaml
 
       - name: Commit version change
         run: |
@@ -109,6 +108,22 @@ jobs:
         with:
           role-to-assume: ${{ secrets.SE_HELM_AWS_ROLE }}
           aws-region: ${{ vars.SE_HELM_AWS_S3_REGION }}
+
+      - name: Deploy public to S3
+        env:
+          S3_BUCKET: ${{ vars.SE_HELM_AWS_S3_BUCKET }}
+          S3_REGION: ${{ vars.SE_HELM_AWS_S3_REGION }}
+          HELM_REPO_URL: ${{ vars.SE_HELM_BASE_URL }}
+        run: |
+          PAGE_TITLE="Helm Repository"
+          
+          sed -i "s|{{BUCKET_NAME}}|${S3_BUCKET}|g" ./helm-chart/public/index.html
+          sed -i "s|{{REGION}}|${S3_REGION}|g" ./helm-chart/public/index.html
+          sed -i "s|{{PAGE_TITLE}}|${PAGE_TITLE}|g" ./helm-chart/public/index.html
+          sed -i "s|{{HELM_REPO_URL}}|\"${HELM_REPO_URL}\"|g" ./helm-chart/public/index.html
+          aws s3 cp ./helm-chart/public/index.html "s3://${S3_BUCKET}/index.html"
+          aws s3 cp ./helm-chart/public/gatling.png "s3://${S3_BUCKET}/gatling.png"
+          aws s3 cp ./helm-chart/public/favicon.ico "s3://${S3_BUCKET}/favicon.ico"
 
       - name: Upload to S3
         env:
