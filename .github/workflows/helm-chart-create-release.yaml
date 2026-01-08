@@ -1,0 +1,200 @@
+name: Helm Chart Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: 'Version bump type'
+        required: true
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+        default: 'patch'
+      internal:
+        description: 'Is it an internal release'
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  calculate-version:
+    runs-on: ubuntu-latest
+    outputs:
+      full_tag: ${{ steps.version-bump.outputs.next-version }}
+      version: ${{ steps.parse.outputs.version }}
+      environment: ${{ steps.parse.outputs.environment }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Calculate next version
+        uses: gatling/private-actions@version-bump/v1
+        id: version-bump
+        with:
+          github-token: ${{ secrets.GITHUB_CI_TOKEN }}
+          prefix: 'helm-chart-v'
+          repo: ${{ github.repository }}
+          bump: ${{ github.event.inputs.bump }}
+
+      - name: Parse version and determine environment
+        id: parse
+        run: |
+          FULL_TAG="${{ steps.version-bump.outputs.next-version }}"
+          echo "Full tag: $FULL_TAG"
+          
+          VERSION="${FULL_TAG#helm-chart-v}"
+          echo "Version: $VERSION"
+
+          ENVIRONMENT=${{ inputs.internal && 'dev' || 'production' }}
+          echo "Environment: $ENVIRONMENT"
+          
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "environment=$ENVIRONMENT" >> $GITHUB_OUTPUT
+
+  release:
+    needs: calculate-version
+    runs-on: ubuntu-latest
+    environment: ${{ needs.calculate-version.outputs.environment }}
+    permissions:
+      contents: write
+      id-token: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_CI_TOKEN }}
+
+      - name: Configure Git
+        run: |
+          git config user.name "${{ secrets.GATLING_CI_NAME }}"
+          git config user.email "${{ secrets.GATLING_CI_EMAIL }}"
+
+      - name: Display release information
+        run: |
+          echo "🚀 Preparing Helm chart release"
+          echo "Bump type: ${{ github.event.inputs.bump }}"
+          echo "Full tag: ${{ needs.calculate-version.outputs.full_tag }}"
+          echo "Chart version: ${{ needs.calculate-version.outputs.version }}"
+          echo "Environment: ${{ needs.calculate-version.outputs.environment }}"
+
+      - name: Update Chart.yaml with version
+        env:
+          VERSION: ${{ needs.calculate-version.outputs.version }}
+        run: |
+          sed -i "s/^version:.*/version: $VERSION/" helm-chart/Chart.yaml
+          sed -i "s/^appVersion:.*/appVersion: \"$VERSION\"/" helm-chart/Chart.yaml
+          
+          echo "✓ Updated Chart.yaml to version $VERSION"
+          grep -E '^(version|appVersion):' helm-chart/Chart.yaml
+
+      - name: Commit version change
+        run: |
+          git add helm-chart/Chart.yaml
+          git commit -m "chore: bump helm chart version to ${{ needs.calculate-version.outputs.version }}"
+
+      - name: Create and push tag
+        env:
+          TAG: ${{ needs.calculate-version.outputs.full_tag }}
+        run: |
+          git tag "$TAG"
+          git push origin "$TAG"
+          echo "✓ Created and pushed tag: $TAG"
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: 'latest'
+
+      - name: Lint Helm chart
+        run: |
+          helm lint helm-chart/
+
+      - name: Package Helm chart
+        run: |
+          helm package helm-chart/ --destination ./packaged-charts/
+          echo "Packaged chart:"
+          ls -lh ./packaged-charts/
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.SE_HELM_AWS_ROLE }}
+          aws-region: ${{ vars.SE_HELM_AWS_S3_REGION }}
+
+      - name: Upload to S3
+        env:
+          S3_BUCKET: ${{ vars.SE_HELM_AWS_S3_BUCKET }}
+          S3_REGION: ${{ vars.SE_HELM_AWS_S3_REGION }}
+        run: |
+          VERSION="${{ needs.calculate-version.outputs.version }}"
+          CHART_FILE="enterprise-locations-packages-${VERSION}.tgz"
+          
+          aws s3 cp "./packaged-charts/$CHART_FILE" \
+            "s3://${S3_BUCKET}/$CHART_FILE" \
+            --region ${S3_REGION}
+          
+          echo "✓ Chart uploaded to s3://${S3_BUCKET}/$CHART_FILE"
+
+      - name: Update Helm repository index
+        env:
+          S3_BUCKET: ${{ vars.SE_HELM_AWS_S3_BUCKET }}
+          S3_REGION: ${{ vars. SE_HELM_AWS_S3_REGION }}
+        run: |
+          aws s3 cp "s3://${S3_BUCKET}/index.yaml" ./index.yaml \
+            --region ${S3_REGION} || echo "index.yaml not found, will create new one"
+          
+          helm repo index ./packaged-charts/ \
+            --url "https://helm.gatling.io" \
+            --merge ./index.yaml || helm repo index ./packaged-charts/ \
+            --url "https://helm.gatling.io"
+          
+          aws s3 cp ./packaged-charts/index.yaml \
+            "s3://${S3_BUCKET}/index.yaml" \
+            --region ${S3_REGION}
+          
+          echo "✓ Repository index updated at /index.yaml"
+
+      - name: Create CloudFront invalidation
+        env:
+          CLOUDFRONT_DISTRIBUTION_ID: ${{ vars.SE_HELM_AWS_CLOUDFRONT_DISTRIBUTION_ID }}
+        run: aws cloudfront create-invalidation --distribution-id ${CLOUDFRONT_DISTRIBUTION_ID} --paths "/*"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.calculate-version.outputs.full_tag }}
+          name: Helm Chart ${{ needs.calculate-version.outputs.version }}
+          files: ./packaged-charts/*.tgz
+          draft: ${{ needs.calculate-version.outputs.environment != 'production' }}
+          token: ${{ secrets.GITHUB_CI_TOKEN }}
+          body: |
+            ## Helm Chart Release ${{ needs.calculate-version.outputs.version }}
+            
+            **Type**: ${{ needs.calculate-version.outputs.environment == 'production' && '✅ Production Release' || '🚧 Milestone (Development)' }}
+            **Environment**: ${{ needs.calculate-version.outputs.environment }}
+            **Bump**: ${{ github.event.inputs.bump }}
+            
+            ### Installation
+            
+            ```bash
+            # Add the Helm repository
+            helm repo add gatling https://helm.gatling.io
+            
+            # Update repositories
+            helm repo update
+            
+            # Install the chart
+            helm install gatling-control-plane gatling/enterprise-control-plane --version ${{ needs.calculate-version.outputs.version }}
+            ```
+            
+            ### Changes
+            - Bumped version using **${{ github.event.inputs.bump }}** strategy
+            - Changelog: See commit history for details
+
