@@ -149,7 +149,9 @@ spec:
           args:  
             {{ toYaml .Values.controlPlane.args | nindent 12 }}
           {{- end }}
-          {{- if or .Values.controlPlane.env .Values.controlPlane.customCACertificates.secretName }}
+          {{- $secrets := include "gatling-helm.collect-secrets" .Values.controlPlane | fromJsonArray }}
+
+          {{- if or .Values.controlPlane.env .Values.controlPlane.customCACertificates.secretName (gt (len $secrets) 0) }}
           env:
           {{- if .Values.controlPlane.env }}
             {{ toYaml .Values.controlPlane.env | nindent 12 }}
@@ -159,6 +161,15 @@ spec:
               value: "/app/conf/certs/ca.pem"
             - name: NODE_EXTRA_CA_CERTS
               value: "/app/conf/certs/ca.pem"
+          {{- end }}
+          {{- if gt (len $secrets) 0 }}
+          {{- range $secrets }}
+            - name: {{ .envName }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .secretName }}
+                  key: {{ .secretKey }}
+          {{- end }}
           {{- end }}
           {{- end }}
           resources:

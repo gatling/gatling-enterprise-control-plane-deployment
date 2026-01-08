@@ -189,7 +189,7 @@ jobs:
             helm repo update
             
             # Install the chart
-            helm install gatling-control-plane ${{ vars.SE_HELM_REPO_NAME }}/enterprise-control-plane --version ${{ github.event.inputs.version }}
+            helm install gatling-control-plane ${{ vars.SE_HELM_REPO_NAME }}/enterprise-locations-packages --version ${{ github.event.inputs.version }}
             ```
             
             ### Changes

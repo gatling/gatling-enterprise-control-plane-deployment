@@ -1,6 +1,6 @@
 control-plane {
   token = ${?CONTROL_PLANE_TOKEN}
-  description = "{{ .Values.controlPlane.description }}"
+  description = {{ include "hocon-value" .Values.controlPlane.description }}
   {{- if and .Values.controlPlane.builder (default false .Values.controlPlane.builder.enabled) }}
   builder {
     git.global.credentials {
@@ -19,30 +19,30 @@ control-plane {
     proxy = {
     {{- with .forward }}
       forward {
-        url = "{{.url}}"
+        url = {{ include "hocon-value" .url}}
       }
     {{- end }}
     {{- with .http }}
       http = {
-        url = "{{.url}}"
-        noproxy = "{{.noproxy}}"
+        url = {{ include "hocon-value" .url }}
+        noproxy = {{ include "hocon-value" .noproxy }}
         {{- with .credentials }}
         credentials = {
-          username = "{{.username}}"
-          password = "{{.password}}"
+          username = {{ include "hocon-value" .username}}
+          password = {{ include "hocon-value" .password}}
         }
         {{- end }}
       }
       {{- end }}
       {{- with .truststore }}
       truststore = {
-        path = "{{.path}}" 
+        path = {{ include "hocon-value" .path }}
       }
       {{- end }}
       {{- with .keystore }}
       keystore = {
-        path = "{{.path}}" 
-        password = "{{.password}}"
+        path = {{ include "hocon-value" .path }}
+        password = {{ include "hocon-value" .password }}
       }
       {{- end }}
     }
@@ -52,39 +52,39 @@ control-plane {
   locations = [
   {{- range .Values.privateLocations }}
     {
-      id = "{{ .id }}"
-      description = "{{ .description }}"
-      type = "{{ .type }}"
+      id = {{ include "hocon-value" .id }}
+      description = {{ include "hocon-value" .description }}
+      type = {{ include "hocon-value" .type }}
       {{- if .enterpriseCloud }}
       enterprise-cloud = {
         {{- with .enterpriseCloud.proxy }}
         proxy = {
           {{- with .forward }}
           forward {
-            url = "{{.url}}"
+            url = {{ include "hocon-value" .url }}
           }
           {{- end }}
           {{- with .http }}
           http = {
-            url = "{{.url}}"
-            noproxy = "{{.noproxy}}"
+            url = {{ include "hocon-value" .url }}
+            noproxy = {{ include "hocon-value" .noproxy }}
             {{- with .credentials }}
             credentials = {
-              username = "{{.username}}"
-              password = "{{.password}}"
+              username = {{ include "hocon-value" .username }}
+              password = {{ include "hocon-value" .password }}
             }
             {{- end }}
           }
           {{- end }}
           {{- with .truststore }}
           truststore = {
-            path = "{{.path}}" 
+            path = {{ include "hocon-value" .path }}
           }
           {{- end }}
           {{- with .keystore }}
           keystore = {
-            path = "{{.path}}" 
-            password = "{{.password}}"
+            path = {{ include "hocon-value" .path}}
+            password = {{ include "hocon-value" .password }}
           }
           {{- end }}
         }
@@ -93,10 +93,10 @@ control-plane {
       {{ end }}
     {{- if eq .type "kubernetes" }}
       namespace = "{{ $.Values.namespace }}"
-      engine = "{{ .engine }}"
+      engine = {{ include "hocon-value" .engine }}
       image = {{ toJson .image }}
       {{- if .context }}
-      context = "{{ .context }}"
+      context = {{ include "hocon-value" .context }}
       {{- end }}
       {{- with .job }}
       job = {
@@ -108,46 +108,46 @@ control-plane {
         }
         spec = {
             template = {{ toJson .spec.template }}
-            ttlSecondsAfterFinished = {{ .spec.ttlSecondsAfterFinished }}
+            ttlSecondsAfterFinished = {{ include "hocon-value" .spec.ttlSecondsAfterFinished }}
         }
       }
       {{- end }}
     {{ end }}
     {{- if eq .type "aws" }}
-      region = "{{ .region }}"
-      engine = "{{ .engine }}"
+      region = {{ include "hocon-value" .region }}
+      engine = {{ include "hocon-value" .engine }}
       ami = {{ toJson .ami }}
       security-groups = {{ toJson .securityGroups }}
-      instance-type = "{{ .instanceType }}"
+      instance-type = {{ include "hocon-value" .instanceType }}
       spot = {{ toJson .spot }}
       subnets = {{ toJson .subnets }}
       auto-associate-public-ipv4 = {{ toJson .autoAssociatePublicIPv4 }}
       elastic-ips = {{ toJson .elasticIps }}
       {{- if .profileName }}
-      profile-name = "{{ .profileName }}"
+      profile-name = {{ include "hocon-value" .profileName }}
       {{- end }}
       {{- if .iamInstanceProfile }}
-      iam-instance-profile = "{{ .iamInstanceProfile }}"
+      iam-instance-profile = {{ include "hocon-value" .iamInstanceProfile }}
       {{- end }}
       tags = {{ toJson .tags }}
       tags-for = {{ toJson .tagsFor }}
     {{- end }}
     {{- if eq .type "azure" }}
-      region = "{{ .region }}"
-      engine = "{{ .engine }}"
-      size = "{{ .size }}"
+      region = {{ include "hocon-value" .region }}
+      engine = {{ include "hocon-value" .engine }}
+      size = {{ include "hocon-value" .size }}
       image = {{ toJson .image }}
-      subscription = "{{ .subscription }}"
-      network-id = "{{ .networkId }}"
-      subnet-name = "{{ .subnetName }}"
+      subscription = {{ include "hocon-value" .subscription }}
+      network-id = {{ include "hocon-value" .networkId }}
+      subnet-name = {{ include "hocon-value" .subnetName }}
       associate-public-ip = {{ toJson .associatePublicIp }}
       tags = {{ toJson .tags }}
     {{- end }}
     {{- if eq .type "gcp" }}
-      zone = "{{ .zone }}"
-      project = "{{ .project }}"
+      zone = {{ include "hocon-value" .zone }}
+      project = {{ include "hocon-value" .project }}
       {{- if .instanceTemplate }}
-      instance-template = "{{ .instanceTemplate }}"
+      instance-template = {{ include "hocon-value" .instanceTemplate }}
       {{- end }}
       machine = {{ toJson .machine }}
     {{- end }}
@@ -158,7 +158,7 @@ control-plane {
       {{- end }}
       }
     {{- if .javaHome }}
-      java-home = "{{ .javaHome }}"
+      java-home = {{ include "hocon-value" .javaHome }}
     {{- end }}
       jvm-options = {{ toJson .jvmOptions }}
     }
@@ -174,7 +174,7 @@ control-plane {
     {{- if .Values.privatePackage.repository.upload }}
     upload = {{ toJson .Values.privatePackage.repository.upload }}
     {{- end }}
-    type = "{{ $repoType }}"
+    type = {{ include "hocon-value" $repoType }}
     {{- range $key, $value := $config }}
     "{{ $key }}" = {{ toJson $value }}
     {{- end }}
