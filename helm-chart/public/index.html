@@ -56,14 +56,58 @@
         list-style-type: none;
         padding: 0;
       }
-      ul#file-list li {
-        padding: 5px 0;
+      .chart-item {
+        padding: 10px 0;
+        border-bottom: 1px solid #ecf0f1;
       }
-      ul#file-list li a {
-        text-decoration: none;
+      .chart-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .chart-name {
+        font-weight: bold;
+        font-size: 1.1em;
+      }
+      .chart-description {
+        color: #7f8c8d;
+        margin: 5px 0;
+      }
+      details {
+        margin-top: 5px;
+      }
+      summary {
+        cursor: pointer;
+        color: #2980b9;
+        font-size: 0.9em;
+      }
+      summary:hover {
+        text-decoration: underline;
+      }
+      .versions-list {
+        margin-top: 10px;
+        padding-left: 15px;
+        border-left: 2px solid #ecf0f1;
+      }
+      .version-item {
+        padding: 5px 0;
+        font-size: 0.9em;
+      }
+      .version-number {
+        font-weight: bold;
         color: #2980b9;
       }
-      ul#file-list li a:hover {
+      .version-meta {
+        color: #7f8c8d;
+        font-size: 0.85em;
+      }
+      .version-download {
+        margin-left: 10px;
+        color: #2980b9;
+        text-decoration: none;
+        font-size: 0.85em;
+      }
+      .version-download:hover {
         text-decoration: underline;
       }
       code {
@@ -104,49 +148,68 @@
       &copy; <span id="year"></span> Gatling Corp.
     </footer>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
     <script>
       document.getElementById('year').textContent = new Date().getFullYear();
 
-      const bucketName = "{{BUCKET_NAME}}";
-      const region = "{{REGION}}";
-      const helmRepoUrl = `https://${bucketName}.s3.amazonaws.com`
+      function formatDate(dateStr) {
+        if (!dateStr) return '';
+        const date = new Date(dateStr);
+        return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+      }
 
-      async function listFiles() {
+      async function loadCharts() {
         try {
-          const response = await fetch(helmRepoUrl);
+          const response = await fetch('index.yaml');
           const text = await response.text();
-          const parser = new DOMParser();
-          const xml = parser.parseFromString(text, "application/xml");
+          const index = jsyaml.load(text);
 
-          const contents = xml.getElementsByTagName("Contents");
           const fileList = document.getElementById("file-list");
 
-          for (let i = 0; i < contents.length; i++) {
-            const key = contents[i].getElementsByTagName("Key")[0].textContent;
-
-            if (
-              key === "index.html" ||
-              key === "gatling.png" ||
-              key === "favicon.ico" ||
-              key.endsWith("/") ||
-              key.endsWith(".png")
-            ) {
-              continue;
-            }
+          for (const [chartName, versions] of Object.entries(index.entries || {})) {
+            const latest = versions[0];
+            const latestUrl = latest.urls && latest.urls[0] ? latest.urls[0] : '#';
 
             const li = document.createElement("li");
-            const a = document.createElement("a");
-            a.href = `${helmRepoUrl}/${key}`;
-            a.textContent = key;
-            li.appendChild(a);
+            li.className = "chart-item";
+
+            let versionsHtml = '';
+            for (const v of versions) {
+              const downloadUrl = v.urls && v.urls[0] ? v.urls[0] : '#';
+              versionsHtml += `
+                <div class="version-item">
+                  <span class="version-number">v${v.version}</span>
+                  <span class="version-meta">
+                    (app: ${v.appVersion || 'N/A'}) - ${formatDate(v.created)}
+                  </span>
+                  <a href="${downloadUrl}" class="version-download">Download</a>
+                </div>
+              `;
+            }
+
+            li.innerHTML = `
+              <div class="chart-header">
+                <span class="chart-name">${chartName}</span>
+                <span>Latest: v${latest.version} <a href="${latestUrl}" class="version-download">Download</a></span>
+              </div>
+              <div class="chart-description">${latest.description || ''}</div>
+              <details>
+                <summary>Show all versions (${versions.length})</summary>
+                <div class="versions-list">
+                  ${versionsHtml}
+                </div>
+              </details>
+            `;
             fileList.appendChild(li);
           }
         } catch (error) {
-          console.error("Error fetching file list:", error);
+          console.error("Error loading charts:", error);
+          document.getElementById("file-list").innerHTML =
+            "<li>Unable to load chart list. Please try again later.</li>";
         }
       }
 
-      listFiles();
+      loadCharts();
     </script>
   </body>
 </html>
