@@ -160,7 +160,9 @@ control-plane {
     {{- if .javaHome }}
       java-home = {{ include "hocon-value" .javaHome }}
     {{- end }}
+    {{- if .jvmOptions }}
       jvm-options = {{ toJson .jvmOptions }}
+    {{- end }}
     }
   {{- end }}
   ]
