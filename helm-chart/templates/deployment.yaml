@@ -151,7 +151,7 @@ spec:
           {{- end }}
           {{- $secrets := include "gatling-helm.collect-secrets" .Values.controlPlane | fromJsonArray }}
 
-          {{- if or .Values.controlPlane.env .Values.controlPlane.customCACertificates.secretName (gt (len $secrets) 0) }}
+          {{- if or .Values.controlPlane.env .Values.controlPlane.customCACertificates.configName (gt (len $secrets) 0) }}
           env:
           {{- if .Values.controlPlane.env }}
             {{ toYaml .Values.controlPlane.env | nindent 12 }}
