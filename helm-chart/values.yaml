@@ -73,7 +73,7 @@ controlPlane:
   # Affinity rules (e.g., nodeAffinity, podAffinity, or podAntiAffinity).
   affinity: {}
   # Tolerations let Pods be scheduled on nodes with matching taints.
-  tolerations: {}
+  tolerations: []
   # Resource requests and limits for the Control Plane container.
   # Align requests with limits for consistent performance. QoS class: Guaranteed.
   resources:
