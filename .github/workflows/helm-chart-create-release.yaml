@@ -117,8 +117,6 @@ jobs:
         run: |
           PAGE_TITLE="Helm Repository"
           
-          sed -i "s|{{BUCKET_NAME}}|${S3_BUCKET}|g" ./helm-chart/public/index.html
-          sed -i "s|{{REGION}}|${S3_REGION}|g" ./helm-chart/public/index.html
           sed -i "s|{{PAGE_TITLE}}|${PAGE_TITLE}|g" ./helm-chart/public/index.html
           sed -i "s|{{HELM_REPO_URL}}|\"${HELM_REPO_URL}\"|g" ./helm-chart/public/index.html
           aws s3 cp ./helm-chart/public/index.html "s3://${S3_BUCKET}/index.html"
