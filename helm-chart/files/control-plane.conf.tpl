@@ -14,20 +14,20 @@ control-plane {
   }
   {{- end }}
   {{- if .Values.controlPlane.enterpriseCloud }}
-  enterprise-cloud = {
+  enterprise-cloud {
     {{- with .Values.controlPlane.enterpriseCloud.proxy }}
-    proxy = {
+    proxy {
     {{- with .forward }}
       forward {
         url = {{ include "hocon-value" .url}}
       }
     {{- end }}
     {{- with .http }}
-      http = {
+      http {
         url = {{ include "hocon-value" .url }}
         noproxy = {{ include "hocon-value" .noproxy }}
         {{- with .credentials }}
-        credentials = {
+        credentials {
           username = {{ include "hocon-value" .username}}
           password = {{ include "hocon-value" .password}}
         }
@@ -35,12 +35,12 @@ control-plane {
       }
       {{- end }}
       {{- with .truststore }}
-      truststore = {
+      truststore {
         path = {{ include "hocon-value" .path }}
       }
       {{- end }}
       {{- with .keystore }}
-      keystore = {
+      keystore {
         path = {{ include "hocon-value" .path }}
         password = {{ include "hocon-value" .password }}
       }
@@ -56,20 +56,20 @@ control-plane {
       description = {{ include "hocon-value" .description }}
       type = {{ include "hocon-value" .type }}
       {{- if .enterpriseCloud }}
-      enterprise-cloud = {
+      enterprise-cloud {
         {{- with .enterpriseCloud.proxy }}
-        proxy = {
+        proxy {
           {{- with .forward }}
           forward {
             url = {{ include "hocon-value" .url }}
           }
           {{- end }}
           {{- with .http }}
-          http = {
+          http {
             url = {{ include "hocon-value" .url }}
             noproxy = {{ include "hocon-value" .noproxy }}
             {{- with .credentials }}
-            credentials = {
+            credentials {
               username = {{ include "hocon-value" .username }}
               password = {{ include "hocon-value" .password }}
             }
@@ -77,12 +77,12 @@ control-plane {
           }
           {{- end }}
           {{- with .truststore }}
-          truststore = {
+          truststore {
             path = {{ include "hocon-value" .path }}
           }
           {{- end }}
           {{- with .keystore }}
-          keystore = {
+          keystore {
             path = {{ include "hocon-value" .path}}
             password = {{ include "hocon-value" .password }}
           }
@@ -99,14 +99,14 @@ control-plane {
       context = {{ include "hocon-value" .context }}
       {{- end }}
       {{- with .job }}
-      job = {
+      job {
         apiVersion = "batch/v1"
         kind = "Job"
-        metadata: {
+        metadata {
             generateName = "gatling-job-"
             namespace = "{{ $.Values.namespace }}"
         }
-        spec = {
+        spec {
             template = {{ toJson .spec.template }}
             ttlSecondsAfterFinished = {{ include "hocon-value" .spec.ttlSecondsAfterFinished }}
         }
@@ -152,7 +152,7 @@ control-plane {
       machine = {{ toJson .machine }}
     {{- end }}
       debug.keep-load-generator-alive = {{ toJson (default false .keepLoadGeneratorAlive) }}
-      system-properties = {
+      system-properties {
       {{- range $key, $val := .systemProperties }}
         "{{ $key }}" = "{{ $val }}"
       {{- end }}
@@ -168,11 +168,11 @@ control-plane {
   ]
   {{- if .Values.privatePackage.enabled }}
     {{- if .Values.privatePackage.repository.server }}
-    server: {{ toJson .Values.privatePackage.repository.server }}
+    server = {{ toJson .Values.privatePackage.repository.server }}
     {{- end }}
   {{- $repoType := .Values.privatePackage.repository.type }}
   {{- $config := index .Values.privatePackage.repository.configurations $repoType }}
-  repository = {
+  repository {
     {{- if .Values.privatePackage.repository.upload }}
     upload = {{ toJson .Values.privatePackage.repository.upload }}
     {{- end }}
