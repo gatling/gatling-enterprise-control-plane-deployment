@@ -149,9 +149,11 @@ spec:
           args:  
             {{ toYaml .Values.controlPlane.args | nindent 12 }}
           {{- end }}
-          {{- $secrets := include "gatling-helm.collect-secrets" .Values.controlPlane | fromJsonArray }}
+          {{- $cpSecrets := include "gatling-helm.collect-secrets" .Values.controlPlane | fromJsonArray }}
+          {{- $locSecrets := include "gatling-helm.collect-secrets" .Values.privateLocations | fromJsonArray }}
+          {{- $secrets := concat $cpSecrets $locSecrets }}
 
-          {{- if or .Values.controlPlane.env .Values.controlPlane.customCACertificates.secretName (gt (len $secrets) 0) }}
+          {{- if or .Values.controlPlane.env .Values.controlPlane.customCACertificates.configName (gt (len $secrets) 0) }}
           env:
           {{- if .Values.controlPlane.env }}
             {{ toYaml .Values.controlPlane.env | nindent 12 }}

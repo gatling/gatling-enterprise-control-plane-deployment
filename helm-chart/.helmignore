@@ -1,0 +1,11 @@
+# Helm repository website assets
+public/
+
+# Documentation
+TODO.md
+
+# Common ignores
+.git/
+.gitignore
+.helmignore
+*.tgz
