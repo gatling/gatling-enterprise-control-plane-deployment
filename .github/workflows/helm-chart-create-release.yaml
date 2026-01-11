@@ -104,7 +104,7 @@ jobs:
           ls -lh ./packaged-charts/
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v5
         with:
           role-to-assume: ${{ secrets.SE_HELM_AWS_ROLE }}
           aws-region: ${{ vars.SE_HELM_AWS_S3_REGION }}
