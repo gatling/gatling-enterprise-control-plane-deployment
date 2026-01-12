@@ -36,6 +36,20 @@ jobs:
         working-directory: helm-chart
         run: helm template . --debug --dry-run
 
+      - name: Setup kubeconform
+        uses: bmuschko/setup-kubeconform@v1
+
+      - name: Validate with kubeconform
+        working-directory: helm-chart
+        run: |
+          for version in 1.28.0 1.29.0 1.30.0 1.31.0; do
+            echo "=== Validating against Kubernetes $version ==="
+            helm template . | kubeconform \
+              -kubernetes-version "$version" \
+              -strict \
+              -summary
+          done
+
       - name: Package Helm chart
         run: |
           helm package ./helm-chart/ --destination ./packaged-charts/
