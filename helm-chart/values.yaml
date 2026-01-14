@@ -277,6 +277,34 @@ privateLocations:
 #     #   Setup the proxy configuration for the private location
 #     #   Reference: https://docs.gatling.io/reference/install/cloud/private-locations/network/#configuring-a-proxy
 #
+# Dedicated machine Private Location configuration
+# Reference: https://docs.gatling.io/reference/deploy/private-locations/dedicated/configuration/
+# - id: "prl_dedicated"                          # Unique identifier for the private location, must be prefixed by prl_, only consist of numbers 0-9, lowercase letters a-z, and underscores, with a max length of 30 characters
+#   description: "Private Location on dedicated machines"  # Brief description of the dedicated location
+#   type: "dedicated"                            # Location type (dedicated machine)
+#   engine: "classic"                            # Execution engine type (e.g., "classic" or "javascript")
+#   hosts:                                       # List of hostnames or IP addresses of the dedicated machines
+#     - "192.168.1.10"
+#     - "192.168.1.11"
+#   # workingDirectory: "/tmp"                   # (Optional) Working directory on the remote machines (default: /tmp)
+#   ssh:
+#     user: "gatling"                            # SSH user account name
+#     privateKey:
+#       path: "/path/to/private-key"             # Path to the SSH private key file (mounted in the control plane)
+#       # password:                              # (Optional) Private key password, supports secret reference
+#       #   env: SSH_KEY_PASSWORD
+#       #   secretName: ssh-secrets
+#       #   key: key-password
+#     # port: 22                                 # (Optional) SSH port (default: 22)
+#     # connectionTimeout: "15 seconds"          # (Optional) SSH connection timeout (default: 15 seconds)
+#   # systemProperties: {}                       # (Optional) Additional system properties for the dedicated location
+#   # javaHome: "/usr/lib/jvm/zulu"              # (Optional) Custom JAVA_HOME path
+#   # jvmOptions: ["-Xmx4G", "-Xms512M"]         # (Optional) JVM options for performance tuning
+#   # keepLoadGeneratorAlive: false              # (Optional) Whether to keep the load generator alive (for debugging)
+#   # enterpriseCloud:
+#     #   Setup the proxy configuration for the private location
+#     #   Reference: https://docs.gatling.io/reference/install/cloud/private-locations/network/#configuring-a-proxy
+#
 # ----------------------------------------------------------------------
 # PRIVATE PACKAGE SETTINGS
 # ----------------------------------------------------------------------

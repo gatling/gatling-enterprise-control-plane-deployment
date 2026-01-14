@@ -151,6 +151,28 @@ control-plane {
       {{- end }}
       machine = {{ toJson .machine }}
     {{- end }}
+    {{- if eq .type "dedicated" }}
+      engine = {{ include "hocon-value" .engine }}
+      hosts = {{ toJson .hosts }}
+      {{- if .workingDirectory }}
+      working-directory = {{ include "hocon-value" .workingDirectory }}
+      {{- end }}
+      ssh {
+        user = {{ include "hocon-value" .ssh.user }}
+        private-key {
+          path = {{ include "hocon-value" .ssh.privateKey.path }}
+          {{- if .ssh.privateKey.password }}
+          password = {{ include "hocon-value" .ssh.privateKey.password }}
+          {{- end }}
+        }
+        {{- if .ssh.port }}
+        port = {{ include "hocon-value" .ssh.port }}
+        {{- end }}
+        {{- if .ssh.connectionTimeout }}
+        connection-timeout = {{ include "hocon-value" .ssh.connectionTimeout }}
+        {{- end }}
+      }
+    {{- end }}
       debug.keep-load-generator-alive = {{ toJson (default false .keepLoadGeneratorAlive) }}
       system-properties {
       {{- range $key, $val := .systemProperties }}
