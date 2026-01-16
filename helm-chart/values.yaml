@@ -130,7 +130,12 @@ privateLocations:
     #   java: "latest"                              # For classic engine; no-op for javascript
     #   image: "gatlingcorp/classic-openjdk:latest" # Custom image name
     # context: "test"                              # Context name (optional, default based on current-context kubernetes configuration)
-    # systemProperties: {}                          # System properties for the JVM
+    # systemProperties:                             # System properties for the JVM (supports secret references)
+    #   "direct.prop": "direct-value"               # Direct value
+    #   "secret.prop":                              # Value from Kubernetes secret
+    #     env: MY_SECRET_PROP
+    #     secretName: my-secrets
+    #     key: prop-key
     # javaHome: "/usr/lib/jvm/zulu"                 # Java home path
     # jvmOptions: ["-Xmx4G", "-Xms512M"]
     # keepLoadGeneratorAlive: false                 # Whether to keep the load generator alive (for debugging - Do not forget to delete ghost pods.)
@@ -215,7 +220,12 @@ privateLocations:
 #   #   instance: {}
 #   #   volume: {}
 #   #   network-interface: {}
-#   # systemProperties: {}                   # (Optional) Additional system properties for the AWS location
+#   # systemProperties:                      # (Optional) Additional system properties for the AWS location (supports secret references)
+#   #   "direct.prop": "direct-value"        # Direct value
+#   #   "secret.prop":                       # Value from Kubernetes secret
+#   #     env: MY_SECRET_PROP
+#   #     secretName: my-secrets
+#   #     key: prop-key
 #   # javaHome: "/usr/lib/jvm/zulu"          # (Optional) Custom JAVA_HOME path
 #   # jvmOptions: ["-Xmx4G", "-Xms512M"]     # (Optional) JVM options for tuning performance
 #   # enterpriseCloud:
@@ -239,7 +249,12 @@ privateLocations:
 #   subnetName: "subnet-name"                # Name of the subnet within the specified virtual network
 #   # associatePublicIp: true                # (Optional) Whether to assign a public IP to the VM
 #   # tags: {}                               # (Optional) Custom tags for the Azure VM
-#   # systemProperties: {}                   # (Optional) Additional system properties for the Azure location
+#   # systemProperties:                      # (Optional) Additional system properties for the Azure location (supports secret references)
+#   #   "direct.prop": "direct-value"        # Direct value
+#   #   "secret.prop":                       # Value from Kubernetes secret
+#   #     env: MY_SECRET_PROP
+#   #     secretName: my-secrets
+#   #     key: prop-key
 #   # javaHome: "/usr/lib/jvm/zulu"          # (Optional) Custom JAVA_HOME path
 #   # jvmOptions: ["-Xmx4G", "-Xms512M"]     # (Optional) Custom JVM options for performance tuning
 #   # enterpriseCloud:
@@ -270,7 +285,12 @@ privateLocations:
 #     #   network: "gatling-network"         # (Optional) Name of the GCP network to use
 #     #   subnetwork: "gatling-subnetwork-europe-west3"  # (Optional) Specific subnetwork within the network
 #     #   with-external-ip: true             # (Optional) Set to true to assign an external IP address
-#   # systemProperties: {}                   # (Optional) Additional system properties for the GCP location
+#   # systemProperties:                      # (Optional) Additional system properties for the GCP location (supports secret references)
+#   #   "direct.prop": "direct-value"        # Direct value
+#   #   "secret.prop":                       # Value from Kubernetes secret
+#   #     env: MY_SECRET_PROP
+#   #     secretName: my-secrets
+#   #     key: prop-key
 #   # javaHome: "/usr/lib/jvm/zulu"          # (Optional) Custom JAVA_HOME path
 #   # jvmOptions: ["-Xmx4G", "-Xms512M"]     # (Optional) JVM options for performance tuning
 #   # enterpriseCloud:
@@ -297,7 +317,12 @@ privateLocations:
 #       #   key: key-password
 #     # port: 22                                 # (Optional) SSH port (default: 22)
 #     # connectionTimeout: "15 seconds"          # (Optional) SSH connection timeout (default: 15 seconds)
-#   # systemProperties: {}                       # (Optional) Additional system properties for the dedicated location
+#   # systemProperties:                          # (Optional) Additional system properties for the dedicated location (supports secret references)
+#   #   "direct.prop": "direct-value"            # Direct value
+#   #   "secret.prop":                           # Value from Kubernetes secret
+#   #     env: MY_SECRET_PROP
+#   #     secretName: my-secrets
+#   #     key: prop-key
 #   # javaHome: "/usr/lib/jvm/zulu"              # (Optional) Custom JAVA_HOME path
 #   # jvmOptions: ["-Xmx4G", "-Xms512M"]         # (Optional) JVM options for performance tuning
 #   # keepLoadGeneratorAlive: false              # (Optional) Whether to keep the load generator alive (for debugging)
