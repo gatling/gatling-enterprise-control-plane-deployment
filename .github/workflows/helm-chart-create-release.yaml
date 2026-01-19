@@ -106,7 +106,7 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v5
         with:
-          role-to-assume: ${{ secrets.SE_HELM_AWS_ROLE }}
+          role-to-assume: ${{ vars.SE_HELM_AWS_ROLE }}
           aws-region: ${{ vars.SE_HELM_AWS_S3_REGION }}
 
       - name: Deploy public to S3
@@ -157,10 +157,21 @@ jobs:
           
           echo "✓ Repository index updated at /index.yaml"
 
-      - name: Create CloudFront invalidation
+      - name: Create CloudFront invalidation (dev)
+        if: needs.calculate-version.outputs.environment == 'dev'
         env:
           CLOUDFRONT_DISTRIBUTION_ID: ${{ vars.SE_HELM_AWS_CLOUDFRONT_DISTRIBUTION_ID }}
         run: aws cloudfront create-invalidation --distribution-id ${CLOUDFRONT_DISTRIBUTION_ID} --paths "/*"
+
+      - name: Create CloudFront invalidation (production)
+        if: needs.calculate-version.outputs.environment == 'production'
+        env:
+          DOCUMENT_NAME: ${{ vars.CLOUDFRONT_INVALIDATION_DOCUMENT }}
+        run: |
+          aws ssm start-automation-execution \
+            --region eu-west-3 \
+            --document-name "${DOCUMENT_NAME}"
+
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
