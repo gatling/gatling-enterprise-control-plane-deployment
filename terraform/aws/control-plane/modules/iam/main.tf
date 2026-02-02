@@ -82,7 +82,7 @@ locals {
 
   iam_profile_name_statements = distinct([
     for location in var.locations : {
-      Sid      = "AllowPassRole${location.conf.iam-instance-profile}"
+      Sid = "AllowPassRole${replace(location.conf.iam-instance-profile, "/[^0-9A-Za-z]/", "")}"
       Effect   = "Allow"
       Action   = "iam:PassRole"
       Resource = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${location.conf.iam-instance-profile}"
