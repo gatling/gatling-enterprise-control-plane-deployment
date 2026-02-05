@@ -55,16 +55,23 @@ jobs:
           token: ${{ secrets.GATLING_CI_TOKEN }}
 
       - name: Configure Git
+        env:
+          GIT_USER_NAME: ${{ secrets.GATLING_CI_NAME }}
+          GIT_USER_EMAIL: ${{ secrets.GATLING_CI_EMAIL }}
         run: |
-          git config user.name "${{ secrets.GATLING_CI_NAME }}"
-          git config user.email "${{ secrets.GATLING_CI_EMAIL }}"
+          git config user.name "$GIT_USER_NAME"
+          git config user.email "$GIT_USER_EMAIL"
 
       - name: Display release information
+        env:
+          FULL_TAG: ${{ needs.calculate-version.outputs.full_tag }}
+          VERSION: ${{ github.event.inputs.version }}
+          ENVIRONMENT: ${{ needs.calculate-version.outputs.environment }}
         run: |
           echo "🚀 Preparing Helm chart release"
-          echo "Full tag: ${{ needs.calculate-version.outputs.full_tag }}"
-          echo "Chart version: ${{ github.event.inputs.version }}"
-          echo "Environment: ${{ needs.calculate-version.outputs.environment }}"
+          echo "Full tag: $FULL_TAG"
+          echo "Chart version: $VERSION"
+          echo "Environment: $ENVIRONMENT"
 
       - name: Update Chart.yaml with version
         env:
@@ -76,9 +83,11 @@ jobs:
           grep -E '^version:' helm-chart/Chart.yaml
 
       - name: Commit version change
+        env:
+          VERSION: ${{ github.event.inputs.version }}
         run: |
           git add helm-chart/Chart.yaml
-          git commit -m "chore: bump helm chart version to ${{ github.event.inputs.version }}"
+          git commit -m "chore: bump helm chart version to $VERSION"
 
       - name: Create and push tag
         env:
