@@ -1,5 +1,13 @@
 data "aws_caller_identity" "current" {}
 
+data "aws_iam_instance_profile" "by_name" {
+  for_each = toset([
+    for location in var.locations : location.conf.iam-instance-profile
+    if location.conf.iam-instance-profile != null
+  ])
+  name = each.key
+}
+
 data "aws_eip" "by_ip" {
   for_each = toset(flatten([
     for location in var.locations : location.conf.elastic-ips
@@ -85,7 +93,7 @@ locals {
       Sid      = "AllowPassRole${replace(location.conf.iam-instance-profile, "/[^0-9A-Za-z]/", "")}"
       Effect   = "Allow"
       Action   = "iam:PassRole"
-      Resource = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${location.conf.iam-instance-profile}"
+      Resource = data.aws_iam_instance_profile.by_name[location.conf.iam-instance-profile].role_arn
     }
     if location.conf.iam-instance-profile != null
   ])
